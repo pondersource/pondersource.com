@@ -7,48 +7,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      background-image: url("./thanks-to-tripsavvy-com.webp");
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-color: rgb(245, 255, 255);
+      font-family:arial,courier,helvetica;
     }
-    h1 {
-      color: #8cf;
-      font-size: 50px;
-      margin-top: 50px;
-      margin-left: 50px;
+    hero h1 {
+      text-align: center;
     }
-    p {
-      color: #8cf;
-      font-size: 25px;
-      margin-top: 10px;
-      margin-left: 50px;
+    hero img {
+      display: block;
+      margin-top: 10%;
+      margin-bottom: 10%;
+      margin-left: auto;
+      margin-right: auto;
+      width: 60%;
     }
-    a {
-      color: #8cf;
+    article {
+      background-color: rgb(235, 255, 255);
+      display: block;
+      margin-top: 10%;
+      margin-bottom: 10%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 10px;
+      border-radius: 30%;
+      width: 60%;
+      text-align: justify;
     }
 
     /* On screens that are 700px or more, pump up the font size */
     @media screen and (min-width: 700px) {
       h1 {
-        font-size: 80px;
+        font-size: 30px;
       }
       p {
-        font-size: 50px;
-      }
-    }
-    /* On screens that are 800px or more, indent the last line */
-    @media screen and (min-width: 800px) {
-      p {
-        margin-top: 80px;
-      }
-      a {
-        margin-left: 250px;
+        font-size: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Ponder Source</h1>
-  <p>Specialists in<p>
-  <a href="https://federatedbookkeeping.org/">Federated Bookkeeping</a>
+  <hero>
+    <img src="./logo.png">
+    <h1><em>You'll be in touch&hellip;</em></h1>
+  </hero>
+  <article>
+    <h1>Who we are</h1>
+    <p>We are a small earn-to-give startup that specialises in <a href="https://federatedbookkeeping.org/">Federated Bookkeeping</a>.
+    All our projects are open source and we aim to connect existing systems with each other, rather than introducing yet another alternative.</p>
+  </article>
+  <article>
+    <h1>Projects</h1>
+    <p>We build connectors that allow computer systems to federate with each other. Possible first projects may include
+    <a href="https://www.odoo.com/">Odoo</a> and <a href="https://erpnext.com/">ERPNext</a> plugins for joining <a href="https://peppol.eu/">Peppol</a>,
+    and a <a href="https://nextcloud.com/">Nextcloud</a> plugin for joining <a href="https://sciencemesh.io/">ScienceMesh</a>.
+    </p>
+  </article>
+  <article>
+    <h1>Contact</h1>
+    <p>We're not yet taking on customer work and are still a bit cautious in hiring our first employees,
+      but if you're as excited about the possibilities of Federated Bookkeeping,
+      then please join the chat on the <a href="https://federatedbookkeeping.org">Federated Bookkeeping</a>
+      website and ask for <strong>@michielbdejong</strong>! Then we can see where the conversation leads us.</p>
+    <p>You can also always email michiel at pondersource dot com with any questions, or connect via
+      <a href=="https://www.linkedin.com/in/michielbdejong/">LinkedIn</a>.</p>
+  </article>
 </body>
