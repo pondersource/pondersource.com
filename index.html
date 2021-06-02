@@ -47,7 +47,7 @@
 </head>
 <body>
   <hero>
-    <img src="./logo.png">
+    <img src="img/logo.png">
     <h1><em>You'll be in touch&hellip;</em></h1>
   </hero>
   <article>
@@ -56,16 +56,61 @@
     All our projects are open source and we aim to connect existing systems with each other, rather than introducing yet another alternative.</p>
   </article>
   <article>
-    <h1>Projects</h1>
-    <p>We build connectors that allow computer systems to federate with each other. Possible first projects may include
-    <a href="https://www.odoo.com/">Odoo</a> and <a href="https://erpnext.com/">ERPNext</a> plugins for joining <a href="https://peppol.eu/">Peppol</a>,
-    and a <a href="https://nextcloud.com/">Nextcloud</a> plugin for joining <a href="https://sciencemesh.io/">ScienceMesh</a>.
-    </p>
+    <h1>Team</h1>
+    <ul style="display: flex; justify-content: space-between; width: 100%; list-style-type: none;">
+      <li>
+        <flexbox>
+          <p>Triantafullenia Doumani</p>
+          <p><img style="width:300px" src="img/triantafullenia.png"></p>
+          <p>Software Engineer</p>
+        </flexbox>
+      </li>
+      <li>
+        <flexbox>
+          <p>Michiel de Jong</p>
+          <p><img style="width:300px" src="img/michiel.png"></p>
+          <p>Software Engineer / Founder</p>
+        </flexbox>
+      </li>
+    </ul>
+  </article>
+    <article>
+      <h1>Projects</h1>
+      <h2>Peppol for the masses!</h2>
+        <p><it>Project lead: Triantafullenia Doumani</it></p>
+        <p>In this project, we extend the popular "<a href="https://peppol.eu/">Peppol</a>" e-invoicing network.
+          In Peppol Classic (current Peppol) a four-corner
+          model is used wherein each participant needs to connect to Peppol via a licenced gateway. This has some
+          advantages such as KYC assurance, but also some disadvantages (gateways can be expensive to use, they can
+          read and even edit your business-sensitive invoice data, and the KYC system only works for legal entities from
+          a specific list of countries).</p>
+        <p>We propose "Peppol Classic + Peppol Direct = Peppol Hybrid", adding an optional feature of sending an invoice
+          straight to its recipient, identified by a WebID URL.</p>
+        <p>See our <a href="https://github.com/pondersource/peppol-python#peppol-for-the-masses">peppol-python</a>
+          and <a href="https://github.com/pondersource/peppol-python-demo">peppol-python-demo</a> repos for more
+          info.</p>
+
+      <h2>Sciencemesh for Nextcloud</h2>
+        <p><it>Project lead: Michiel de Jong</it></p>
+        <p><it>Technology partner: <a href="https://www.muze.nl/">{muze}</a></it></p>
+        <p>In this project, we extend the innovative "<a href="https://sciencemesh.io/">Sciencemesh</a>"
+          project to <a href="https://nextcloud.com">Nextcloud</a>.
+          Sciencemesh builds on Open Cloud Mesh (OCM) to enable federation between enterprise sync and share systems.
+          It is spearheaded by the three-year EU-funded project "CS3MESH4EOSC", to whom we as Ponder Source are
+          proud to be a sub-contractor.
+          On this project, Ponder Source collaborates with  (in particular the talented
+          engineer and visionary Yvo Brevoort).
+      </p>
+      <h2>Collaborative Invoice Composition</h2>
+        <p><it>Project lead: Michiel de Jong</it></p>
+        <p><it>Technology partner: <a href="https://m-ld.org/">m-ld</a></it></p>
+        <p>The vision behind this project (which is still in a very early stage) is summarized in
+          <a href="https://github.com/federatedbookkeeping/research/issues/4">this GitHub issue</a>.
+        </p>
   </article>
   <article>
     <h1>Contact</h1>
-    <p>We're not yet taking on customer work and are still a bit cautious in hiring our first employees,
-      but if you're as excited about the possibilities of Federated Bookkeeping,
+    <p>If you're as excited about the possibilities of Federated Bookkeeping,
       then please join the chat on the <a href="https://federatedbookkeeping.org">Federated Bookkeeping</a>
       website and ask for <strong>@michielbdejong</strong>! Then we can see where the conversation leads us.</p>
     <p>You can also always email michiel at pondersource dot com with any questions, or connect via
