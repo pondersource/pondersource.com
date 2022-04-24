@@ -39,7 +39,7 @@
   <rect stroke="#000" id="svg_56" height="32" width="127" y="446" x="500.5" fill="#aaffff"/>
   <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -126.128 288.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_57" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Billing-API</text>
   <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -125.128 337.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_58" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Timesheets</text>
-  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -125.128 387.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_59" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Dogfooding</text>
+  <text transform="matrix(0.599771 0 0 0.357479 -125.128 387.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_59" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Dogfooding</text>
   <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 22.872 285.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_60" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Peppol-Next</text>
   <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 24.872 340.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_61" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">LetsPeppol</text>
   <text transform="matrix(0.599771 0 0 0.357479 161.872 390.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_62" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">ScienceMesh-OC10</text>
@@ -50,5 +50,7 @@
   <rect stroke="#000" id="svg_67" height="32" width="127" y="385" x="653.5" fill="#aaffff"/>
   <text transform="matrix(0.599771 0 0 0.357479 498.872 276.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_68" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Sunet-MFA</text>
   <line stroke="#000000" id="svg_69" y2="328" x2="88.5" y1="269" x1="350.5" fill="none"/>
+  <rect stroke="#000" id="svg_70" height="32" width="126" y="532" x="27.5" fill="#aaffff"/>
+  <text transform="matrix(0.523333 0 0 0.357479 -124.725 424.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_71" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Connect Your Books</text>
  </g>
 </svg>
