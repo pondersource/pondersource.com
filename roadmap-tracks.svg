@@ -1,0 +1,54 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>Layer 1</title>
+  <rect stroke="#000" id="svg_46" height="32" width="127" y="329" x="30.5" fill="#D1FFB4"/>
+  <rect id="svg_1" height="107" width="222" y="162" x="335.5" stroke="#000" fill="#FFFA8D"/>
+  <path id="svg_2" d="m425.5,207" opacity="NaN" stroke="#000" fill="#fff"/>
+  <path id="svg_3" d="m374.5,214" opacity="NaN" stroke="#000" fill="#fff"/>
+  <text xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_4" y="223" x="374.5" stroke-width="0" stroke="#000" fill="#000000">Ponder Source</text>
+  <path id="svg_6" d="m160.5,208" opacity="NaN" stroke="#000" fill="#fff"/>
+  <path id="svg_7" d="m109.5,215" opacity="NaN" stroke="#000" fill="#fff"/>
+  <rect stroke="#000" id="svg_13" height="32" width="127" y="329" x="175.5" fill="#d4ffaa"/>
+  <path id="svg_14" d="m363.5,334" opacity="NaN" stroke="#000" fill="#fff"/>
+  <path id="svg_15" d="m312.5,341" opacity="NaN" stroke="#000" fill="#fff"/>
+  <text transform="matrix(0.599771 0 0 0.357479 125.872 222.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_16" y="353.98685" x="144.43513" stroke-width="0" fill="#000000">Peppol</text>
+  <rect stroke="#000" id="svg_17" height="32" width="127" y="329" x="499.5" fill="#d4ffaa"/>
+  <path id="svg_18" d="m605.5,335" opacity="NaN" stroke="#000" fill="#fff"/>
+  <text transform="matrix(0.599771 0 0 0.357479 376.872 224.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_19" y="345.59474" x="277.81934" stroke-width="0" fill="#000000">Solid</text>
+  <path id="svg_21" d="m219.5,333" opacity="NaN" stroke="#000" fill="#fff"/>
+  <text transform="matrix(0.599771 0 0 0.357479 -127.128 221.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_22" y="351.18948" x="309.49809" stroke-width="0" fill="#000000">Prejournal</text>
+  <rect stroke="#000" id="svg_23" height="32" width="127" y="329" x="655.5" fill="#d4ffaa"/>
+  <path id="svg_24" d="m741.5,334" opacity="NaN" stroke="#000" fill="#fff"/>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 503.872 222.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_25" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Nextcloud</text>
+  <rect stroke="#000" id="svg_33" height="32" width="127" y="329" x="341.5" fill="#d4ffaa"/>
+  <text transform="matrix(0.599771 0 0 0.357479 283.872 221.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_35" y="353.98685" x="144.43513" stroke-width="0" fill="#000000">ScienceMesh</text>
+  <line id="svg_37" y2="329" x2="238.5" y1="269" x1="412.5" stroke="#000" fill="none"/>
+  <line stroke="#000" id="svg_38" y2="329" x2="406.5" y1="269" x1="439.5" fill="none"/>
+  <line stroke="#000" id="svg_39" y2="328" x2="559.5" y1="269" x1="478.5" fill="none"/>
+  <line id="svg_40" y2="329" x2="721.5" y1="269" x1="522.5" stroke="#000" fill="none"/>
+  <rect stroke="#000" id="svg_47" height="32" width="127" y="394" x="29.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_48" height="32" width="127" y="391" x="177.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_49" height="32" width="127" y="446" x="177.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_50" height="32" width="127" y="443" x="27.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_51" height="32" width="127" y="492" x="27.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_52" height="32" width="127" y="390" x="338.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_53" height="32" width="127" y="448" x="342.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_54" height="32" width="127" y="498" x="342.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_55" height="32" width="127" y="387" x="501.5" fill="#aaffff"/>
+  <rect stroke="#000" id="svg_56" height="32" width="127" y="446" x="500.5" fill="#aaffff"/>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -126.128 288.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_57" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Billing-API</text>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -125.128 337.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_58" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Timesheets</text>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 -125.128 387.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_59" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Dogfooding</text>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 22.872 285.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_60" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Peppol-Next</text>
+  <text style="cursor: move;" transform="matrix(0.599771 0 0 0.357479 24.872 340.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_61" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">LetsPeppol</text>
+  <text transform="matrix(0.599771 0 0 0.357479 161.872 390.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_62" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">ScienceMesh-OC10</text>
+  <text transform="matrix(0.599771 0 0 0.357479 173.872 284.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_63" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">OCM test suite</text>
+  <text transform="matrix(0.599771 0 0 0.357479 168.872 342.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_64" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">ScienceMesh-NC</text>
+  <text transform="matrix(0.599771 0 0 0.357479 331.872 279.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_65" y="351.18948" x="309.49809" stroke-width="0" fill="#000000">Solid-Nextcloud</text>
+  <text transform="matrix(0.599771 0 0 0.357479 334.872 339.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_66" y="351.18948" x="309.49809" stroke-width="0" fill="#000000">Solid test suite</text>
+  <rect stroke="#000" id="svg_67" height="32" width="127" y="385" x="653.5" fill="#aaffff"/>
+  <text transform="matrix(0.599771 0 0 0.357479 498.872 276.314)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" id="svg_68" y="348.39211" x="311.16539" stroke-width="0" fill="#000000">Sunet-MFA</text>
+  <line stroke="#000000" id="svg_69" y2="328" x2="88.5" y1="269" x1="350.5" fill="none"/>
+ </g>
+</svg>
