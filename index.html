@@ -3,43 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ponder Source - redesigning</title>
+  <title>Ponder Source</title>
   <style>
+    :root {
+      --ink: #1f2a2e;
+      --muted: #55666c;
+      --accent: #0d6efd;
+      --bg: rgb(250, 255, 255);
+      --card-bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
     body {
-      background-color: rgb(250, 255, 255);
+      background-color: var(--bg);
+      color: var(--ink);
       font-family: arial, courier, helvetica;
       margin: 0;
     }
-    main {
-      min-height: 100vh;
+    header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
-      padding: 20px;
-      box-sizing: border-box;
+      padding: 60px 20px 40px;
     }
-    img {
-      max-width: 240px;
-      margin-bottom: 30px;
+    header img {
+      max-width: 160px;
+      margin-bottom: 20px;
     }
     h1 {
-      font-size: 30px;
+      font-size: 32px;
+      margin: 0 0 12px;
     }
-    p {
+    .tagline {
+      font-size: 19px;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.5;
+      margin: 0;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
+    }
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .section-intro {
+      text-align: center;
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.5;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+    .app-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+    .app-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+      margin-bottom: 16px;
+    }
+    .app-card h3 {
+      margin: 0 0 8px;
       font-size: 20px;
     }
-    a {
-      color: #0d6efd;
+    .app-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 66px;
+    }
+    .app-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: #0b5ed7;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid #d7dee1;
+    }
+    .btn-secondary:hover {
+      border-color: var(--muted);
+      color: var(--ink);
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px 50px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    footer a {
+      color: var(--muted);
     }
   </style>
 </head>
 <body>
-  <main>
+  <header>
     <img src="assets/logo.jpeg" alt="Ponder Source logo">
-    <h1>We're redesigning our website</h1>
-    <p>In the meantime, feel free to <a href="2020-2025/index.html">view our older website from 2025</a>.</p>
+    <h1>Ponder Source</h1>
+    <p class="tagline">
+      Ponder Source is a non-profit organisation that maintains forks of open source projects,
+      keeping them alive, improved, and free for everyone to use and build on.
+    </p>
+  </header>
+  <main>
+    <h2>Try one of our apps</h2>
+    <p class="section-intro">
+      Each app runs live at its own subdomain, and every line of code is open source on GitHub.
+    </p>
+    <div class="app-grid">
+      <div class="app-card">
+        <img class="app-icon" src="assets/apps/litewrite.png" alt="Litewrite icon">
+        <h3>Litewrite</h3>
+        <p>Unobtrusive writing. A simple, distraction-free notepad that works offline and everywhere.</p>
+        <div class="app-links">
+          <a class="btn btn-primary" href="https://litewrite.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-secondary" href="https://github.com/pondersource/litewrite" target="_blank" rel="noopener">View source</a>
+        </div>
+      </div>
+      <div class="app-card">
+        <img class="app-icon" src="assets/apps/inbox-rs.png" alt="Inbox RS icon">
+        <h3>Inbox RS</h3>
+        <p>A universal inbox for saving URLs, notes, images, emails, and audio, backed by remoteStorage so your data stays yours.</p>
+        <div class="app-links">
+          <a class="btn btn-primary" href="https://inbox-rs.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-secondary" href="https://github.com/pondersource/inbox-rs" target="_blank" rel="noopener">View source</a>
+        </div>
+      </div>
+      <div class="app-card">
+        <img class="app-icon" src="assets/apps/hyperdraft.svg" alt="Hyperdraft icon">
+        <h3>Hyperdraft</h3>
+        <p>Turn your text notes into a website. Organise your thinking and network your ideas with a simple double-bracket syntax.</p>
+        <div class="app-links">
+          <a class="btn btn-primary" href="https://hyperdraft.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-secondary" href="https://github.com/pondersource/hyperdraft" target="_blank" rel="noopener">View source</a>
+        </div>
+      </div>
+    </div>
   </main>
+  <footer>
+    <p>© 2026 All Rights Reserved Ponder Source. Legal entity: <a href="https://org.pondersource.com">Stichting Ponder Source</a></p>
+    <p>Curious what we looked like before? <a href="2020-2025/index.html">View our older website from 2020-2025</a>.</p>
+  </footer>
 </body>
 </html>
