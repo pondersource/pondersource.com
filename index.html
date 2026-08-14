@@ -141,9 +141,97 @@
     footer a {
       color: var(--muted);
     }
+    .sf-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 42, 46, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .sf-overlay[hidden] {
+      display: none;
+    }
+    .sf-modal {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 28px 24px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+    .sf-modal h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+    .sf-modal p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .sf-modal .sf-account {
+      color: var(--ink);
+      word-break: break-all;
+    }
+    .sf-app-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .sf-app-choice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid #d7dee1;
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+    .sf-app-choice:hover {
+      border-color: var(--accent);
+      background: #f2f7ff;
+    }
+    .sf-app-choice img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .sf-cancel {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .sf-cancel:hover {
+      color: var(--ink);
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
+  <div id="storage-first-overlay" class="sf-overlay" hidden>
+    <div class="sf-modal">
+      <h3>Connect your storage</h3>
+      <p>A storage provider wants to connect the account <strong class="sf-account" id="sf-account-name"></strong> to one of our apps. Choose which one:</p>
+      <div class="sf-app-choices" id="sf-app-choices"></div>
+      <button type="button" class="sf-cancel" id="sf-cancel">Cancel</button>
+    </div>
+  </div>
   <header>
     <img src="assets/logo.jpeg" alt="Ponder Source logo">
     <h1>Ponder Source</h1>
@@ -194,5 +282,61 @@
     <p>© 2026 All Rights Reserved Ponder Source. Legal entity: <a href="https://org.pondersource.com">Stichting Ponder Source</a></p>
     <p>Curious what we looked like before? <a href="2020-2025/index.html">View our older website from 2020-2025</a>.</p>
   </footer>
+  <script>
+    // Storage-first bearer token issuance (remoteStorage spec, section 11):
+    // https://github.com/remotestorage/spec/blob/0a190a23cc283058588ecb700c42dcb156a87c43/release/draft-dejong-remotestorage-26.txt#L604
+    // A storage provider MAY redirect here with a 'remotestorage' field in the URL
+    // fragment. We're a directory of apps rather than a storage-consuming app
+    // ourselves, so after the user confirms, we forward them (with the same
+    // fragment) to whichever of our remoteStorage-compatible apps they pick; that
+    // app then performs the actual account discovery/connection (spec section 10).
+    (function () {
+      var APPS = [
+        { name: 'Litewrite', subdomain: 'litewrite', icon: 'assets/apps/litewrite.png' },
+        { name: 'Inbox RS', subdomain: 'inbox-rs', icon: 'assets/apps/inbox-rs.png' },
+        { name: 'Hyperdraft', subdomain: 'hyperdraft', icon: 'assets/apps/hyperdraft.svg' }
+      ];
+
+      var hash = window.location.hash.replace(/^#/, '');
+      var params = new URLSearchParams(hash);
+      var account = params.get('remotestorage');
+      if (!account) return;
+
+      var overlay = document.getElementById('storage-first-overlay');
+      var accountName = document.getElementById('sf-account-name');
+      var choices = document.getElementById('sf-app-choices');
+      var cancelBtn = document.getElementById('sf-cancel');
+
+      accountName.textContent = account;
+
+      APPS.forEach(function (app) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'sf-app-choice';
+
+        var icon = document.createElement('img');
+        icon.src = app.icon;
+        icon.alt = '';
+        button.appendChild(icon);
+
+        var label = document.createElement('span');
+        label.textContent = app.name;
+        button.appendChild(label);
+
+        button.addEventListener('click', function () {
+          window.location.href = 'https://' + app.subdomain + '.pondersource.com/#remotestorage=' + encodeURIComponent(account);
+        });
+
+        choices.appendChild(button);
+      });
+
+      cancelBtn.addEventListener('click', function () {
+        overlay.hidden = true;
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      });
+
+      overlay.hidden = false;
+    })();
+  </script>
 </body>
 </html>
