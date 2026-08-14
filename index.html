@@ -141,97 +141,79 @@
     footer a {
       color: var(--muted);
     }
-    .sf-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(31, 42, 46, 0.55);
+    .rs-address-bar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      z-index: 100;
+      gap: 10px;
+      background: #f2f7ff;
+      border: 1px solid #d7e6ff;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin: 0 auto 30px;
+      max-width: 620px;
+      text-align: center;
+      font-size: 14px;
     }
-    .sf-overlay[hidden] {
+    .rs-address-bar[hidden] {
       display: none;
     }
-    .sf-modal {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 360px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    }
-    .sf-modal h3 {
-      margin: 0 0 8px;
-      font-size: 19px;
-    }
-    .sf-modal p {
-      margin: 0 0 20px;
+    .rs-address-bar .rs-address-label {
       color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
     }
-    .sf-modal .sf-account {
+    .rs-address-bar .rs-address-value {
       color: var(--ink);
       word-break: break-all;
     }
-    .sf-app-choices {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .sf-app-choice {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid #d7dee1;
-      background: #ffffff;
-      font-family: inherit;
-      font-size: 15px;
-      color: var(--ink);
-      cursor: pointer;
-      text-align: left;
-    }
-    .sf-app-choice:hover {
-      border-color: var(--accent);
-      background: #f2f7ff;
-    }
-    .sf-app-choice img {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-    .sf-cancel {
+    .rs-address-edit-btn {
       background: transparent;
-      border: none;
+      border: 1px solid #d7dee1;
+      border-radius: 10px;
       color: var(--muted);
       font-family: inherit;
-      font-size: 14px;
+      font-size: 13px;
+      padding: 6px 12px;
       cursor: pointer;
-      padding: 4px;
     }
-    .sf-cancel:hover {
+    .rs-address-edit-btn:hover {
+      border-color: var(--accent);
       color: var(--ink);
-      text-decoration: underline;
+    }
+    .rs-address-edit-form {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .rs-address-edit-form[hidden] {
+      display: none;
+    }
+    .rs-address-edit-form input {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d7dee1;
+      flex: 1;
+      min-width: 200px;
+    }
+    .rs-address-edit-form button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div id="storage-first-overlay" class="sf-overlay" hidden>
-    <div class="sf-modal">
-      <h3>Connect your storage</h3>
-      <p>A storage provider wants to connect the account <strong class="sf-account" id="sf-account-name"></strong> to one of our apps. Choose which one:</p>
-      <div class="sf-app-choices" id="sf-app-choices"></div>
-      <button type="button" class="sf-cancel" id="sf-cancel">Cancel</button>
-    </div>
-  </div>
   <header>
     <img src="assets/logo.jpeg" alt="Ponder Source logo">
     <h1>Ponder Source</h1>
@@ -245,13 +227,22 @@
     <p class="section-intro">
       Each app runs live at its own subdomain, and every line of code is open source on GitHub.
     </p>
+    <div id="rs-address-bar" class="rs-address-bar" hidden>
+      <span class="rs-address-label">Connecting remoteStorage account</span>
+      <span class="rs-address-value" id="rs-address-value"></span>
+      <button type="button" class="rs-address-edit-btn" id="rs-address-edit-btn">Configure your remoteStorage address</button>
+      <div class="rs-address-edit-form" id="rs-address-edit-form" hidden>
+        <input type="text" id="rs-address-input" placeholder="you@your-storage.example">
+        <button type="button" id="rs-address-save-btn">Save</button>
+      </div>
+    </div>
     <div class="app-grid">
       <div class="app-card">
         <img class="app-icon" src="assets/apps/litewrite.png" alt="Litewrite icon">
         <h3>Litewrite</h3>
         <p>Unobtrusive writing. A simple, distraction-free notepad that works offline and everywhere.</p>
         <div class="app-links">
-          <a class="btn btn-primary" href="https://litewrite.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-primary rs-open-app" data-base-href="https://litewrite.pondersource.com" href="https://litewrite.pondersource.com" target="_blank" rel="noopener">Open app</a>
           <a class="btn btn-secondary" href="https://github.com/pondersource/litewrite" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/litewrite/litewrite" target="_blank" rel="noopener">Upstream source</a>
         </div>
@@ -261,7 +252,7 @@
         <h3>Inbox RS</h3>
         <p>A universal inbox for saving URLs, notes, images, emails, and audio, backed by remoteStorage so your data stays yours.</p>
         <div class="app-links">
-          <a class="btn btn-primary" href="https://inbox-rs.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-primary rs-open-app" data-base-href="https://inbox-rs.pondersource.com" href="https://inbox-rs.pondersource.com" target="_blank" rel="noopener">Open app</a>
           <a class="btn btn-secondary" href="https://github.com/pondersource/inbox-rs" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/silverbucket/inbox-rs" target="_blank" rel="noopener">Upstream source</a>
         </div>
@@ -271,7 +262,7 @@
         <h3>Hyperdraft</h3>
         <p>Turn your text notes into a website. Organise your thinking and network your ideas with a simple double-bracket syntax.</p>
         <div class="app-links">
-          <a class="btn btn-primary" href="https://hyperdraft.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <a class="btn btn-primary rs-open-app" data-base-href="https://hyperdraft.pondersource.com" href="https://hyperdraft.pondersource.com" target="_blank" rel="noopener">Open app</a>
           <a class="btn btn-secondary" href="https://github.com/pondersource/hyperdraft" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/rosano/hyperdraft" target="_blank" rel="noopener">Upstream source</a>
         </div>
@@ -286,56 +277,55 @@
     // Storage-first bearer token issuance (remoteStorage spec, section 11):
     // https://github.com/remotestorage/spec/blob/0a190a23cc283058588ecb700c42dcb156a87c43/release/draft-dejong-remotestorage-26.txt#L604
     // A storage provider MAY redirect here with a 'remotestorage' field in the URL
-    // fragment. We're a directory of apps rather than a storage-consuming app
-    // ourselves, so after the user confirms, we forward them (with the same
-    // fragment) to whichever of our remoteStorage-compatible apps they pick; that
-    // app then performs the actual account discovery/connection (spec section 10).
+    // fragment. The apps are already visible as cards, so we don't need a separate
+    // confirmation step: we just carry the account through to whichever 'Open app'
+    // button the user clicks, by appending the same fragment to its href. That
+    // app's own remoteStorage.js instance then performs the actual account
+    // discovery/connection (spec section 10). We also surface the detected
+    // address and let the user correct it before opening an app.
     (function () {
-      var APPS = [
-        { name: 'Litewrite', subdomain: 'litewrite', icon: 'assets/apps/litewrite.png' },
-        { name: 'Inbox RS', subdomain: 'inbox-rs', icon: 'assets/apps/inbox-rs.png' },
-        { name: 'Hyperdraft', subdomain: 'hyperdraft', icon: 'assets/apps/hyperdraft.svg' }
-      ];
+      var openAppLinks = document.querySelectorAll('.rs-open-app');
+      var addressBar = document.getElementById('rs-address-bar');
+      var addressValue = document.getElementById('rs-address-value');
+      var editBtn = document.getElementById('rs-address-edit-btn');
+      var editForm = document.getElementById('rs-address-edit-form');
+      var addressInput = document.getElementById('rs-address-input');
+      var saveBtn = document.getElementById('rs-address-save-btn');
 
-      var hash = window.location.hash.replace(/^#/, '');
-      var params = new URLSearchParams(hash);
-      var account = params.get('remotestorage');
-      if (!account) return;
-
-      var overlay = document.getElementById('storage-first-overlay');
-      var accountName = document.getElementById('sf-account-name');
-      var choices = document.getElementById('sf-app-choices');
-      var cancelBtn = document.getElementById('sf-cancel');
-
-      accountName.textContent = account;
-
-      APPS.forEach(function (app) {
-        var button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'sf-app-choice';
-
-        var icon = document.createElement('img');
-        icon.src = app.icon;
-        icon.alt = '';
-        button.appendChild(icon);
-
-        var label = document.createElement('span');
-        label.textContent = app.name;
-        button.appendChild(label);
-
-        button.addEventListener('click', function () {
-          window.location.href = 'https://' + app.subdomain + '.pondersource.com/#remotestorage=' + encodeURIComponent(account);
+      function applyAccount(account) {
+        openAppLinks.forEach(function (a) {
+          var base = a.getAttribute('data-base-href');
+          a.href = account ? base + '#remotestorage=' + encodeURIComponent(account) : base;
         });
+      }
 
-        choices.appendChild(button);
+      function setAccount(account) {
+        account = (account || '').trim();
+        addressValue.textContent = account;
+        addressBar.hidden = !account;
+        applyAccount(account);
+        var newHash = account ? 'remotestorage=' + encodeURIComponent(account) : '';
+        history.replaceState(null, '', window.location.pathname + window.location.search + (newHash ? '#' + newHash : ''));
+      }
+
+      editBtn.addEventListener('click', function () {
+        addressInput.value = addressValue.textContent;
+        editForm.hidden = !editForm.hidden;
+        if (!editForm.hidden) addressInput.focus();
       });
 
-      cancelBtn.addEventListener('click', function () {
-        overlay.hidden = true;
-        history.replaceState(null, '', window.location.pathname + window.location.search);
+      saveBtn.addEventListener('click', function () {
+        setAccount(addressInput.value);
+        editForm.hidden = true;
       });
 
-      overlay.hidden = false;
+      addressInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') saveBtn.click();
+      });
+
+      var params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      var initialAccount = params.get('remotestorage');
+      if (initialAccount) setAccount(initialAccount);
     })();
   </script>
 </body>
