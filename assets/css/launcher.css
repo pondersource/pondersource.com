@@ -1,0 +1,26 @@
+[hidden] { display: none !important; }
+button, input { font-family: inherit; }
+button.btn { cursor: pointer; border: 1px solid transparent; }
+button.btn-secondary { border-color: #d7dee1; }
+button:disabled { cursor: wait; opacity: .6; }
+:focus-visible { outline: 3px solid #0d6efd; outline-offset: 4px; }
+.launcher-tabs { display: flex; justify-content: center; gap: 8px; margin: 0 0 32px; }
+.launcher-tabs button { border: 1px solid #d7dee1; border-radius: 24px; padding: 12px 24px; background: white; color: var(--ink); font-size: 16px; cursor: pointer; }
+.launcher-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: white; }
+.storage-status { margin: 14px 0 0; color: var(--muted); line-height: 1.5; }
+.library-message { text-align: center; color: var(--muted); min-height: 1.5em; }
+.library-error { padding: 14px; border: 1px solid #b02a37; border-radius: 10px; color: #b02a37; }
+.empty-library { text-align: center; padding: 40px 20px; border: 2px dashed #d7dee1; border-radius: 20px; margin-bottom: 32px; }
+.empty-library p { color: var(--muted); line-height: 1.5; }
+.installed-grid { margin-bottom: 36px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.installed-grid .app-card p { min-height: 0; }
+.install-note { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 24px; text-align: center; }
+.provider-buttons { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.provider-buttons:has(> [hidden]:first-child + [hidden]:last-child) { display: none; }
+#copy-device-apps { margin-top: 12px; }
+noscript p { text-align: center; }
+@media (max-width: 480px) {
+  header { padding-top: 32px; }
+  .launcher-tabs button { padding: 12px 18px; }
+  .rs-login-row input { min-width: 0; width: 100%; flex-basis: 100%; }
+}

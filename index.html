@@ -275,6 +275,7 @@
       margin-top: 2px;
     }
   </style>
+  <link rel="stylesheet" href="assets/css/launcher.css">
 </head>
 <body>
   <header>
@@ -298,25 +299,50 @@
                  placeholder="user@provider.example">
           <button type="submit" id="rs-connect-btn">Sign in</button>
         </div>
-        <p class="rs-login-error" id="rs-login-error" role="alert" hidden></p>
         <p class="rs-login-hint" id="rs-login-hint">
-          Your list of recently used apps is stored on your own remoteStorage, so it follows you to every device.
+          Connect to keep your installed apps and recent launches in your own storage across devices.
           No account yet? <a href="https://5apps.com/storage" target="_blank" rel="noopener">Get a free one at 5apps</a>.
         </p>
+        <div class="provider-buttons">
+          <button type="button" class="rs-link-btn" data-storage-provider="googledrive" hidden>Connect Google Drive</button>
+          <button type="button" class="rs-link-btn" data-storage-provider="dropbox" hidden>Connect Dropbox</button>
+        </div>
       </form>
       <div class="rs-session" id="rs-session" hidden>
         <span class="rs-session-label">Signed in as</span>
         <span class="rs-session-address" id="rs-session-address"></span>
         <button type="button" class="rs-link-btn" id="rs-disconnect-btn">Sign out</button>
       </div>
+      <p class="rs-login-error" id="rs-login-error" role="alert" hidden></p>
+      <p class="storage-status" id="storage-status" role="status">Opening your app library…</p>
+      <button type="button" class="rs-link-btn" id="copy-device-apps" hidden>Copy this device’s apps to this account</button>
     </section>
+    <noscript><p>Enable JavaScript to install apps and save your library.</p></noscript>
+    <p class="library-error" id="library-error" role="alert" hidden></p>
+    <button type="button" class="rs-link-btn" id="retry-library" hidden>Try loading your library again</button>
+    <p class="library-message" id="library-message" role="status"></p>
+    <div class="launcher-tabs" role="tablist" aria-label="App launcher">
+      <button type="button" id="library-tab" role="tab" aria-selected="true" aria-controls="library-panel">My apps <span id="installed-count">(0)</span></button>
+      <button type="button" id="store-tab" role="tab" aria-selected="false" aria-controls="store-panel" tabindex="-1">App store</button>
+    </div>
+    <section id="library-panel" role="tabpanel" aria-labelledby="library-tab">
+      <h2>Your apps</h2>
+      <p class="section-intro">Your own little corner of the open web.</p>
+      <div class="empty-library" id="empty-library" hidden>
+        <h3>Make yourself at home</h3>
+        <p>Install an app from the store and it will be ready to launch here.</p>
+        <button type="button" class="btn btn-primary" id="browse-apps">Browse the app store</button>
+      </div>
+      <div class="app-grid installed-grid" id="installed-apps"></div>
     <section class="recent-apps" id="recent-apps" hidden>
       <h2>Recently used</h2>
       <ul class="recent-list" id="recent-list"></ul>
     </section>
-    <h2>Try one of the apps we distribute</h2>
+    </section>
+    <section id="store-panel" role="tabpanel" aria-labelledby="store-tab" hidden>
+    <h2>Find your next app</h2>
     <p class="section-intro">
-      Each app runs live at its own subdomain, and every line of code is open source on GitHub.
+      Independent, open source apps for your everyday life. Install your favorites to add them to your launcher.
     </p>
     <div class="app-grid">
       <div class="app-card" data-app-id="litewrite">
@@ -324,7 +350,7 @@
         <h3>Litewrite</h3>
         <p>Unobtrusive writing. A simple, distraction-free notepad that works offline and everywhere.</p>
         <div class="app-links">
-          <a class="btn btn-primary rs-open-app" data-base-href="https://litewrite.pondersource.com" href="https://litewrite.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <button type="button" class="btn btn-primary install-app" data-base-href="https://litewrite.pondersource.com" disabled>Install app</button>
           <a class="btn btn-secondary" href="https://github.com/pondersource/litewrite" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/litewrite/litewrite" target="_blank" rel="noopener">Upstream source</a>
         </div>
@@ -334,7 +360,7 @@
         <h3>Inbox RS</h3>
         <p>A universal inbox for saving URLs, notes, images, emails, and audio, backed by remoteStorage so your data stays yours.</p>
         <div class="app-links">
-          <a class="btn btn-primary rs-open-app" data-base-href="https://inbox-rs.pondersource.com" href="https://inbox-rs.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <button type="button" class="btn btn-primary install-app" data-base-href="https://inbox-rs.pondersource.com" disabled>Install app</button>
           <a class="btn btn-secondary" href="https://github.com/pondersource/inbox-rs" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/silverbucket/inbox-rs" target="_blank" rel="noopener">Upstream source</a>
         </div>
@@ -344,261 +370,20 @@
         <h3>Hyperdraft</h3>
         <p>Turn your text notes into a website. Organise your thinking and network your ideas with a simple double-bracket syntax.</p>
         <div class="app-links">
-          <a class="btn btn-primary rs-open-app" data-base-href="https://hyperdraft.pondersource.com" href="https://hyperdraft.pondersource.com" target="_blank" rel="noopener">Open app</a>
+          <button type="button" class="btn btn-primary install-app" data-base-href="https://hyperdraft.pondersource.com" disabled>Install app</button>
           <a class="btn btn-secondary" href="https://github.com/pondersource/hyperdraft" target="_blank" rel="noopener">Our fork</a>
           <a class="btn btn-tertiary" href="https://github.com/rosano/hyperdraft" target="_blank" rel="noopener">Upstream source</a>
         </div>
       </div>
     </div>
+    <p class="install-note">Installing adds a shortcut to your launcher. Each app runs on its own website; removing a shortcut does not delete your data in that app.</p>
+    </section>
   </main>
   <footer>
     <p>© 2026 All Rights Reserved Ponder Source. Legal entity: <a href="https://org.pondersource.com">Stichting Ponder Source</a></p>
     <p>Curious what we looked like before? <a href="2020-2025/index.html">View our older website from 2020-2025</a>.</p>
   </footer>
   <script src="dependencies/remotestoragejs/remotestorage.js"></script>
-  <script>
-    // Sign-in and recently used apps. The launcher connects to the user's own
-    // remoteStorage (spec section 10) with access to the 'launcher' category
-    // only, and keeps the list of recently opened apps in /launcher/recent-apps,
-    // so it is the same on every device the user signs in from.
-    //
-    // Storage-first bearer token issuance (remoteStorage spec, section 11):
-    // https://github.com/remotestorage/spec/blob/0a190a23cc283058588ecb700c42dcb156a87c43/release/draft-dejong-remotestorage-26.txt#L604
-    // A storage provider MAY redirect here with a 'remotestorage' field in the URL
-    // fragment. We take it out of the URL before remoteStorage.js starts (which
-    // would otherwise redirect to the provider straight away) and prefill the
-    // sign-in form with it instead. We also carry the account through to whichever
-    // 'Open app' button the user clicks, by appending the same fragment to its
-    // href, so that app's own remoteStorage.js instance connects to it.
-    (function () {
-      var MAX_RECENT_APPS = 8;
-
-      var loginForm = document.getElementById('rs-login-form');
-      var addressInput = document.getElementById('rs-user-address');
-      var connectBtn = document.getElementById('rs-connect-btn');
-      var loginError = document.getElementById('rs-login-error');
-      var loginHint = document.getElementById('rs-login-hint');
-      var session = document.getElementById('rs-session');
-      var sessionAddress = document.getElementById('rs-session-address');
-      var disconnectBtn = document.getElementById('rs-disconnect-btn');
-      var recentSection = document.getElementById('recent-apps');
-      var recentList = document.getElementById('recent-list');
-
-      var apps = {};
-      document.querySelectorAll('.app-card').forEach(function (card) {
-        var link = card.querySelector('.rs-open-app');
-        apps[card.dataset.appId] = {
-          id: card.dataset.appId,
-          name: card.querySelector('h3').textContent,
-          url: link.getAttribute('data-base-href'),
-          icon: card.querySelector('.app-icon').src
-        };
-      });
-
-      var params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-      var storageFirstAccount = (params.get('remotestorage') || '').trim();
-      if (storageFirstAccount) {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-        addressInput.value = storageFirstAccount;
-      }
-
-      var remoteStorage = new RemoteStorage();
-      remoteStorage.access.claim('launcher', 'rw');
-      remoteStorage.caching.enable('/launcher/');
-      var launcher = remoteStorage.scope('/launcher/');
-      launcher.declareType('recent-apps', {
-        type: 'object',
-        properties: {
-          apps: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                name: { type: 'string' },
-                url: { type: 'string' },
-                icon: { type: 'string' },
-                lastOpened: { type: 'number' }
-              },
-              required: ['id', 'url', 'lastOpened']
-            }
-          }
-        },
-        required: ['apps']
-      });
-
-      function currentAccount() {
-        return remoteStorage.connected ? remoteStorage.remote.userAddress : storageFirstAccount;
-      }
-
-      function appHref(baseHref) {
-        var account = currentAccount();
-        return account ? baseHref + '#remotestorage=' + encodeURIComponent(account) : baseHref;
-      }
-
-      function applyAccount() {
-        document.querySelectorAll('[data-base-href]').forEach(function (a) {
-          a.href = appHref(a.getAttribute('data-base-href'));
-        });
-      }
-
-      function showError(message) {
-        loginError.textContent = message;
-        loginError.hidden = !message;
-      }
-
-      function setBusy(busy) {
-        connectBtn.disabled = busy;
-        connectBtn.textContent = busy ? 'Connecting…' : 'Sign in';
-      }
-
-      function showSignedOut() {
-        setBusy(false);
-        loginForm.hidden = false;
-        session.hidden = true;
-        recentSection.hidden = true;
-        if (storageFirstAccount) {
-          loginHint.textContent = 'Your storage provider sent you here. Sign in to keep your list of recently used apps on ' + storageFirstAccount + '.';
-        }
-        applyAccount();
-      }
-
-      function showSignedIn() {
-        setBusy(false);
-        showError('');
-        loginForm.hidden = true;
-        session.hidden = false;
-        sessionAddress.textContent = remoteStorage.remote.userAddress;
-        applyAccount();
-        loadRecentApps();
-      }
-
-      var timeFormat = window.Intl && Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }) : null;
-      function timeAgo(timestamp) {
-        var seconds = Math.round((timestamp - Date.now()) / 1000);
-        var units = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
-        for (var i = 0; i < units.length; i++) {
-          if (Math.abs(seconds) >= units[i][1]) {
-            var value = Math.round(seconds / units[i][1]);
-            return timeFormat ? timeFormat.format(value, units[i][0]) : Math.abs(value) + ' ' + units[i][0] + 's ago';
-          }
-        }
-        return 'just now';
-      }
-
-      function renderRecentApps(recent) {
-        recentList.textContent = '';
-        recent.forEach(function (entry) {
-          // Prefer the current name and icon from this page, in case they changed.
-          var app = apps[entry.id] || entry;
-          var li = document.createElement('li');
-          var a = document.createElement('a');
-          a.className = 'recent-app';
-          a.setAttribute('data-base-href', app.url);
-          a.setAttribute('data-app-id', entry.id);
-          a.href = appHref(app.url);
-          a.target = '_blank';
-          a.rel = 'noopener';
-          if (app.icon) {
-            var img = document.createElement('img');
-            img.src = app.icon;
-            img.alt = '';
-            a.appendChild(img);
-          }
-          var text = document.createElement('span');
-          var name = document.createElement('span');
-          name.className = 'recent-app-name';
-          name.textContent = app.name || app.url;
-          var time = document.createElement('span');
-          time.className = 'recent-app-time';
-          time.textContent = 'Opened ' + timeAgo(entry.lastOpened);
-          text.appendChild(name);
-          text.appendChild(time);
-          a.appendChild(text);
-          li.appendChild(a);
-          recentList.appendChild(li);
-        });
-        recentSection.hidden = !remoteStorage.connected || recent.length === 0;
-      }
-
-      function readRecentApps(maxAge) {
-        return launcher.getObject('recent-apps', maxAge).then(function (obj) {
-          return (obj && Array.isArray(obj.apps)) ? obj.apps : [];
-        });
-      }
-
-      function loadRecentApps() {
-        if (!remoteStorage.connected) return;
-        readRecentApps(false).then(renderRecentApps, function (err) {
-          console.error('Could not load recently used apps', err);
-        });
-      }
-
-      function recordAppOpened(appId) {
-        if (!remoteStorage.connected || !apps[appId]) return;
-        // Default maxAge: if the first sync hasn't finished yet, this reads
-        // from the server, so we never overwrite a list we haven't seen.
-        readRecentApps().then(function (recent) {
-          recent = recent.filter(function (entry) { return entry.id !== appId; });
-          var app = apps[appId];
-          recent.unshift({ id: app.id, name: app.name, url: app.url, icon: app.icon, lastOpened: Date.now() });
-          recent = recent.slice(0, MAX_RECENT_APPS);
-          renderRecentApps(recent);
-          return launcher.storeObject('recent-apps', 'recent-apps', { apps: recent });
-        }).catch(function (err) {
-          console.error('Could not save recently used apps', err);
-        });
-      }
-
-      function onAppLinkActivated(event) {
-        if (event.type === 'auxclick' && event.button !== 1) return;
-        var link = event.target.closest('a[data-base-href]');
-        var owner = link && link.closest('[data-app-id]');
-        if (owner) recordAppOpened(owner.getAttribute('data-app-id'));
-      }
-      document.addEventListener('click', onAppLinkActivated);
-      document.addEventListener('auxclick', onAppLinkActivated);
-
-      loginForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        var address = addressInput.value.trim();
-        if (address.indexOf('@') === -1) {
-          showError('Please enter your full remoteStorage address, like user@provider.example.');
-          return;
-        }
-        showError('');
-        setBusy(true);
-        remoteStorage.connect(address);
-      });
-
-      disconnectBtn.addEventListener('click', function () {
-        remoteStorage.disconnect();
-      });
-
-      remoteStorage.on('connecting', function () { setBusy(true); });
-      remoteStorage.on('connected', showSignedIn);
-      remoteStorage.on('not-connected', showSignedOut);
-      remoteStorage.on('disconnected', showSignedOut);
-      remoteStorage.on('error', function (err) {
-        setBusy(false);
-        if (err.name === 'DiscoveryError') {
-          showError('Could not find a remoteStorage server for that address. Please check it and try again.');
-        } else if (err.name === 'Unauthorized') {
-          showError('Signing in did not work. Please try again.');
-        } else {
-          console.error(err);
-        }
-      });
-      // A change event carries the new list; reading it back from the cache
-      // right away could still return the old one during a sync.
-      launcher.on('change', function (event) {
-        if (event.relativePath !== 'recent-apps' || !remoteStorage.connected) return;
-        renderRecentApps(event.newValue && Array.isArray(event.newValue.apps) ? event.newValue.apps : []);
-      });
-      remoteStorage.on('sync-done', loadRecentApps);
-
-      showSignedOut();
-    })();
-  </script>
+  <script type="module" src="assets/js/launcher.mjs"></script>
 </body>
 </html>
