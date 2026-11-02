@@ -119,24 +119,32 @@ test('real OPFS: install, reload, launch, recent apps, remove, keyboard navigati
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
 });
 
-test('Sharesome installs, persists and launches the upstream app', async t => {
-  const { context, page } = await open(t);
-  await context.route('https://sharesome.5apps.com/**', route => route.fulfill({ body: 'Sharesome fixture' }));
-  await page.goto(base + '/#remotestorage=alice%40storage.example');
-  await localReady(page);
-  await install(page, 'sharesome');
-  await page.reload();
-  await localReady(page);
-  const launch = page.getByRole('link', { name: 'Launch Sharesome', exact: true });
-  assert.equal(await launch.getAttribute('href'), 'https://sharesome.5apps.com');
-  const popupReady = context.waitForEvent('page');
-  await launch.click();
-  const popup = await popupReady;
-  await popup.waitForLoadState();
-  assert.equal(new URL(popup.url()).origin, 'https://sharesome.5apps.com');
-  await popup.close();
-  await page.waitForFunction(() => document.querySelector('#recent-list').textContent.includes('Sharesome'));
-});
+for (const [id, name, url] of [
+  ['sharesome', 'Sharesome', 'https://sharesome.5apps.com'],
+  ['webmarks', 'Webmarks', 'https://webmarks.5apps.com'],
+  ['todonna', 'Todonna', 'https://todonna.gitlab.io']
+]) {
+  test(name + ' installs, persists and launches the upstream app', async t => {
+    const { context, page } = await open(t);
+    await context.route(url + '/**', route => route.fulfill({ body: name + ' fixture' }));
+    await page.goto(base);
+    await localReady(page);
+    await install(page, id);
+    await page.reload();
+    await localReady(page);
+    const launch = page.getByRole('link', { name: 'Launch ' + name, exact: true });
+    assert.equal(await launch.getAttribute('href'), url);
+    const popupReady = context.waitForEvent('page');
+    await launch.click();
+    const popup = await popupReady;
+    await popup.waitForLoadState();
+    assert.equal(new URL(popup.url()).origin, url);
+    await popup.close();
+    await page.waitForFunction(name => document.querySelector('#recent-list').textContent.includes(name), name);
+    await page.getByRole('button', { name: 'Remove ' + name + ' from your launcher' }).click();
+    await page.waitForFunction(() => document.querySelector('#installed-count').textContent === '(0)');
+  });
+}
 
 test('browser-storage fallback persists installs without OPFS', async t => {
   const { context, page } = await open(t);
@@ -165,7 +173,7 @@ test('corrupt OPFS is not overwritten and can be retried after repair', async t 
   const contents = await page.evaluate(async () => (await (await (await navigator.storage.getDirectory()).getFileHandle('pondersource-launcher-v1.json')).getFile()).text());
   assert.equal(contents, '{broken');
   await page.getByRole('tab', { name: 'App store' }).click();
-  assert.equal(await page.locator('.install-app:disabled').count(), 4);
+  assert.equal(await page.locator('.install-app:disabled').count(), 6);
   await page.evaluate(async () => (await navigator.storage.getDirectory()).removeEntry('pondersource-launcher-v1.json'));
   await page.locator('#retry-library').click();
   await localReady(page);
@@ -229,7 +237,7 @@ test('invalid remote library blocks writes instead of resetting account data', a
   assert.match(await page.locator('#library-error').textContent(), /format/);
   assert.equal(fixture.puts, 0);
   await page.getByRole('tab', { name: 'App store' }).click();
-  assert.equal(await page.locator('.install-app:disabled').count(), 4);
+  assert.equal(await page.locator('.install-app:disabled').count(), 6);
   await page.locator('#rs-disconnect-btn').click();
   await localReady(page);
 });
