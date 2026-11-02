@@ -14,10 +14,10 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ## App launcher
 
 The **App store** contains six apps with links to the Ponder Source forks and
-upstream source. Sharesome and Webmarks use the Ponder Source Pages deployments
-at https://sharesome.pondersource.com and https://webmarks.pondersource.com.
-Todonna temporarily opens https://todonna.gitlab.io while its GitLab Pages
-custom domain is being configured. Installing adds a shortcut to **My apps**; launching opens the app's website. Removing a shortcut
+upstream source. Each app uses its Ponder Source deployment at
+`https://APP_NAME.pondersource.com`. Todonna uses GitLab Pages; the other five
+use GitHub Pages. Installing adds a shortcut to **My apps**; launching opens the
+app's website. Removing a shortcut
 also removes it from Recently used, without deleting any data in the app itself.
 The catalog and its source links live in `index.html`.
 
