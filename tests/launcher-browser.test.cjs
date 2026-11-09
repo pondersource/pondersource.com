@@ -120,11 +120,13 @@ test('real OPFS: install, reload, launch, recent apps, remove, keyboard navigati
 });
 
 for (const [id, name, url] of [
-  ['sharesome', 'Sharesome', 'https://sharesome.5apps.com'],
-  ['webmarks', 'Webmarks', 'https://webmarks.5apps.com'],
-  ['todonna', 'Todonna', 'https://todonna.gitlab.io']
+  ['sharesome', 'Sharesome', 'https://sharesome.pondersource.com'],
+  ['webmarks', 'Webmarks', 'https://webmarks.pondersource.com'],
+  ['todonna', 'Todonna', 'https://todonna.pondersource.com'],
+  ['inspektor', 'RS Inspektor', 'https://inspektor.pondersource.com'],
+  ['savr', 'Savr', 'https://savr.pondersource.com']
 ]) {
-  test(name + ' installs, persists and launches the upstream app', async t => {
+  test(name + ' installs, persists and launches the hosted app', async t => {
     const { context, page } = await open(t);
     await context.route(url + '/**', route => route.fulfill({ body: name + ' fixture' }));
     await page.goto(base);
@@ -173,7 +175,7 @@ test('corrupt OPFS is not overwritten and can be retried after repair', async t 
   const contents = await page.evaluate(async () => (await (await (await navigator.storage.getDirectory()).getFileHandle('pondersource-launcher-v1.json')).getFile()).text());
   assert.equal(contents, '{broken');
   await page.getByRole('tab', { name: 'App store' }).click();
-  assert.equal(await page.locator('.install-app:disabled').count(), 6);
+  assert.equal(await page.locator('.install-app:disabled').count(), await page.locator('.install-app').count());
   await page.evaluate(async () => (await navigator.storage.getDirectory()).removeEntry('pondersource-launcher-v1.json'));
   await page.locator('#retry-library').click();
   await localReady(page);
@@ -237,7 +239,7 @@ test('invalid remote library blocks writes instead of resetting account data', a
   assert.match(await page.locator('#library-error').textContent(), /format/);
   assert.equal(fixture.puts, 0);
   await page.getByRole('tab', { name: 'App store' }).click();
-  assert.equal(await page.locator('.install-app:disabled').count(), 6);
+  assert.equal(await page.locator('.install-app:disabled').count(), await page.locator('.install-app').count());
   await page.locator('#rs-disconnect-btn').click();
   await localReady(page);
 });
