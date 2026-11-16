@@ -333,11 +333,16 @@ try {
     try { await rs.disconnect(); }
     catch { connectionError('Could not sign out. Please try again.'); }
   });
-  if (rs.solid) {
+  {
     const solidForm = $('solid-login-form');
     const podForm = $('solid-pod-form');
     const select = $('solid-pod');
-    solidForm.hidden = false;
+    const showSolidLogin = () => {
+      solidForm.hidden = !rs.solid || rs.connected ||
+        (rs.backend === 'solid' && rs.solid.getPodURLs() !== null);
+    };
+    showSolidLogin();
+    rs.on('features-loaded', showSolidLogin);
     solidForm.addEventListener('submit', async event => {
       event.preventDefault();
       connectionError('');
@@ -387,7 +392,10 @@ try {
     $('rs-session-address').textContent = rs.remote.userAddress || providerName();
     switchLibrary(true);
   });
-  rs.on('not-connected', signedOut);
+  rs.on('not-connected', () => {
+    if (rs.backend === 'solid' && rs.solid?.getPodURLs() != null) return;
+    signedOut();
+  });
   rs.on('disconnected', signedOut);
   rs.on('error', error => {
     connectionBusy(false);
