@@ -104,3 +104,9 @@ for authorization, account isolation, sync, and a fresh device. Google Drive and
 Dropbox tests check OAuth initiation with public test identifiers. Live provider
 authorization requires registered applications and user consent and is not
 covered by these fixtures.
+
+The PonderSource Google OAuth project is `pondersource-apps`. It currently runs
+in Testing mode with `michiel@unhosted.org` as a test user; public availability
+requires completing the consent branding and Google verification requirements.
+The Dropbox app is **PonderSource Apps** (app key `gaezgoax9khjilj`), with
+additional users enabled in development mode (up to 500 users).
