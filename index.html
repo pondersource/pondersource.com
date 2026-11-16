@@ -308,6 +308,19 @@
           <button type="button" class="rs-link-btn" data-storage-provider="dropbox" hidden>Connect Dropbox</button>
         </div>
       </form>
+      <form id="solid-login-form" hidden>
+        <label class="rs-login-label" for="solid-issuer">Sync your app library with a Solid pod</label>
+        <div class="rs-login-row">
+          <input id="solid-issuer" type="url" required placeholder="https://your-solid-provider.example">
+          <button id="solid-connect-btn" type="submit">Connect Solid</button>
+        </div>
+      </form>
+      <form id="solid-pod-form" hidden>
+        <label for="solid-pod">Choose a Solid pod</label>
+        <select id="solid-pod" required></select>
+        <button type="submit">Use this pod</button>
+        <button id="solid-cancel" type="button">Cancel</button>
+      </form>
       <div class="rs-session" id="rs-session" hidden>
         <span class="rs-session-label">Signed in as</span>
         <span class="rs-session-address" id="rs-session-address"></span>

@@ -10,6 +10,7 @@ document.querySelectorAll('#store-panel .app-card').forEach(card => {
     id, name: card.querySelector('h3').textContent,
     description: card.querySelector('p').textContent,
     url: button.dataset.baseHref,
+    storage: card.dataset.storage || 'remotestorage',
     icon: card.querySelector('.app-icon').getAttribute('src'), button
   });
   button.addEventListener('click', () => changeApp(id, 'install'));
@@ -59,13 +60,14 @@ function currentAccount() {
   return storageFirstAccount;
 }
 
-function appHref(url) {
+function appHref(app) {
+  const url = app.url;
   const account = currentAccount();
-  return account ? url + '#remotestorage=' + encodeURIComponent(account) : url;
+  return account && app.storage === 'remotestorage' ? url + '#remotestorage=' + encodeURIComponent(account) : url;
 }
 
 function providerName() {
-  return { googledrive: 'Google Drive', dropbox: 'Dropbox', remotestorage: 'remoteStorage' }[rs?.backend] || 'remoteStorage';
+  return { googledrive: 'Google Drive', dropbox: 'Dropbox', solid: 'Solid', remotestorage: 'remoteStorage' }[rs?.backend] || 'remoteStorage';
 }
 
 function render() {
@@ -129,7 +131,7 @@ function render() {
 
 function launchLink(app, className) {
   const link = document.createElement('a');
-  link.href = appHref(app.url);
+  link.href = appHref(app);
   link.target = '_blank';
   link.rel = 'noopener';
   link.className = className;
@@ -262,6 +264,7 @@ $('copy-device-apps').addEventListener('click', () => {
 
 function connectionBusy(value) {
   $('rs-connect-btn').disabled = value;
+  $('solid-connect-btn').disabled = value;
   $('rs-connect-btn').textContent = value ? 'Connecting…' : 'Sign in';
   document.querySelectorAll('[data-storage-provider]').forEach(button => { button.disabled = value; });
 }
@@ -272,6 +275,8 @@ function connectionError(message) {
 function signedOut() {
   connectionBusy(false);
   $('rs-login-form').hidden = false;
+  $('solid-login-form').hidden = !rs?.solid;
+  $('solid-pod-form').hidden = true;
   $('rs-session').hidden = true;
   switchLibrary(false);
 }
@@ -328,11 +333,56 @@ try {
     try { await rs.disconnect(); }
     catch { connectionError('Could not sign out. Please try again.'); }
   });
+  if (rs.solid) {
+    const solidForm = $('solid-login-form');
+    const podForm = $('solid-pod-form');
+    const select = $('solid-pod');
+    solidForm.hidden = false;
+    solidForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      connectionError('');
+      try {
+        const issuer = new URL($('solid-issuer').value.trim());
+        const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(issuer.hostname);
+        if (issuer.protocol !== 'https:' && !(issuer.protocol === 'http:' && loopback)) {
+          connectionError('Use an HTTPS Solid identity provider.');
+          return;
+        }
+        connectionBusy(true);
+        rs.solid.setAuthURL(issuer.href);
+        await rs.solid.connect();
+      } catch {
+        connectionBusy(false);
+        connectionError('Could not sign in to the Solid provider.');
+      }
+    });
+    rs.on('pod-not-selected', () => {
+      const pods = rs.solid.getPodURLs() || [];
+      $('rs-login-form').hidden = true;
+      solidForm.hidden = true;
+      podForm.hidden = false;
+      select.replaceChildren(...pods.map(pod => new Option(pod, pod)));
+      podForm.querySelector('button[type="submit"]').disabled = pods.length === 0;
+      connectionError(pods.length ? '' : 'This Solid account has no advertised pods.');
+      connectionBusy(false);
+    });
+    podForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      try { await rs.solid.setPodURL(select.value); }
+      catch { connectionError('Could not open the selected Solid pod.'); }
+    });
+    $('solid-cancel').addEventListener('click', async () => {
+      try { await rs.disconnect(); }
+      catch { connectionError('Could not sign out of Solid.'); }
+    });
+  }
   rs.on('connecting', () => connectionBusy(true));
   rs.on('connected', () => {
     connectionBusy(false);
     connectionError('');
     $('rs-login-form').hidden = true;
+    $('solid-login-form').hidden = true;
+    $('solid-pod-form').hidden = true;
     $('rs-session').hidden = false;
     $('rs-session-address').textContent = rs.remote.userAddress || providerName();
     switchLibrary(true);

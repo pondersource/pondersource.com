@@ -104,3 +104,13 @@ for authorization, account isolation, sync, and a fresh device. Google Drive and
 Dropbox tests check OAuth initiation with public test identifiers. Live provider
 authorization requires registered applications and user consent and is not
 covered by these fixtures.
+
+## Solid launcher storage preview
+
+The Solid build is pinned to [remoteStorage.js PR #1403](https://github.com/remotestorage/remotestorage.js/pull/1403).
+The preview workflow builds the browser bundle from source and stages it in the
+existing script slot. The published preview artifact is a static site, with the
+Solid option alongside the other storage providers. The launcher library remains
+a private remoteStorage-format JSON document. Solid apps can use native RDF
+independently and should set `data-storage="solid"` on their catalog cards so
+launch links do not carry a remoteStorage account hint.
