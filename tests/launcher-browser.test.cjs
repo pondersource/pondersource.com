@@ -125,7 +125,8 @@ for (const [id, name, url] of [
   ['todonna', 'Todonna', 'https://todonna.pondersource.com'],
   ['inspektor', 'RS Inspektor', 'https://inspektor.pondersource.com'],
   ['savr', 'Savr', 'https://savr.pondersource.com'],
-  ['marco', 'Marco', 'https://marco.pondersource.com']
+  ['marco', 'Marco', 'https://marco.pondersource.com'],
+  ['solid-memo', 'Solid Memo', 'https://solid-memo.pondersource.com']
 ]) {
   test(name + ' installs, persists and launches the hosted app', async t => {
     const { context, page } = await open(t);

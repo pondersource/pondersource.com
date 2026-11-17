@@ -10,6 +10,7 @@ document.querySelectorAll('#store-panel .app-card').forEach(card => {
     id, name: card.querySelector('h3').textContent,
     description: card.querySelector('p').textContent,
     url: button.dataset.baseHref,
+    allowsRemoteStorageHandoff: button.dataset.storageHandoff !== 'none',
     icon: card.querySelector('.app-icon').getAttribute('src'), button
   });
   button.addEventListener('click', () => changeApp(id, 'install'));
@@ -59,9 +60,9 @@ function currentAccount() {
   return storageFirstAccount;
 }
 
-function appHref(url) {
-  const account = currentAccount();
-  return account ? url + '#remotestorage=' + encodeURIComponent(account) : url;
+function appHref(app) {
+  const account = app.allowsRemoteStorageHandoff ? currentAccount() : '';
+  return account ? app.url + '#remotestorage=' + encodeURIComponent(account) : app.url;
 }
 
 function providerName() {
@@ -129,7 +130,7 @@ function render() {
 
 function launchLink(app, className) {
   const link = document.createElement('a');
-  link.href = appHref(app.url);
+  link.href = appHref(app);
   link.target = '_blank';
   link.rel = 'noopener';
   link.className = className;
