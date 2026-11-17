@@ -125,7 +125,8 @@ for (const [id, name, url] of [
   ['todonna', 'Todonna', 'https://todonna.pondersource.com'],
   ['inspektor', 'RS Inspektor', 'https://inspektor.pondersource.com'],
   ['savr', 'Savr', 'https://savr.pondersource.com'],
-  ['marco', 'Marco', 'https://marco.pondersource.com']
+  ['marco', 'Marco', 'https://marco.pondersource.com'],
+  ['solid-memo', 'Solid Memo', 'https://solid-memo.pondersource.com']
 ]) {
   test(name + ' installs, persists and launches the hosted app', async t => {
     const { context, page } = await open(t);
@@ -148,6 +149,20 @@ for (const [id, name, url] of [
     await page.waitForFunction(() => document.querySelector('#installed-count').textContent === '(0)');
   });
 }
+
+test('Solid Memo handles sign-in when the launcher has a remoteStorage account', async t => {
+  const { context, page } = await open(t);
+  await remoteFixture(context, {
+    version: 1,
+    apps: [{ id: 'solid-memo', installed: true, updatedAt: 100, lastOpened: 0 }]
+  });
+  await page.goto(base);
+  await localReady(page);
+  await connect(page);
+  const launch = page.getByRole('link', { name: 'Launch Solid Memo', exact: true });
+  await launch.waitFor();
+  assert.equal(await launch.getAttribute('href'), 'https://solid-memo.pondersource.com');
+});
 
 test('browser-storage fallback persists installs without OPFS', async t => {
   const { context, page } = await open(t);
