@@ -150,6 +150,20 @@ for (const [id, name, url] of [
   });
 }
 
+test('Solid Memo handles sign-in when the launcher has a remoteStorage account', async t => {
+  const { context, page } = await open(t);
+  await remoteFixture(context, {
+    version: 1,
+    apps: [{ id: 'solid-memo', installed: true, updatedAt: 100, lastOpened: 0 }]
+  });
+  await page.goto(base);
+  await localReady(page);
+  await connect(page);
+  const launch = page.getByRole('link', { name: 'Launch Solid Memo', exact: true });
+  await launch.waitFor();
+  assert.equal(await launch.getAttribute('href'), 'https://solid-memo.pondersource.com');
+});
+
 test('browser-storage fallback persists installs without OPFS', async t => {
   const { context, page } = await open(t);
   await context.addInitScript(() => Object.defineProperty(navigator.storage, 'getDirectory', { value: undefined }));
