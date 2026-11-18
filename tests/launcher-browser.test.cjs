@@ -23,6 +23,14 @@ async function open(t, options = {}) {
 async function localReady(page) {
   await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('saved on this device'));
 }
+
+test('registered Google Drive and Dropbox providers remain available', async t => {
+  const { page } = await open(t);
+  await page.goto(base);
+  await localReady(page);
+  assert.ok(await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).isVisible());
+  assert.ok(await page.getByRole('button', { name: 'Connect Dropbox', exact: true }).isVisible());
+});
 async function install(page, id) {
   await page.getByRole('tab', { name: 'App store' }).click();
   await page.locator('#store-panel [data-app-id="' + id + '"] .install-app').click();
