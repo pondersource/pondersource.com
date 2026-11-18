@@ -21,7 +21,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | App | Fork | Deployment / test evidence | Module status |
 | --- | --- | --- | --- |
 | ODI Solid File Manager | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright + existing Cypress pass ([run](https://github.com/pondersource/media-kraken/actions/runs/44312525055)); production artifact build underway; publication unverified | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
+| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright + existing Cypress pass ([run](https://github.com/pondersource/media-kraken/actions/runs/44312525055)); production artifact passed; [PR 1](https://github.com/pondersource/media-kraken/pull/1) merged; publication unverified | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
 | Penny | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Umai | [fork](https://github.com/pondersource/umai) | Development + production Playwright passed; [PR 1](https://github.com/pondersource/umai/pull/1) merged; Pages configuration returns HTTP 404 ([probe](https://github.com/pondersource/umai/pull/2)) | Soukai runtime; shared recipes parser checked in acceptance |
 | 0data Hello with Solid | Not yet forked | Not yet tested; not classified broken | Not yet audited |
