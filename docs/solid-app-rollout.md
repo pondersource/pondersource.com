@@ -21,9 +21,9 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | App | Fork | Deployment / test evidence | Module status |
 | --- | --- | --- | --- |
 | ODI Solid File Manager | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright under validation; existing Cypress passes | Soukai runtime; movies reader fixes [PR 4](https://github.com/pondersource/data-modules/pull/4) |
+| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright under validation; existing Cypress passes; publication gated on both | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
 | Penny | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Umai | [fork](https://github.com/pondersource/umai) | Development + production Playwright passed; production artifact/deployment work [PR 1](https://github.com/pondersource/umai/pull/1) | Soukai runtime; shared recipes parser checked in acceptance |
+| Umai | [fork](https://github.com/pondersource/umai) | Development + production Playwright passed; [PR 1](https://github.com/pondersource/umai/pull/1) merged; Pages configuration returns HTTP 404 ([probe](https://github.com/pondersource/umai/pull/2)) | Soukai runtime; shared recipes parser checked in acceptance |
 | 0data Hello with Solid | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Booklice | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Mnera.io | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -35,7 +35,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | NotePod (ANU) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | HealthPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | MovieStar | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| SolidFocus | Not yet forked | [Upstream source](https://github.com/NoelDeMartin/solid-focus) inspected; next candidate | Task/notes model mapping not yet audited |
+| SolidFocus | Not yet forked | [Upstream source](https://github.com/NoelDeMartin/solid-focus) inspected; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending |
 | Portable LibreChat | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Proxion | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Tired Bike | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -62,7 +62,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 
 The connected GitHub API can update existing repositories and run PR checks, but exposes no repository-fork operation. Shell requests to api.github.com fail to connect in the current environment. No browser-control tool is currently available. This blocks creation of the remaining forks, not source inspection or work on existing forks. Do not mark those apps postponed as broken merely because repository creation is blocked.
 
-New Pages sites and custom-domain DNS may need configuration beyond the available connector. A successful artifact build is not a verified deployment. Keep unverified URLs out of the launcher.
+Umai's Pages API returned HTTP 404 under an Actions token granted pages:read; its production artifact and both browser modes have passed. Repository Pages setup is therefore a concrete publication blocker. The available connector cannot configure Pages. Other new Pages sites and custom-domain DNS may also need configuration beyond the available connector. A successful artifact build is not a verified deployment. Keep unverified URLs out of the launcher.
 
 ## Initial source findings
 
