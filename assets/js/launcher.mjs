@@ -10,7 +10,7 @@ document.querySelectorAll('#store-panel .app-card').forEach(card => {
     id, name: card.querySelector('h3').textContent,
     description: card.querySelector('p').textContent,
     url: button.dataset.baseHref,
-    storage: card.dataset.storage || 'remotestorage',
+    allowsRemoteStorageHandoff: button.dataset.storageHandoff !== 'none',
     icon: card.querySelector('.app-icon').getAttribute('src'), button
   });
   button.addEventListener('click', () => changeApp(id, 'install'));
@@ -61,9 +61,8 @@ function currentAccount() {
 }
 
 function appHref(app) {
-  const url = app.url;
-  const account = currentAccount();
-  return account && app.storage === 'remotestorage' ? url + '#remotestorage=' + encodeURIComponent(account) : url;
+  const account = app.allowsRemoteStorageHandoff ? currentAccount() : '';
+  return account ? app.url + '#remotestorage=' + encodeURIComponent(account) : app.url;
 }
 
 function providerName() {
