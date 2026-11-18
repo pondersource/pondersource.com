@@ -315,6 +315,16 @@
           <button id="solid-connect-btn" type="submit">Connect Solid</button>
         </div>
       </form>
+      <form id="lws-discovery-form">
+        <label class="rs-login-label" for="lws-address">Find your LWS storage</label>
+        <div class="rs-login-row">
+          <input id="lws-address" type="url" required placeholder="https://your-lws-server.example/storage/" aria-describedby="lws-discovery-help">
+          <button id="lws-discover-btn" type="submit">Find LWS storage</button>
+        </div>
+        <p id="lws-discovery-help">Enter an LWS storage URL or a resource URL from your storage.</p>
+      </form>
+      <p id="lws-discovery-status" role="status"></p>
+      <dl id="lws-discovery-result" style="overflow-wrap: anywhere"></dl>
       <form id="solid-pod-form" hidden>
         <label for="solid-pod">Choose a Solid pod</label>
         <select id="solid-pod" required></select>

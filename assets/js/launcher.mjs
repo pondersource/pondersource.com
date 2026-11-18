@@ -1,3 +1,4 @@
+import { discoverLWS } from './lws-discovery.mjs';
 import { emptyState, readState, mergeStates, updateApp, openLocalStore } from './launcher-storage.mjs';
 import { storageApiKeys } from './launcher-config.mjs';
 
@@ -419,3 +420,54 @@ try {
   $('rs-connect-btn').disabled = true;
   connectionError('Storage connections are unavailable. You can still use apps saved on this device.');
 }
+
+const lwsForm = $('lws-discovery-form');
+let lwsRequest;
+lwsForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  lwsRequest?.abort();
+  const request = new AbortController();
+  lwsRequest = request;
+  const button = $('lws-discover-btn');
+  const status = $('lws-discovery-status');
+  const result = $('lws-discovery-result');
+  button.disabled = true;
+  button.textContent = 'Finding storage…';
+  status.textContent = 'Looking up LWS storage…';
+  result.replaceChildren();
+  try {
+    const found = await discoverLWS($('lws-address').value.trim(), {
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(15000)])
+    });
+    if (lwsRequest !== request) return;
+    const fields = [
+      ['Storage', found.storage],
+      ['Storage root', found.root],
+      ...found.authorizationServers.map(url => ['Authorization server', url])
+    ];
+    for (const [name, url] of fields) {
+      const label = document.createElement('dt');
+      label.textContent = name;
+      const value = document.createElement('dd');
+      const link = document.createElement('a');
+      link.href = url;
+      link.textContent = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      value.append(link);
+      result.append(label, value);
+    }
+    status.textContent = found.authorizationServers.length ?
+      'LWS storage found. Discovery is complete. Syncing the launcher with LWS will require LWS sign-in support.' :
+      'LWS storage found. No authorization server was advertised. Syncing the launcher with LWS will require LWS sign-in support.';
+  } catch (error) {
+    if (lwsRequest !== request) return;
+    status.textContent = error.name === 'TimeoutError' ? 'LWS discovery timed out. Please try again.' :
+      'Could not discover LWS storage. ' + (error.message || 'Check the address and browser access permissions.');
+  } finally {
+    if (lwsRequest === request) {
+      button.disabled = false;
+      button.textContent = 'Find LWS storage';
+    }
+  }
+});
