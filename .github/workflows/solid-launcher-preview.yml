@@ -25,6 +25,7 @@ jobs:
         working-directory: rs-solid-source/examples/solid
       - run: npx playwright install --with-deps chromium
         working-directory: rs-solid-source/examples/solid
+      - run: node --test tests/lws-discovery.test.mjs
       - name: Stage site
         run: |
           mkdir preview

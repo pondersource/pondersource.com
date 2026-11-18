@@ -287,3 +287,48 @@ for (const [provider, label, host] of [['googledrive', 'Google Drive', 'accounts
     else assert.match(authorization.searchParams.get('scope'), /drive/);
   });
 }
+
+test('LWS discovery displays the storage root and authorization server without changing accounts', async t => {
+  const { context, page } = await open(t);
+  const calls = [];
+  await context.route('https://lws.example/**', async route => {
+    const request = route.request();
+    calls.push({ method: request.method(), url: request.url(), authorization: request.headers().authorization });
+    const common = { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'Link, WWW-Authenticate' };
+    if (request.url() === 'https://lws.example/alice/notes') {
+      return route.fulfill({ status: 401, headers: { ...common,
+        Link: '<https://lws.example/alice>; rel="https://www.w3.org/ns/lws#storage"',
+        'WWW-Authenticate': 'Bearer resource_metadata="https://lws.example/metadata"'
+      }, body: '' });
+    }
+    const body = request.url() === 'https://lws.example/alice' ?
+      { id: 'https://lws.example/alice', type: 'Storage', service: [
+        { type: 'StorageRoot', serviceEndpoint: 'https://lws.example/alice/data/' }
+      ] } : { resource: 'https://lws.example/alice/notes', authorization_servers: ['https://login.example/'] };
+    return route.fulfill({ contentType: 'application/json', headers: common, body: JSON.stringify(body) });
+  });
+  await page.goto(base);
+  await localReady(page);
+  await page.getByLabel('Find your LWS storage').fill('https://lws.example/alice/notes');
+  await page.getByRole('button', { name: 'Find LWS storage', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#lws-discovery-result').textContent.includes('https://login.example/'));
+  assert.deepEqual(await page.locator('#lws-discovery-result a').evaluateAll(links => links.map(link => link.href)), [
+    'https://lws.example/alice', 'https://lws.example/alice/data/', 'https://login.example/'
+  ]);
+  assert.equal(await page.locator('#rs-session').isVisible(), false);
+  assert.equal(calls.length, 3);
+  assert.ok(calls.every(call => call.method === 'GET' && call.authorization === undefined));
+  assert.match(await page.locator('#storage-status').textContent(), /saved on this device/);
+});
+
+test('LWS discovery reports CORS failures and can retry', async t => {
+  const { context, page } = await open(t);
+  await context.route('https://unavailable.example/**', route => route.abort('failed'));
+  await page.goto(base);
+  await localReady(page);
+  await page.getByLabel('Find your LWS storage').fill('https://unavailable.example/storage/');
+  await page.getByRole('button', { name: 'Find LWS storage', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#lws-discovery-status').textContent.includes('Could not discover'));
+  assert.equal(await page.getByRole('button', { name: 'Find LWS storage', exact: true }).isEnabled(), true);
+  assert.equal(await page.locator('#lws-discovery-result a').count(), 0);
+});

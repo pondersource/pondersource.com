@@ -116,3 +116,27 @@ Solid option alongside the other storage providers. The launcher library remains
 a private remoteStorage-format JSON document. Solid apps can use native RDF
 independently and should set `data-storage="solid"` on their catalog cards so
 launch links do not carry a remoteStorage account hint.
+
+## LWS discovery
+
+Enter a storage or resource URL under **Find your LWS storage**. The launcher
+follows the LWS storage Link relation, reads the storage description, and displays
+the StorageRoot endpoint. For a protected resource it follows the challenge's
+resource_metadata URL and displays the advertised authorization servers.
+If the original resource is public, it also checks the root for a challenge.
+
+This discovers server configuration. LWS authentication and launcher-library
+synchronization require an LWS backend in remoteStorage.js. Existing account
+connections and the local app library continue to work while discovery runs.
+
+Discovery uses anonymous GET requests, rejects redirects, and validates that
+storage, root and protected-resource metadata belong to the requested origin.
+Authorization servers may have a separate origin. HTTPS is required except for
+loopback development URLs. The server must allow CORS reads and expose Link and
+WWW-Authenticate response headers. Requests time out after 15 seconds.
+
+Protocol references are the [LWS storage description and discovery rules](https://www.w3.org/TR/lws10-core/#storage-description)
+and [OAuth protected-resource metadata](https://www.rfc-editor.org/rfc/rfc9728).
+
+Run the discovery tests with `node --test tests/lws-discovery.test.mjs`.
+The launcher browser suite also covers discovery and a failed request.
