@@ -21,7 +21,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | App | Fork | Deployment / test evidence | Module status |
 | --- | --- | --- | --- |
 | ODI Solid File Manager | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright under validation; existing Cypress passes; publication gated on both | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
+| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright + existing Cypress pass ([run](https://github.com/pondersource/media-kraken/actions/runs/44312525055)); production artifact build underway; publication unverified | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
 | Penny | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Umai | [fork](https://github.com/pondersource/umai) | Development + production Playwright passed; [PR 1](https://github.com/pondersource/umai/pull/1) merged; Pages configuration returns HTTP 404 ([probe](https://github.com/pondersource/umai/pull/2)) | Soukai runtime; shared recipes parser checked in acceptance |
 | 0data Hello with Solid | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -35,7 +35,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | NotePod (ANU) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | HealthPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | MovieStar | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| SolidFocus | Not yet forked | [Upstream source](https://github.com/NoelDeMartin/solid-focus) inspected; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending |
+| SolidFocus | Not yet forked | [Upstream source](https://github.com/NoelDeMartin/solid-focus) inspected; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending. Existing SolidOS writer quoting/error fixes merged [PR 6](https://github.com/pondersource/data-modules/pull/6) |
 | Portable LibreChat | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Proxion | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Tired Bike | Not yet forked | Not yet tested; not classified broken | Not yet audited |
