@@ -1,5 +1,60 @@
 # Solid apps — local worker handoff
 
+## Cloud continuation — 18 November 2026
+
+This continuation follows the local publication work below; do not redo the completed Umai/Media Kraken deployments.
+
+### SolidFocus: real acceptance passed; publication extension pending
+
+- [PR 1](https://github.com/pondersource/solid-focus/pull/1) is open as a draft on `solid-production-acceptance`. Latest head at this checkpoint: `53aafe907c0e9f9454d1728d8cee640bb6fefe19`.
+- Production Playwright passed at `31d8b5de2f2f07ef9e4a063eff993b8a79e24510`: real CSS login, private task creation, priority/completion changes, anonymous denial, fresh-browser recovery and interpretation through the existing shared task reader. [Passing acceptance run](https://github.com/pondersource/solid-focus/actions/runs/44336524554). The inherited build/lint/unit/Cypress CI also passed at that revision ([run](https://github.com/pondersource/solid-focus/actions/runs/44336524632)).
+- Subsequent commits add production packaging, Pages deployment, deployed-origin replay of the same private-Pod test, and a `Focus verified publication` commit status. These extensions are not yet claimed as passing or deployed. One running validation is [44340974359](https://github.com/pondersource/solid-focus/actions/runs/44340974359); inspect checks on the latest head, not just this older run.
+- An authenticated CLI connection was briefly available. It created the Pages site, selected Actions publishing, set `focus.pondersource.com`, and enabled enforced HTTPS after the certificate was approved. DNS for `focus.pondersource.com`, `solid-focus.pondersource.com` and `mashlib.pondersource.com` resolves to `pondersource.github.io`. The chosen Focus hostname is `focus.pondersource.com`.
+- Do not list Focus in the launcher until the main-branch deploy and public-origin acceptance pass. No live Focus deployment was verified at this checkpoint.
+- Test details: CSS 5.1.0 is installed outside the checkout under the runner temporary directory, avoiding Components.js collisions with the app's CSS 7 dependency. Tests wait for the accessible `Online` state between local-first edits. Vitest excludes `acceptance/**` and `shared-data-modules/**`. Public-origin tests grant local-network access only to that origin in disposable browser contexts. Runtime remains Aerogel/Soukai.
+
+Next steps:
+
+```sh
+gh pr checks 1 --repo pondersource/solid-focus
+gh pr view 1 --repo pondersource/solid-focus --json headRefOid,mergeStateStatus
+# Merge after latest-head checks and review pass:
+gh pr ready 1 --repo pondersource/solid-focus
+gh pr merge 1 --repo pondersource/solid-focus --merge
+gh run list --repo pondersource/solid-focus --workflow solid-acceptance.yml --branch main --limit 5
+```
+
+Watch the main run through build, deployment and live tests. Its final `Focus verified publication` status links to the result. Preserve the existing native-Solid launcher handoff rules when adding it.
+
+### Mashlib: build succeeds; browser startup baseline needs diagnosis
+
+- [PR 1](https://github.com/pondersource/mashlib/pull/1) was merged at `e64e12a0a0b5a4d327eb687202195856a5d31e96` to bootstrap the fork-specific workflow. It builds the checked-out source and adds a public cross-origin RDF browser baseline; upstream dependency-mutating/release/npm-publishing jobs were removed from the fork's CI.
+- Actions was enabled but had no registered workflows/runs initially. Reapplying enabled Actions permissions after the bootstrap registered the workflow; it is now active. No upstream npm publication was attempted.
+- [First run 44340663139](https://github.com/pondersource/mashlib/actions/runs/44340663139) built successfully, but Playwright timed out waiting for a successful RDF-profile fetch. This is not a passing browser baseline.
+- [Diagnostic PR 2](https://github.com/pondersource/mashlib/pull/2), branch `diagnose-browser-startup`, head `21008a8aabe956da21ab8e63d015a301fa3c4539`, reports browser startup/console errors and bounds the request wait. [Run 44342173374](https://github.com/pondersource/mashlib/actions/runs/44342173374) is pending at this checkpoint.
+- Inspect those diagnostics before deciding whether source/dependency compatibility or the harness needs correction. Private login, pane editing, persistence, module integration and deployment remain unfinished. Do not classify this app as working or add it to the launcher yet.
+
+### Fork batch interrupted: no completed forks verified
+
+The execution environment disconnected during an attempted batch. Follow-up repository reads returned 404 for all seven attempted targets: `pondersource/notepod`, `healthpod`, `moviestar`, `LibreChat`, `proxion-messenger`, `innerpod`, and `msfatigue`. Do not count these as created. Recheck before retrying because another worker may subsequently create them.
+
+Primary catalog source links were resolved and metadata checked for these additional repositories:
+
+- `anusii/notepod`, `anusii/healthpod`, `anusii/moviestar`
+- `solid-contrib/LibreChat` (the catalog's `solid/LibreChat` URL redirects here)
+- `cafeTechne/proxion-messenger`
+- `gjwgit/innerpod`, `anusii/msfatigue`, `anusii/filepod`, `anusii/keypod`
+- `gjwgit/geopod`, `gjwgit/todopod`, `gjwgit/rolopod`, `gjwgit/konapod`, `gjwgit/billipod`
+
+The ANU/gjwgit apps above report GPL-3.0 and default branch `dev`; LibreChat reports MIT, Proxion AGPL-3.0. Source availability and these metadata checks do not establish functional behaviour. Preserve licences and inspect release/build/test workflows before deploying.
+
+The catalog's ODI file-manager link redirects to `solid-contrib/solid-file-manager`; its API metadata did not identify a licence. Inspect the repository's actual licensing files before making a distribution decision.
+
+The broader inventory remains authoritative for untested apps. No new module names/scopes were introduced. Existing module and rs.js runtime migrations remain pending.
+
+---
+
+
 ## Local continuation — 18 November 2026
 
 The publication milestone below is now complete. Use [the current rollout inventory](solid-app-rollout.md) for deployed revisions and test evidence; the original cloud snapshot follows for background.
