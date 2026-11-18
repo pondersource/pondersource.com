@@ -37,7 +37,8 @@ jobs:
           python3 -m http.server 8000 --bind 127.0.0.1 --directory preview &
           trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
           export PLAYWRIGHT_MODULE="$PWD/rs-solid-source/examples/solid/node_modules/playwright"
-          node --test tests/launcher-solid.test.cjs
+          export NODE_PATH="$PWD/rs-solid-source/examples/solid/node_modules"
+          node --test tests/launcher-browser.test.cjs tests/launcher-solid.test.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: solid-launcher-preview
