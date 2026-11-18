@@ -1,5 +1,20 @@
 # Solid apps — local worker handoff
 
+## Local continuation — 18 November 2026
+
+The publication milestone below is now complete. Use [the current rollout inventory](solid-app-rollout.md) for deployed revisions and test evidence; the original cloud snapshot follows for background.
+
+- Umai and Media Kraken now have GitHub Actions Pages publishing, their requested custom domains, and enforced HTTPS. DNS was already correctly configured. Both passed real login, private Pod writes, anonymous denial and fresh-browser recovery at their public HTTPS origins.
+- [Umai PR 3](https://github.com/pondersource/umai/pull/3) and [Media Kraken PR 2](https://github.com/pondersource/media-kraken/pull/2) are merged. Their workflows now repeat live-origin checks after deployment. These include routes, assets, service-worker scopes and Umai's public client-ID/redirect configuration. Media Kraken's cache patterns now follow the custom domain; reopening its public root offline was independently verified.
+- [Launcher PR 23](https://github.com/pondersource/pondersource.com/pull/23) is merged and deployed. Both apps install, persist after reload and launch successfully from pondersource.com. Their native Solid entries do not receive remoteStorage discovery hints. Unrelated Google Drive launcher changes were preserved.
+- Umai's temporary Pages diagnostic PR 2 is closed without merging. Do not repeat Pages enablement.
+- [SolidFocus](https://github.com/pondersource/solid-focus) and [Mashlib](https://github.com/pondersource/mashlib) forks now exist. Their initial heads are `53e6fddb0fec1e8cc9373b0106b138c99ae444a0` and `df7aab3ed56365adc8910cf86dfd29aea5d5ce7f`. They still need implementation, meaningful browser coverage and deployments; fork creation is no longer blocked.
+- The conventions contribution is submitted upstream as [pdsinterop/conventions PR 34](https://github.com/pdsinterop/conventions/pull/34).
+
+Next: continue with SolidFocus and Mashlib. The wider catalog and runtime shared-module/rs.js migrations remain unfinished. The recipes and bookmark-topic PRs remain pending, and no npm packages were published. Recipes is still a private read-only parser; bookmark-topic round trips need to retain RDF term kinds before runtime integration. Solid Memo/LWS remain with the separate worker. The original requirement to approve new module names/scopes remains applicable.
+
+## Original cloud snapshot
+
 Snapshot: 18 November 2026. Continue the existing rollout; do not restart discovery or redo passing changes.
 
 ## Goal and standing authorisation
