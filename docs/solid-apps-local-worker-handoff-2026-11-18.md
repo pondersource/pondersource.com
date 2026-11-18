@@ -6,10 +6,11 @@ This continuation follows the local publication work below; do not redo the comp
 
 ### SolidFocus: real acceptance passed; publication extension pending
 
-- [PR 1](https://github.com/pondersource/solid-focus/pull/1) is open as a draft on `solid-production-acceptance`. Latest head at this checkpoint: `53aafe907c0e9f9454d1728d8cee640bb6fefe19`.
+- [PR 1](https://github.com/pondersource/solid-focus/pull/1) is open and ready for review on `solid-production-acceptance`. Latest head at this checkpoint: `53aafe907c0e9f9454d1728d8cee640bb6fefe19`.
 - Production Playwright passed at `31d8b5de2f2f07ef9e4a063eff993b8a79e24510`: real CSS login, private task creation, priority/completion changes, anonymous denial, fresh-browser recovery and interpretation through the existing shared task reader. [Passing acceptance run](https://github.com/pondersource/solid-focus/actions/runs/44336524554). The inherited build/lint/unit/Cypress CI also passed at that revision ([run](https://github.com/pondersource/solid-focus/actions/runs/44336524632)).
 - Subsequent commits add production packaging, Pages deployment, deployed-origin replay of the same private-Pod test, and a `Focus verified publication` commit status. These extensions are not yet claimed as passing or deployed. One running validation is [44340974359](https://github.com/pondersource/solid-focus/actions/runs/44340974359); inspect checks on the latest head, not just this older run.
 - An authenticated CLI connection was briefly available. It created the Pages site, selected Actions publishing, set `focus.pondersource.com`, and enabled enforced HTTPS after the certificate was approved. DNS for `focus.pondersource.com`, `solid-focus.pondersource.com` and `mashlib.pondersource.com` resolves to `pondersource.github.io`. The chosen Focus hostname is `focus.pondersource.com`.
+- Latest-head production acceptance passed ([44342154814](https://github.com/pondersource/solid-focus/actions/runs/44342154814)). Latest-head upstream CI [44342154489](https://github.com/pondersource/solid-focus/actions/runs/44342154489) has passed build, lint and unit tests and is still running Cypress. PR 1 remains unmerged pending that result.
 - Do not list Focus in the launcher until the main-branch deploy and public-origin acceptance pass. No live Focus deployment was verified at this checkpoint.
 - Test details: CSS 5.1.0 is installed outside the checkout under the runner temporary directory, avoiding Components.js collisions with the app's CSS 7 dependency. Tests wait for the accessible `Online` state between local-first edits. Vitest excludes `acceptance/**` and `shared-data-modules/**`. Public-origin tests grant local-network access only to that origin in disposable browser contexts. Runtime remains Aerogel/Soukai.
 
@@ -26,13 +27,15 @@ gh run list --repo pondersource/solid-focus --workflow solid-acceptance.yml --br
 
 Watch the main run through build, deployment and live tests. Its final `Focus verified publication` status links to the result. Preserve the existing native-Solid launcher handoff rules when adding it.
 
-### Mashlib: build succeeds; browser startup baseline needs diagnosis
+### Mashlib: public RDF browser baseline passed
 
 - [PR 1](https://github.com/pondersource/mashlib/pull/1) was merged at `e64e12a0a0b5a4d327eb687202195856a5d31e96` to bootstrap the fork-specific workflow. It builds the checked-out source and adds a public cross-origin RDF browser baseline; upstream dependency-mutating/release/npm-publishing jobs were removed from the fork's CI.
 - Actions was enabled but had no registered workflows/runs initially. Reapplying enabled Actions permissions after the bootstrap registered the workflow; it is now active. No upstream npm publication was attempted.
-- [First run 44340663139](https://github.com/pondersource/mashlib/actions/runs/44340663139) built successfully, but Playwright timed out waiting for a successful RDF-profile fetch. This is not a passing browser baseline.
-- [Diagnostic PR 2](https://github.com/pondersource/mashlib/pull/2), branch `diagnose-browser-startup`, head `21008a8aabe956da21ab8e63d015a301fa3c4539`, reports browser startup/console errors and bounds the request wait. [Run 44342173374](https://github.com/pondersource/mashlib/actions/runs/44342173374) is pending at this checkpoint.
-- Inspect those diagnostics before deciding whether source/dependency compatibility or the harness needs correction. Private login, pane editing, persistence, module integration and deployment remain unfinished. Do not classify this app as working or add it to the launcher yet.
+- The initial timeout was caused by fixture CORS: rdflib requests include credentials, so wildcard CORS and missing preflight handling prevented the RDF fetch.
+- [PR 2](https://github.com/pondersource/mashlib/pull/2) corrects the fixture to allow only the local app origin with credentials and required preflight headers; it also retains bounded waits and browser diagnostics.
+- Production build and public cross-origin RDF rendering/reload passed at `2f359d672a3c33f2954041884edada4947efd1bd`: [run 44342866583](https://github.com/pondersource/mashlib/actions/runs/44342866583).
+- PR 2 is merged at `c867e75f46a429dfe66fa4a89553cc825b84f8e8`.
+- This is a public-resource baseline only. Private login, pane editing, persistence, runtime module integration and deployment remain unfinished. Do not list Mashlib in the launcher yet.
 
 ### Fork batch interrupted: no completed forks verified
 
