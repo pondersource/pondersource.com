@@ -274,6 +274,7 @@ function connectionError(message) {
 }
 function signedOut() {
   connectionBusy(false);
+  connectionError('');
   $('rs-login-form').hidden = false;
   $('solid-login-form').hidden = !rs?.solid;
   $('solid-pod-form').hidden = true;
