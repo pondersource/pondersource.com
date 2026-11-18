@@ -402,6 +402,11 @@ try {
     connectionError(error.name === 'DiscoveryError' ? 'Could not find storage for that address. Please check it and try again.' :
       'Storage is unavailable. Your saved apps are kept; please reconnect or try again.');
   });
+  rs.on('sync-done', result => {
+    // A failed request can recover on the next cycle. Keep real failures
+    // visible, but clear the connection warning after a completed sync.
+    if (result.completed && rs.connected) connectionError('');
+  });
   launcher.on('change', event => {
     if (event.relativePath !== 'installed-apps' || event.origin === 'window' || mode !== 'remote' || !ready) return;
     const generation = epoch;

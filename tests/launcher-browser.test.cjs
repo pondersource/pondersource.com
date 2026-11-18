@@ -332,3 +332,26 @@ test('LWS discovery reports CORS failures and can retry', async t => {
   assert.equal(await page.getByRole('button', { name: 'Find LWS storage', exact: true }).isEnabled(), true);
   assert.equal(await page.locator('#lws-discovery-result a').count(), 0);
 });
+
+test('Google Drive: empty account, install, upload, reload and restore after sign-out', { timeout: 90000 }, async t => {
+  const { context, page } = await open(t);
+  page.setDefaultTimeout(15000);
+  page.setDefaultNavigationTimeout(15000);
+  const fixture = await require('./google-drive-fixture.cjs')(context);
+  await page.goto(base);
+  await localReady(page);
+  await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to Google Drive'));
+  await install(page, 'webmarks');
+  await waitFor(() => [...fixture.files.values()].some(f => f.body?.includes('webmarks')));
+  await page.reload();
+  await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await localReady(page);
+  assert.equal(await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).count(), 0);
+  await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).click();
+  await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).waitFor();
+  assert.equal(fixture.invalidReads, 0, 'missing library must not request metadata for an undefined file ID');
+  await page.locator('#rs-login-error').waitFor({ state: 'hidden' });
+  assert.ok(fixture.writes > 0);
+});
