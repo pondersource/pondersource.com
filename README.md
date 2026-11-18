@@ -69,8 +69,10 @@ this is the origin without a trailing slash, e.g. `https://pondersource.com`
 the permissions requested by the bundled backend. Each user then authorizes
 their own account through the provider. Unconfigured buttons stay hidden.
 
-The bundled library supports remoteStorage, Google Drive, and Dropbox. It does
-not include Solid Pod or Atomic adapters; those require a separate integration.
+The published build supports remoteStorage, Google Drive, Dropbox, and Solid pods.
+CI builds the Solid bundle from the pinned PR commit and publishes it after the
+launcher browser tests pass. The checked-in bundle remains usable for local
+remoteStorage development. Download the CI artifact to test the Solid build locally.
 
 ## Tests
 
