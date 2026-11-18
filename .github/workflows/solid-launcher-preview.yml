@@ -1,0 +1,68 @@
+name: Solid launcher preview
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  launcher:
+    runs-on: ubuntu-latest
+    env:
+      RS_SOLID_TEST_PASSWORD: disposable-launcher-test-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: remotestorage/remotestorage.js
+          ref: dab59c8a55b4542d359af64d4d130c3ade28e204
+          path: rs-solid-source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci && npm run build:solid
+        working-directory: rs-solid-source
+      - run: npm ci
+        working-directory: rs-solid-source/examples/solid
+      - run: npx playwright install --with-deps chromium
+        working-directory: rs-solid-source/examples/solid
+      - name: Stage site
+        run: |
+          mkdir preview
+          git archive HEAD | tar -x -C preview
+          cp rs-solid-source/release/remotestorage-solid.js preview/dependencies/remotestoragejs/remotestorage.js
+          cp rs-solid-source/release/remotestorage-solid.js.LICENSE.txt preview/dependencies/remotestoragejs/
+      - name: Test launcher against Community Solid Server
+        run: |
+          (cd rs-solid-source/examples/solid && exec node tests/server.cjs) &
+          python3 -m http.server 8000 --bind 127.0.0.1 --directory preview &
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          export PLAYWRIGHT_MODULE="$PWD/rs-solid-source/examples/solid/node_modules/playwright"
+          export NODE_PATH="$PWD/rs-solid-source/examples/solid/node_modules"
+          node --test tests/launcher-browser.test.cjs tests/launcher-solid.test.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solid-launcher-preview
+          path: preview/
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: launcher
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: solid-launcher-preview
+          path: site
+      - run: touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
+        id: deployment

@@ -69,8 +69,10 @@ this is the origin without a trailing slash, e.g. `https://pondersource.com`
 the permissions requested by the bundled backend. Each user then authorizes
 their own account through the provider. Unconfigured buttons stay hidden.
 
-The bundled library supports remoteStorage, Google Drive, and Dropbox. It does
-not include Solid Pod or Atomic adapters; those require a separate integration.
+The published build supports remoteStorage, Google Drive, Dropbox, and Solid pods.
+CI builds the Solid bundle from the pinned PR commit and publishes it after the
+launcher browser tests pass. The checked-in bundle remains usable for local
+remoteStorage development. Download the CI artifact to test the Solid build locally.
 
 ## Tests
 
@@ -105,10 +107,12 @@ Dropbox tests check OAuth initiation with public test identifiers. Live provider
 authorization requires registered applications and user consent and is not
 covered by these fixtures.
 
-The PonderSource Google OAuth project is `pondersource-apps`. It is in
-production mode, available beyond named test users. Google verification is still
-pending; users may see an unverified-app warning and the project has a lifetime
-100-user cap until its requested scopes are approved. The published privacy
-notice is https://pondersource.com/privacy.html.
-The Dropbox app is **PonderSource Apps** (app key `gaezgoax9khjilj`), with
-additional users enabled in development mode (up to 500 users).
+## Solid launcher storage preview
+
+The Solid build is pinned to [remoteStorage.js PR #1403](https://github.com/remotestorage/remotestorage.js/pull/1403).
+The preview workflow builds the browser bundle from source and stages it in the
+existing script slot. The published preview artifact is a static site, with the
+Solid option alongside the other storage providers. The launcher library remains
+a private remoteStorage-format JSON document. Solid apps can use native RDF
+independently and should set `data-storage="solid"` on their catalog cards so
+launch links do not carry a remoteStorage account hint.
