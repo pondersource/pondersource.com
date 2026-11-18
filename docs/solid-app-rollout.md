@@ -21,9 +21,9 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | App | Fork | Deployment / test evidence | Module status |
 | --- | --- | --- | --- |
 | ODI Solid File Manager | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | Production Playwright + existing Cypress pass ([run](https://github.com/pondersource/media-kraken/actions/runs/44312525055)); production artifact passed; [PR 1](https://github.com/pondersource/media-kraken/pull/1) merged; publication unverified | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4) |
+| Media Kraken | [fork](https://github.com/pondersource/media-kraken) | [Live HTTPS](https://media-kraken.pondersource.com); [deployment](https://github.com/pondersource/media-kraken/actions/runs/44319324812) at `7cac12414372444a44e6ac1bc740fbb4024ae055`. Deployed-origin Playwright passed: real login, private movie writes, anonymous denial, fresh-browser watched/watch-later recovery, direct route, assets and service-worker scope. [PR 2](https://github.com/pondersource/media-kraken/pull/2) adds continuing live checks and custom-domain caching | Soukai runtime; movies reader fixes merged [PR 4](https://github.com/pondersource/data-modules/pull/4), test-only interpretation |
 | Penny | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| Umai | [fork](https://github.com/pondersource/umai) | Development + production Playwright passed; [PR 1](https://github.com/pondersource/umai/pull/1) merged; Pages configuration returns HTTP 404 ([probe](https://github.com/pondersource/umai/pull/2)) | Soukai runtime; shared recipes parser checked in acceptance |
+| Umai | [fork](https://github.com/pondersource/umai) | [Live HTTPS](https://umai.pondersource.com); [deployment](https://github.com/pondersource/umai/actions/runs/44319318256) at `4d6674ec92da70c253c3ca0eb9196121fe6f2809`. Deployed-origin Playwright passed: real login, private recipe write, anonymous denial, fresh-browser recovery, recipe reload, assets and production client ID/redirect URI. [PR 3](https://github.com/pondersource/umai/pull/3) adds continuing live checks | Soukai runtime; shared recipes parser checked in acceptance, not a runtime migration |
 | 0data Hello with Solid | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Booklice | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Mnera.io | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -35,12 +35,12 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | NotePod (ANU) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | HealthPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | MovieStar | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| SolidFocus | Not yet forked | [Upstream source](https://github.com/NoelDeMartin/solid-focus) inspected; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending. Existing SolidOS writer quoting/error fixes merged [PR 6](https://github.com/pondersource/data-modules/pull/6) |
+| SolidFocus | [fork](https://github.com/pondersource/solid-focus) | Fork created 2026-11-18; not yet deployed or browser-tested; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending. Existing SolidOS writer fixes merged [PR 6](https://github.com/pondersource/data-modules/pull/6) |
 | Portable LibreChat | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Proxion | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Tired Bike | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | PodCal | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| SolidOS Databrowser / Mashlib | Not yet forked | [Upstream source](https://github.com/SolidOS/mashlib) inspected; next candidate | Pane conventions corrections [PR 1](https://github.com/pondersource/conventions/pull/1) |
+| SolidOS Databrowser / Mashlib | [fork](https://github.com/pondersource/mashlib) | Fork created 2026-11-18; standalone `dist/browse.html` remains an app candidate; not yet deployed or browser-tested | Pane conventions corrections [PR 1](https://github.com/pondersource/conventions/pull/1); [upstream PR 34](https://github.com/pdsinterop/conventions/pull/34) submitted |
 | Synara AI | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Pod Drive | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Pod Resume | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -58,11 +58,13 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | BilliPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Solid Memo | [fork](https://github.com/pondersource/solid-memo) | [Live deployment](https://solid-memo.pondersource.com); separate worker owns validation | Separate worker owns flashcards module integration |
 
-## Current access blockers
+## Publication and remaining work
 
-The connected GitHub API can update existing repositories and run PR checks, but exposes no repository-fork operation. Shell requests to api.github.com fail to connect in the current environment. No browser-control tool is currently available. This blocks creation of the remaining forks, not source inspection or work on existing forks. Do not mark those apps postponed as broken merely because repository creation is blocked.
+The local GitHub account resolved the former Pages/fork access limitation on 2026-11-18. Both app repositories now use GitHub Actions Pages publishing with their own custom domains and enforced HTTPS. Existing DNS CNAMEs point to `pondersource.github.io`. The obsolete [Umai diagnostic PR 2](https://github.com/pondersource/umai/pull/2) is closed.
 
-Umai's Pages API returned HTTP 404 under an Actions token granted pages:read; its production artifact and both browser modes have passed. Repository Pages setup is therefore a concrete publication blocker. The available connector cannot configure Pages. Other new Pages sites and custom-domain DNS may also need configuration beyond the available connector. A successful artifact build is not a verified deployment. Keep unverified URLs out of the launcher.
+Live checks ran against the public HTTPS origins and disposable localhost Pods. Chromium's local-network permission is granted only to each tested origin; no personal account is involved. Browser checks cover private remote writes, shared-reader interpretation and recovery in fresh contexts. App source attribution is retained. Native Solid launcher entries use `data-storage-handoff="none"` so remoteStorage discovery hints are not sent to their login flows.
+
+This does not complete the rollout. SolidFocus and Mashlib now have forks but still need meaningful browser coverage and deployments. The remaining catalog is untested, not classified as broken. Recipes and bookmark-topic PRs remain pending; the recipes parser is private/read-only, and the bookmark API still needs a term-kind-preserving round-trip review before using it for runtime migrations. No npm packages were published. Solid Memo and LWS remain with their separate worker.
 
 ## Initial source findings
 

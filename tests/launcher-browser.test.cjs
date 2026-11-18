@@ -134,7 +134,9 @@ for (const [id, name, url] of [
   ['inspektor', 'RS Inspektor', 'https://inspektor.pondersource.com'],
   ['savr', 'Savr', 'https://savr.pondersource.com'],
   ['marco', 'Marco', 'https://marco.pondersource.com'],
-  ['solid-memo', 'Solid Memo', 'https://solid-memo.pondersource.com']
+  ['solid-memo', 'Solid Memo', 'https://solid-memo.pondersource.com'],
+  ['umai', 'Umai', 'https://umai.pondersource.com'],
+  ['media-kraken', 'Media Kraken', 'https://media-kraken.pondersource.com']
 ]) {
   test(name + ' installs, persists and launches the hosted app', async t => {
     const { context, page } = await open(t);
@@ -158,19 +160,21 @@ for (const [id, name, url] of [
   });
 }
 
-test('Solid Memo handles sign-in when the launcher has a remoteStorage account', async t => {
-  const { context, page } = await open(t);
-  await remoteFixture(context, {
-    version: 1,
-    apps: [{ id: 'solid-memo', installed: true, updatedAt: 100, lastOpened: 0 }]
+for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['media-kraken', 'Media Kraken']]) {
+  test(name + ' handles sign-in when the launcher has a remoteStorage account', async t => {
+    const { context, page } = await open(t);
+    await remoteFixture(context, {
+      version: 1,
+      apps: [{ id, installed: true, updatedAt: 100, lastOpened: 0 }]
+    });
+    await page.goto(base);
+    await localReady(page);
+    await connect(page);
+    const launch = page.getByRole('link', { name: 'Launch ' + name, exact: true });
+    await launch.waitFor();
+    assert.equal(await launch.getAttribute('href'), 'https://' + id + '.pondersource.com');
   });
-  await page.goto(base);
-  await localReady(page);
-  await connect(page);
-  const launch = page.getByRole('link', { name: 'Launch Solid Memo', exact: true });
-  await launch.waitFor();
-  assert.equal(await launch.getAttribute('href'), 'https://solid-memo.pondersource.com');
-});
+}
 
 test('browser-storage fallback persists installs without OPFS', async t => {
   const { context, page } = await open(t);
