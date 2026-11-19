@@ -28,7 +28,7 @@ async function login(page) {
 
 test('the Solid pod stores the launcher library across browser contexts', { timeout: 150_000 }, async () => {
   await Promise.all([waitForServer(base), waitForServer(issuer + '/.well-known/openid-configuration')]);
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
   try {
     const first = await browser.newPage();
     await login(first);

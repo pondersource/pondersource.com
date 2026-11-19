@@ -140,3 +140,35 @@ and [OAuth protected-resource metadata](https://www.rfc-editor.org/rfc/rfc9728).
 
 Run the discovery tests with `node --test tests/lws-discovery.test.mjs`.
 The launcher browser suite also covers discovery and a failed request.
+
+
+## Hosted remoteStorage apps
+
+All nine apps use the Solid-enabled PonderSource rs.js build
+`2.0.0-beta.10-pondersource.6`. Dropbox, Google Drive and Solid are enabled.
+The launcher uses the same source build. Each app accesses its remoteStorage
+scope through an rs.js module; backend-specific storage requests belong in rs.js.
+The shared adapters and Solid connection controls are in `packages/rs-apps`.
+
+| App | Requested scope (read/write) | rs.js module API |
+| --- | --- | --- |
+| Webmarks | `bookmarks` | Bookmarks, with archive change events |
+| Litewrite | `documents` | Documents |
+| Inbox RS | `inbox`, `shares` | Inbox and Shares, with public file methods |
+| Hyperdraft | `wikiavec` | Zero Data Wrap-generated rs.js modules for private/public wikiavec |
+| Inspektor | `*` | Inspection module for all-scope browsing and editing |
+| Savr | `savr` | Savr module, with public export methods |
+| Marco | `places` | Places, with change events |
+| Todonna | `todonna` | Todonna module, including todo and app-state schemas |
+| Launcher | `launcher` | Launcher module |
+| Sharesome | `shares` | Shares |
+
+These are remoteStorage data scopes, not OAuth scopes. Google Drive uses the
+Drive permission, Dropbox uses its registered PonderSource Apps folder, and
+Solid uses the selected pod. Public share operations grant read access only to
+files in a public scope. Hyperdraft can synchronize with Google Drive, but its
+static-site publishing remains unavailable there because Drive is not a static
+website host.
+
+Run shared adapter tests with `node --test packages/rs-apps/test.cjs`; browser
+controls are covered by `tests/rs-apps-browser.test.cjs` in the launcher workflow.

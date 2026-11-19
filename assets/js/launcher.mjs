@@ -285,11 +285,13 @@ function signedOut() {
 // Initialize local storage even if remoteStorage.js fails to load.
 switchLibrary(false);
 try {
-  rs = new RemoteStorage();
+  rs = new RemoteStorage({ modules: [{ name: 'launcher', builder(client) {
+    return { exports: { getObject: client.getObject.bind(client), storeObject: client.storeObject.bind(client), on: client.on.bind(client), declareType: client.declareType.bind(client) } };
+  } }] });
   rs.access.claim('launcher', 'rw');
   rs.caching.enable('/launcher/');
   rs.setApiKeys(storageApiKeys);
-  launcher = rs.scope('/launcher/');
+  launcher = rs.launcher;
   launcher.declareType('installed-apps', {
     type: 'object', properties: {
       version: { type: 'number', enum: [1] },
