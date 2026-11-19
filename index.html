@@ -276,6 +276,7 @@
       font-size: 13px;
       margin-top: 2px;
     }
+    #launcher-storage-widget .rs-widget { position: relative; top: auto; right: auto; margin: 0 0 1rem; }
   </style>
   <link rel="stylesheet" href="assets/css/launcher.css">
 </head>
@@ -292,33 +293,8 @@
   </header>
   <main>
     <section class="rs-login" id="rs-login" aria-live="polite">
-      <form id="rs-login-form">
-        <!-- autocomplete="username" (not "email"): a remoteStorage address looks
-             like an email address, but Chrome should only offer the addresses
-             previously used to sign in here, not the user's email addresses. -->
-        <label class="rs-login-label" for="rs-user-address">Sign in with your remoteStorage account</label>
-        <div class="rs-login-row">
-          <input type="text" id="rs-user-address" name="rs-user-address" autocomplete="username"
-                 autocapitalize="off" autocorrect="off" spellcheck="false" required
-                 placeholder="user@provider.example">
-          <button type="submit" id="rs-connect-btn">Sign in</button>
-        </div>
-        <p class="rs-login-hint" id="rs-login-hint">
-          Connect to keep your installed apps and recent launches in your own storage across devices.
-          No account yet? <a href="https://5apps.com/storage" target="_blank" rel="noopener">Get a free one at 5apps</a>.
-        </p>
-        <div class="provider-buttons">
-          <button type="button" class="rs-link-btn" data-storage-provider="googledrive" hidden>Connect Google Drive</button>
-          <button type="button" class="rs-link-btn" data-storage-provider="dropbox" hidden>Connect Dropbox</button>
-        </div>
-      </form>
-      <form id="solid-login-form" hidden>
-        <label class="rs-login-label" for="solid-issuer">Sync your app library with a Solid pod</label>
-        <div class="rs-login-row">
-          <input id="solid-issuer" type="url" required placeholder="https://your-solid-provider.example">
-          <button id="solid-connect-btn" type="submit">Connect Solid</button>
-        </div>
-      </form>
+      <p>Connect your storage to sync installed apps and recent launches across devices.</p>
+      <div id="launcher-storage-widget"></div>
       <form id="lws-discovery-form">
         <label class="rs-login-label" for="lws-address">Find your LWS storage</label>
         <div class="rs-login-row">
@@ -329,17 +305,6 @@
       </form>
       <p id="lws-discovery-status" role="status"></p>
       <dl id="lws-discovery-result" style="overflow-wrap: anywhere"></dl>
-      <form id="solid-pod-form" hidden>
-        <label for="solid-pod">Choose a Solid pod</label>
-        <select id="solid-pod" required></select>
-        <button type="submit">Use this pod</button>
-        <button id="solid-cancel" type="button">Cancel</button>
-      </form>
-      <div class="rs-session" id="rs-session" hidden>
-        <span class="rs-session-label">Signed in as</span>
-        <span class="rs-session-address" id="rs-session-address"></span>
-        <button type="button" class="rs-link-btn" id="rs-disconnect-btn">Sign out</button>
-      </div>
       <p class="rs-login-error" id="rs-login-error" role="alert" hidden></p>
       <p class="storage-status" id="storage-status" role="status">Opening your app library…</p>
       <button type="button" class="rs-link-btn" id="copy-device-apps" hidden>Copy this device’s apps to this account</button>
@@ -502,6 +467,7 @@
     <p>Curious what we looked like before? <a href="2020-2025/index.html">View our older website from 2020-2025</a>.</p>
   </footer>
   <script src="dependencies/remotestoragejs/remotestorage.js"></script>
+  <script src="dependencies/remotestorage-widget/widget.js"></script>
   <script type="module" src="assets/js/launcher.mjs"></script>
 </body>
 </html>

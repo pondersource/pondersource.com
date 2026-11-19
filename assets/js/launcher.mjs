@@ -24,7 +24,6 @@ let storageFirstAccount = (params.get('remotestorage') || '').trim();
 if (storageFirstAccount) {
   params.delete('remotestorage');
   history.replaceState(null, '', location.pathname + location.search + (params.size ? '#' + params : ''));
-  $('rs-user-address').value = storageFirstAccount;
 }
 
 let rs;
@@ -262,23 +261,13 @@ $('copy-device-apps').addEventListener('click', () => {
   });
 });
 
-function connectionBusy(value) {
-  $('rs-connect-btn').disabled = value;
-  $('solid-connect-btn').disabled = value;
-  $('rs-connect-btn').textContent = value ? 'Connecting…' : 'Sign in';
-  document.querySelectorAll('[data-storage-provider]').forEach(button => { button.disabled = value; });
-}
 function connectionError(message) {
   $('rs-login-error').textContent = message;
   $('rs-login-error').hidden = !message;
 }
 function signedOut() {
-  connectionBusy(false);
+  storageFirstAccount = '';
   connectionError('');
-  $('rs-login-form').hidden = false;
-  $('solid-login-form').hidden = !rs?.solid;
-  $('solid-pod-form').hidden = true;
-  $('rs-session').hidden = true;
   switchLibrary(false);
 }
 
@@ -303,96 +292,25 @@ try {
       } }
     }, required: ['version', 'apps']
   });
-  for (const provider of ['googledrive', 'dropbox']) {
-    const button = document.querySelector('[data-storage-provider="' + provider + '"]');
-    button.hidden = !storageApiKeys[provider];
-    button.addEventListener('click', async () => {
-      connectionError('');
-      connectionBusy(true);
-      try { await rs[provider].connect(); }
-      catch { connectionBusy(false); connectionError('Could not connect to this provider. Please try again.'); }
-    });
-  }
-  $('rs-login-form').addEventListener('submit', event => {
-    event.preventDefault();
-    const address = $('rs-user-address').value.trim();
-    if (!address.includes('@') && !/^https?:\/\//.test(address)) {
-      connectionError('Enter your full remoteStorage address, like user@provider.example.');
-      return;
-    }
-    connectionError('');
-    connectionBusy(true);
-    rs.setBackend('remotestorage');
-    try { rs.connect(address); }
-    catch { connectionBusy(false); connectionError('Could not connect. Please check the address and try again.'); }
+  const widget = new Widget(rs, {
+    solidProviders: { allowAnyProvider: true }, skipInitial: true, leaveOpen: true,
   });
-  $('rs-disconnect-btn').addEventListener('click', async () => {
-    storageFirstAccount = '';
-    $('rs-user-address').value = '';
-    // Invalidate outstanding account work immediately, before async cleanup.
-    ++epoch;
-    ready = false;
-    render();
-    try { await rs.disconnect(); }
-    catch { connectionError('Could not sign out. Please try again.'); }
-  });
-  {
-    const solidForm = $('solid-login-form');
-    const podForm = $('solid-pod-form');
-    const select = $('solid-pod');
-    const showSolidLogin = () => {
-      solidForm.hidden = !rs.solid || rs.connected ||
-        (rs.backend === 'solid' && rs.solid.getPodURLs() !== null);
-    };
-    showSolidLogin();
-    rs.on('features-loaded', showSolidLogin);
-    solidForm.addEventListener('submit', async event => {
-      event.preventDefault();
-      connectionError('');
-      try {
-        const issuer = new URL($('solid-issuer').value.trim());
-        const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(issuer.hostname);
-        if (issuer.protocol !== 'https:' && !(issuer.protocol === 'http:' && loopback)) {
-          connectionError('Use an HTTPS Solid identity provider.');
-          return;
-        }
-        connectionBusy(true);
-        rs.solid.setAuthURL(issuer.href);
-        await rs.solid.connect();
-      } catch {
-        connectionBusy(false);
-        connectionError('Could not sign in to the Solid provider.');
-      }
-    });
-    rs.on('pod-not-selected', () => {
-      const pods = rs.solid.getPodURLs() || [];
-      $('rs-login-form').hidden = true;
-      solidForm.hidden = true;
-      podForm.hidden = false;
-      select.replaceChildren(...pods.map(pod => new Option(pod, pod)));
-      podForm.querySelector('button[type="submit"]').disabled = pods.length === 0;
-      connectionError(pods.length ? '' : 'This Solid account has no advertised pods.');
-      connectionBusy(false);
-    });
-    podForm.addEventListener('submit', async event => {
-      event.preventDefault();
-      try { await rs.solid.setPodURL(select.value); }
-      catch { connectionError('Could not open the selected Solid pod.'); }
-    });
-    $('solid-cancel').addEventListener('click', async () => {
-      try { await rs.disconnect(); }
-      catch { connectionError('Could not sign out of Solid.'); }
-    });
+  widget.attach('launcher-storage-widget');
+  if (storageFirstAccount) {
+    widget.rsAddressInput.value = storageFirstAccount;
+    widget.setState('sign-in');
   }
-  rs.on('connecting', () => connectionBusy(true));
+  document.querySelectorAll('#launcher-storage-widget .rs-disconnect').forEach(button => {
+    button.addEventListener('click', () => {
+      // Invalidate outstanding account work before asynchronous disconnect cleanup.
+      storageFirstAccount = '';
+      ++epoch;
+      ready = false;
+      render();
+    }, true);
+  });
   rs.on('connected', () => {
-    connectionBusy(false);
     connectionError('');
-    $('rs-login-form').hidden = true;
-    $('solid-login-form').hidden = true;
-    $('solid-pod-form').hidden = true;
-    $('rs-session').hidden = false;
-    $('rs-session-address').textContent = rs.remote.userAddress || providerName();
     switchLibrary(true);
   });
   rs.on('not-connected', () => {
@@ -401,7 +319,6 @@ try {
   });
   rs.on('disconnected', signedOut);
   rs.on('error', error => {
-    connectionBusy(false);
     connectionError(error.name === 'DiscoveryError' ? 'Could not find storage for that address. Please check it and try again.' :
       'Storage is unavailable. Your saved apps are kept; please reconnect or try again.');
   });
@@ -425,7 +342,6 @@ try {
   });
 } catch (error) {
   console.error('Storage connection:', error);
-  $('rs-connect-btn').disabled = true;
   connectionError('Storage connections are unavailable. You can still use apps saved on this device.');
 }
 

@@ -16,14 +16,15 @@ async function waitForServer(url) {
 
 async function login(page) {
   await page.goto(base);
-  await page.locator('#solid-issuer').fill(issuer);
-  await page.getByRole('button', { name: 'Connect Solid' }).click();
+  await page.locator('.rs-choose-solid').click();
+  await page.locator('[name=rs-provider-address]').fill(issuer);
+  await page.locator('.rs-solid-connect').click();
   await page.locator('input[type=email]').fill('solid-test@example.test');
   await page.locator('input[type=password]').fill(process.env.RS_SOLID_TEST_PASSWORD);
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
   await page.getByRole('button', { name: 'Authorize', exact: true }).click();
-  await page.getByRole('button', { name: 'Use this pod' }).click();
-  await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to Solid'));
+  await page.waitForURL(base + '/');
+  await page.waitForFunction(() => document.querySelector('#storage-status')?.textContent.includes('connected to Solid'));
 }
 
 test('the Solid pod stores the launcher library across browser contexts', { timeout: 150_000 }, async () => {

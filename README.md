@@ -174,7 +174,7 @@ All nine apps use the Solid-enabled PonderSource rs.js build
 `2.0.0-beta.10-pondersource.6`. Dropbox, Google Drive and Solid are enabled.
 The launcher uses the same source build. Each app accesses its remoteStorage
 scope through an rs.js module; backend-specific storage requests belong in rs.js.
-The shared adapters and Solid connection controls are in `packages/rs-apps`.
+The shared scope adapters are in `packages/rs-apps`. All nine apps and the launcher use `remotestorage-widget@1.8.2-pondersource.1` for remoteStorage, Dropbox, Google Drive and Solid login. This continues [Yashar’s widget PR #136](https://github.com/remotestorage/remotestorage-widget/pull/136), with current widget fixes, pod selection and error recovery. Separate Solid controls are no longer mounted.
 
 | App | Requested scope (read/write) | rs.js module API |
 | --- | --- | --- |

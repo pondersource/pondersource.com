@@ -28,8 +28,8 @@ test('registered Google Drive and Dropbox providers remain available', async t =
   const { page } = await open(t);
   await page.goto(base);
   await localReady(page);
-  assert.ok(await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).isVisible());
-  assert.ok(await page.getByRole('button', { name: 'Connect Dropbox', exact: true }).isVisible());
+  assert.ok(await page.getByRole('button', { name: 'Google Drive', exact: true }).isVisible());
+  assert.ok(await page.getByRole('button', { name: 'Dropbox', exact: true }).isVisible());
 });
 async function install(page, id) {
   await page.getByRole('tab', { name: 'App store' }).click();
@@ -86,8 +86,9 @@ function remoteFixture(context, initial, fixture = { data: initial, puts: 0, fai
   }).then(() => fixture);
 }
 async function connect(page) {
-  await page.locator('#rs-user-address').fill('alice@storage.example');
-  await page.locator('#rs-connect-btn').click();
+  if (await page.locator('.rs-choose-rs').isVisible()) await page.locator('.rs-choose-rs').click();
+  await page.locator('[name=rs-user-address]').fill('alice@storage.example');
+  await page.locator('.rs-connect').click();
   await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to remoteStorage'));
 }
 
@@ -95,7 +96,7 @@ test('real OPFS: install, reload, launch, recent apps, remove, keyboard navigati
   const { context, page } = await open(t, { viewport: { width: 390, height: 844 } });
   await page.goto(base + '/#remotestorage=alice%40storage.example');
   await localReady(page);
-  assert.equal(await page.locator('#rs-user-address').inputValue(), 'alice@storage.example');
+  assert.equal(await page.locator('[name=rs-user-address]').inputValue(), 'alice@storage.example');
   assert.equal(new URL(page.url()).hash, '');
   assert.equal(await page.getByRole('link', { name: 'Launch Litewrite' }).count(), 0);
   await page.locator('#browse-apps').click();
@@ -247,7 +248,7 @@ test('real remoteStorage.js: authorize, load account library, copy device apps, 
   assert.equal(await otherDevice.page.locator('#installed-count').textContent(), '(2)', 'a fresh device reads the synced library');
   await page.getByRole('button', { name: 'Remove Hyperdraft from your launcher' }).click();
   await waitFor(() => fixture.data.apps.some(app => app.id === 'hyperdraft' && !app.installed));
-  await page.locator('#rs-disconnect-btn').click();
+  await page.locator('.rs-box-connected .rs-disconnect').click();
   await localReady(page);
   assert.equal(await page.locator('#installed-count').textContent(), '(1)');
   assert.equal(await page.getByRole('link', { name: 'Launch Litewrite' }).getAttribute('href'), 'https://litewrite.pondersource.com');
@@ -261,14 +262,15 @@ test('invalid remote library blocks writes instead of resetting account data', a
   const fixture = await remoteFixture(context, { version: 99, apps: [] });
   await page.goto(base);
   await localReady(page);
-  await page.locator('#rs-user-address').fill('alice@storage.example');
-  await page.locator('#rs-connect-btn').click();
+  if (await page.locator('.rs-choose-rs').isVisible()) await page.locator('.rs-choose-rs').click();
+  await page.locator('[name=rs-user-address]').fill('alice@storage.example');
+  await page.locator('.rs-connect').click();
   await page.locator('#library-error').waitFor({ state: 'visible' });
   assert.match(await page.locator('#library-error').textContent(), /format/);
   assert.equal(fixture.puts, 0);
   await page.getByRole('tab', { name: 'App store' }).click();
   assert.equal(await page.locator('.install-app:disabled').count(), await page.locator('.install-app').count());
-  await page.locator('#rs-disconnect-btn').click();
+  await page.locator('.rs-box-connected .rs-disconnect').click();
   await localReady(page);
 });
 
@@ -283,7 +285,7 @@ for (const [provider, label, host] of [['googledrive', 'Google Drive', 'accounts
     });
     await page.goto(base);
     await localReady(page);
-    await page.getByRole('button', { name: 'Connect ' + label }).click();
+    await page.getByRole('button', { name: label }).click();
     await waitFor(() => authorization);
     assert.equal(authorization.searchParams.get('client_id'), 'public-test-client-id');
     assert.equal(new URL(authorization.searchParams.get('redirect_uri')).href, new URL(base).origin + '/');
@@ -319,7 +321,7 @@ test('LWS discovery displays the storage root and authorization server without c
   assert.deepEqual(await page.locator('#lws-discovery-result a').evaluateAll(links => links.map(link => link.href)), [
     'https://lws.example/alice', 'https://lws.example/alice/data/', 'https://login.example/'
   ]);
-  assert.equal(await page.locator('#rs-session').isVisible(), false);
+  assert.equal(await page.locator('.rs-box-connected').isVisible(), false);
   assert.equal(calls.length, 3);
   assert.ok(calls.every(call => call.method === 'GET' && call.authorization === undefined));
   assert.match(await page.locator('#storage-status').textContent(), /saved on this device/);
@@ -344,16 +346,16 @@ test('Google Drive: empty account, install, upload, reload and restore after sig
   const fixture = await require('./google-drive-fixture.cjs')(context);
   await page.goto(base);
   await localReady(page);
-  await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).click();
+  await page.getByRole('button', { name: 'Google Drive', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to Google Drive'));
   await install(page, 'webmarks');
   await waitFor(() => [...fixture.files.values()].some(f => f.body?.includes('webmarks')));
   await page.reload();
   await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).waitFor();
-  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await page.getByRole('button', { name: 'Disconnect', exact: true }).click();
   await localReady(page);
   assert.equal(await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).count(), 0);
-  await page.getByRole('button', { name: 'Connect Google Drive', exact: true }).click();
+  await page.getByRole('button', { name: 'Google Drive', exact: true }).click();
   await page.getByRole('link', { name: 'Launch Webmarks', exact: true }).waitFor();
   assert.equal(fixture.invalidReads, 0, 'missing library must not request metadata for an undefined file ID');
   await page.locator('#rs-login-error').waitFor({ state: 'hidden' });
