@@ -21,6 +21,32 @@ app's website. Removing a shortcut
 also removes it from Recently used, without deleting any data in the app itself.
 The catalog and its source links live in `index.html`.
 
+## Public app pages and search discovery
+
+`/apps/` is a public directory, with a static page at `/apps/APP_ID/` for each
+catalog app. These pages include direct app links and work without JavaScript
+or an account. The homepage links to the directory even when the store tab is
+closed. The launcher itself continues to manage installations and storage.
+
+After editing the catalog or the editorial text in `scripts/build-app-pages.py`,
+regenerate the committed pages and sitemap:
+
+```sh
+python3 scripts/build-app-pages.py
+python3 scripts/build-app-pages.py --check
+```
+
+CI checks for stale output before deployment. `robots.txt` advertises
+`https://pondersource.com/sitemap.xml`; submit that URL in Search Console too.
+The homepage canonical points to `/`, including when served at `/index.html`.
+GitHub Pages has no server-side redirect configuration, so this uses a canonical
+instead of a JavaScript redirect that could interfere with storage login callbacks.
+App pages have their own canonical URLs. The sitemap covers this website; the
+hosted apps on subdomains are separate sites. Use a Search Console Domain
+property to measure the whole domain including those subdomains.
+
+## Launcher storage
+
 Without a connected account, installed apps and launch history are stored in the
 browser's Origin Private File System (OPFS), with localStorage as a fallback when
 OPFS is unavailable. This storage belongs to this site's origin and browser
