@@ -1,5 +1,15 @@
 # Solid apps — local worker handoff
 
+## Updated priority — 19 November 2026
+
+Michiel has chosen this sequence: first improve remoteStorage modules and their interoperability with the rs.js Solid backend; then migrate the Solid and LWS app forks to rs.js plus those modules; then retro-define Atomic schemas for the proven shapes and investigate Atomic as an rs.js backend. Do not treat app-wide storage migrations or Atomic schemas as completed.
+
+Initial bookmarks work is [pondersource/remotestorage-module-bookmarks PR 1](https://github.com/pondersource/remotestorage-module-bookmarks/pull/1), draft, head `c6f83d8`. No existing Ponder Source fork of the module was found, so the existing raucao module was forked (upstream: https://github.com/raucao/remotestorage-module-bookmarks). This is an existing bookmarks domain, not a newly proposed module.
+
+Nine local tests and the production UMD build pass. The remoteStorage API now reads the Solid vanilla reader's RDF fixtures and aliases through scoped rs.js file/cache calls, retaining document/subject identities, multiple bookmarks per document, topic term kinds and Soukai dates. A regression exercises an actual rs.js local cache. Existing JSON CRUD remains supported.
+
+This is an initial read-only increment. RDF updates/deletes deliberately reject before a JSON write. Automatic type-index discovery, external document/container sources, disconnected document URL resolution, lossless RDF/history writes, and authenticated Solid-backend Playwright coverage remain required. Local Chromium launch timed out; do not claim a passing browser result. CI was running at checkpoint: [44487872616](https://github.com/pondersource/remotestorage-module-bookmarks/actions/runs/44487872616) and [44487870910](https://github.com/pondersource/remotestorage-module-bookmarks/actions/runs/44487870910). No npm release, app migration or backend modification occurred in this increment.
+
 ## Cloud continuation — 18 November 2026
 
 This continuation follows the local publication work below; do not redo the completed Umai/Media Kraken deployments.
