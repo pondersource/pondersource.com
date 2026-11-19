@@ -198,3 +198,5 @@ website host.
 
 Run shared adapter tests with `node --test packages/rs-apps/test.cjs`; browser
 controls are covered by `tests/rs-apps-browser.test.cjs` in the launcher workflow.
+
+The launcher vendors widget commit `5ad6a05` from the updated upstream PR #136, including late pod discovery and route remount recovery.
