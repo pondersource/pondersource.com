@@ -1,5 +1,38 @@
 # Solid apps — local worker handoff
 
+## Bookmarks/backend continuation — 19 November 2026
+
+The module-first priority below remains current. Do not start the app-wide migration or Atomic schemas yet.
+
+### Validated module increment
+
+- [Bookmarks PR 1](https://github.com/pondersource/remotestorage-module-bookmarks/pull/1), still draft. Validated head: `0811835be0112611a5f34178065c7bebfa3f8238`.
+- [Passing run 44559037274](https://github.com/pondersource/remotestorage-module-bookmarks/actions/runs/44559037274): 22 module regressions, 110 rs.js sync tests, and real CSS/Playwright acceptance.
+- Added WebID private/public type-index discovery, Bookmark/BookMark/ActivityStreams Note registrations, registered container traversal, explicit document/container sources and source deduplication. Out-of-scope registrations are reported; `getAll` rejects rather than returning a misleading partial result. Discovery performs no registrations/writes.
+- Reads and writes go through supplied scoped rs.js clients. Fixed awaiting the current backend's asynchronous `getItemURL` and decoding binary RDF MIME bodies. An explicit saved scope URL supports offline identity resolution.
+- `openSolidCollection({client,webId,storageURL,documents,containers})` provides discovery and reads. Explicit `update(id,{title,url,creator,topics})` and `remove(id)` preserve unrelated RDF, sibling subjects, type/field aliases and typed topics. Same-client sibling edits are serialized. Turtle/N-Triples writes are covered; multilingual title edits reject.
+- Browser acceptance proves native RDF discovery, title update followed by subject deletion, preservation of sibling/unknown triples, private denial, existing module JSON writes, fresh-browser recovery and offline reads. A two-context concurrent edit exposes local, remote and last-common bodies while preserving the newer Pod content.
+- Soukai/CRDT documents remain read-only for updates/deletion pending history-aware operations. `Folder.store/remove` still reject RDF rather than replacing it with JSON.
+- Earlier read/JSON/offline acceptance passed against the exact deployed launcher baseline `c0f41cb89aba7e45524897e7d7fde190f6d57144`: [44555139839](https://github.com/pondersource/remotestorage-module-bookmarks/actions/runs/44555139839).
+
+### Backend defect reproduced and fixed in a focused branch
+
+- CSS returned HTTP 205 with no ETag after an RDF update. The next mutation was incorrectly sent with `If-None-Match: *`, failed with 412 and became a false conflict. Reproduced after separating fixture seeding from reader contexts and waiting for completed sync boundaries.
+- [rs.js PR 6](https://github.com/pondersource/remotestorage.js/pull/6) is ready for review. Validated head: `b918b45f00598a9c219519b566a583344fb8f6ce`; branch `fix/solid-etagless-followup`.
+- A known acknowledged body without a validator is fetched before another PUT/DELETE. The GET validator is adopted only when body/content type still match that acknowledged version. A different remote body remains a genuine conflict. No unrelated HEAD validator is assigned to an old body.
+- Adds three regressions; all 110 sync tests and the real Pod acceptance above pass.
+- PR 6 targets `solid-bookmarks-baseline-c0f41cb`, a baseline branch at the launcher's exact source revision, so its diff contains only `src/sync.ts` and sync tests. Do not merge/cherry-pick the whole deployment stack into an unrelated branch. Integrate the focused fix with the appropriate Solid/LWS branch after review, then repin consumers to the tested integrated revision.
+- An initial upstream PR 1439 was closed because its base included unrelated stack commits. The focused review is PR 6; no upstream merge occurred.
+- The bookmarks workflow builds the pinned fix. The production launcher, fork master and LWS worker's branch have not been changed by this work.
+
+### Remaining gates
+
+Native RDF creation, Soukai history-aware writes, cross-Pod source routing, consumer-app readback, and application-level conflict resolution remain unfinished. The conflict test proves detection and availability of candidate bodies, not automatic RDF merge or durable conflict UI. No npm publication or app migration occurred.
+
+The local checkout at `work/bookmarks-solid/module` contains the source changes, but its Git history still starts at the earlier c6f83d8 commit: later commits were made through GitHub while CLI networking was unavailable. Preserve local edits when fetching; the PR's validated head is authoritative. The regenerated browser distribution is committed in the PR.
+
+---
+
 ## Updated priority — 19 November 2026
 
 Michiel has chosen this sequence: first improve remoteStorage modules and their interoperability with the rs.js Solid backend; then migrate the Solid and LWS app forks to rs.js plus those modules; then retro-define Atomic schemas for the proven shapes and investigate Atomic as an rs.js backend. Do not treat app-wide storage migrations or Atomic schemas as completed.
