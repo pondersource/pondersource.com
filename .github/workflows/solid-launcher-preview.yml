@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: remotestorage/remotestorage.js
-          ref: c0f41cb89aba7e45524897e7d7fde190f6d57144
+          ref: fda7c0fa3101e64e6a975d5844f6382112ebad3a
           path: rs-solid-source
       - uses: actions/setup-node@v4
         with:
