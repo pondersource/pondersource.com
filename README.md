@@ -200,3 +200,30 @@ Run shared adapter tests with `node --test packages/rs-apps/test.cjs`; browser
 controls are covered by `tests/rs-apps-browser.test.cjs` in the launcher workflow.
 
 The launcher vendors widget commit `5ad6a05` from the updated upstream PR #136, including late pod discovery and route remount recovery.
+
+## Migrated Solid app forks
+
+Umai, Media Kraken and Solid Memo now use the same login widget and rs.js.
+Their shared data modules live in
+[pondersource/data-modules](https://github.com/pondersource/data-modules/tree/rs-app-data-modules/remotestorage).
+
+| App | Requested scope (read/write) | Module |
+| --- | --- | --- |
+| Umai | `recipes` | Recipes |
+| Media Kraken | `movies` | Movies |
+| Solid Memo | `flashcards` | Flashcards |
+
+These modules own all scoped storage, preserve the original RDF data, and import
+existing Solid documents read-only. Google Drive and Dropbox callbacks must be
+registered for each app origin. Their account tests are separate from the
+Solid acceptance tests. The launcher passes remoteStorage account hints to these
+apps; each app handles its own provider login. The rs.js source pin is
+`92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`, including public-delete completion,
+Solid write revalidation without ETags, path/hash restoration after renewal,
+serialized cache mutations, and child-first cache freshness checks.
+
+The Solid launcher browser test can also verify the published site. With the
+disposable test server running on localhost:3000, set
+`LAUNCHER_TEST_URL=https://pondersource.com` when running
+`node --test tests/launcher-solid.test.cjs`. The test grants local network access
+only to that app origin so it can reach the disposable Solid server.

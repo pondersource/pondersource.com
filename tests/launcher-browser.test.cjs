@@ -162,7 +162,7 @@ for (const [id, name, url] of [
 }
 
 for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['media-kraken', 'Media Kraken']]) {
-  test(name + ' handles sign-in when the launcher has a remoteStorage account', async t => {
+  test(name + ' receives the remoteStorage account hint from the launcher', async t => {
     const { context, page } = await open(t);
     await remoteFixture(context, {
       version: 1,
@@ -173,7 +173,7 @@ for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['medi
     await connect(page);
     const launch = page.getByRole('link', { name: 'Launch ' + name, exact: true });
     await launch.waitFor();
-    assert.equal(await launch.getAttribute('href'), 'https://' + id + '.pondersource.com');
+    assert.equal(await launch.getAttribute('href'), 'https://' + id + '.pondersource.com#remotestorage=' + encodeURIComponent('alice@storage.example'));
   });
 }
 
