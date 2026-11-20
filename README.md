@@ -218,5 +218,6 @@ existing Solid documents read-only. Google Drive and Dropbox callbacks must be
 registered for each app origin. Their account tests are separate from the
 Solid acceptance tests. The launcher passes remoteStorage account hints to these
 apps; each app handles its own provider login. The rs.js source pin is
-`fda7c0fa3101e64e6a975d5844f6382112ebad3a`, including public-delete completion,
-Solid write revalidation without ETags, and path/hash restoration after renewal.
+`92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`, including public-delete completion,
+Solid write revalidation without ETags, path/hash restoration after renewal,
+serialized cache mutations, and child-first cache freshness checks.
