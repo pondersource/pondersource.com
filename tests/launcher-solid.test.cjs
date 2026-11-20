@@ -4,7 +4,7 @@ const { setTimeout: delay } = require('node:timers/promises');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 
 const issuer = 'http://localhost:3000';
-const base = 'http://localhost:8000';
+const base = (process.env.LAUNCHER_TEST_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 async function waitForServer(url) {
   for (let attempt = 0; attempt < 60; attempt++) {
@@ -15,6 +15,9 @@ async function waitForServer(url) {
 }
 
 async function login(page) {
+  if (new URL(base).protocol === 'https:') {
+    await page.context().grantPermissions(['local-network-access'], { origin: new URL(base).origin });
+  }
   await page.goto(base);
   await page.locator('.rs-choose-solid').click();
   await page.locator('[name=rs-provider-address]').fill(issuer);

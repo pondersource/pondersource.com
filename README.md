@@ -221,3 +221,9 @@ apps; each app handles its own provider login. The rs.js source pin is
 `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`, including public-delete completion,
 Solid write revalidation without ETags, path/hash restoration after renewal,
 serialized cache mutations, and child-first cache freshness checks.
+
+The Solid launcher browser test can also verify the published site. With the
+disposable test server running on localhost:3000, set
+`LAUNCHER_TEST_URL=https://pondersource.com` when running
+`node --test tests/launcher-solid.test.cjs`. The test grants local network access
+only to that app origin so it can reach the disposable Solid server.
