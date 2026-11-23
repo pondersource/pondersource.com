@@ -34,7 +34,9 @@ for path, target in assets:
 
 def provenance(checkout):
     checkout = checkout.resolve()
-    files = sorted([*checkout.glob('src/**/*'), checkout / 'package.json', checkout / 'package-lock.json'])
+    sources = sorted(path for path in checkout.glob('src/**/*') if path.is_file())
+    build_inputs = [checkout / name for name in ['package.json', 'package-lock.json', 'tsconfig.json', 'webpack.config.js', 'scripts/nextgraph-csp-loader.cjs'] if (checkout / name).is_file()]
+    files = [*sources, *build_inputs]
     digest = hashlib.sha256()
     for path in files:
         if path.is_file():

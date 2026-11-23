@@ -7,7 +7,7 @@ with source and artifact provenance.
 
 | App | Local validation | Limits |
 | --- | --- | --- |
-| Launcher | 26 staged browser checks | Production workflow retains the deployed rs.js pin while the new distribution is reviewed. |
+| Launcher | 26 staged browser checks | Draft workflow pins the reviewed Ponder Source core/widget revisions; deployment still awaits merge and acceptance. |
 | Litewrite | Production build, Standard lint, 6 browser journeys | Used an isolated test port and the installed Chromium. |
 | Inbox RS | Biome check, full production build and all 696 tests pass | Real pinned transcription assets downloaded and verified; Node fetch needed `NODE_USE_ENV_PROXY=1`. |
 | Hyperdraft | Rollup build | Existing accessibility warnings remain. Browser/format acceptance still needed. |
@@ -33,7 +33,7 @@ records until that choice is implemented. A new optional module-native view can
 read and edit original document URLs; it is not silently substituted for an
 existing user's JSON-adapter data.
 
-The final preview uses `preview.2` archives with matching lockfile integrity and
+The final preview uses `preview.3` archives with matching lockfile integrity and
 identical installed core bundle hashes across all nine package consumers. The
 three static consumers include artifact hashes. The OneDrive test ZIP contains
 the same verified core/widget builds. These files are published only on the draft review branches.
@@ -67,6 +67,23 @@ Shared source reviews: [all-backend distribution](https://github.com/pondersourc
 [data modules](https://github.com/pondersource/data-modules/pull/8), and
 [the preserved OneDrive draft](https://github.com/pondersource/remotestorage.js/pull/7).
 
-The Atomic plugin race fix is held separately while the direct native SDK
-connection and synchronization flow is evaluated. It is not a prerequisite
-for a native Atomic SDK backend. No AtomicServer fork was created.
+The Atomic plugin race fix is separately reviewable in
+[AtomicServer #2645](https://github.com/ontola/atomic-server/pull/2645) while
+the direct native SDK connection and synchronization flow is evaluated. It is
+not a prerequisite for a native Atomic SDK backend. No AtomicServer fork was
+created; the user exempted it from the fork policy.
+
+## Concurrency and startup follow-up
+
+The distribution also includes the upstream Solid review fixes, server-enforced
+Dropbox mutation conditions, the shared unknown-body/lost-acknowledgement fix,
+and LWS HTTP cache isolation. The pinned NextGraph SDK now builds under strict
+CSP without dynamic evaluation. OneDrive authentication initializes only after
+explicit connection, so optional configuration cannot break guest startup on
+insecure HTTP test origins.
+
+These changes do not establish atomic writes on an arbitrary server. The
+[concurrency audit](backend-concurrency-audit.md) distinguishes client bugs,
+provider primitives and CRDT conflict retention. The pinned Java LWS reference
+server exposed a separate blob-lifetime read race (HTTP 500 during concurrent
+index replacement); required interoperability checks retain that evidence.

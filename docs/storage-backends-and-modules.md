@@ -133,9 +133,9 @@ can be changed only after the corresponding sources are published and tested.
 
 ## Verified locally
 
-- rs.js: 672 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
-- LWS: 24 Node tests and browser offline/reconnect journey (open-mode fixture).
-- OneDrive: 16 mocked Graph/MSAL tests; real sign-in navigation only, no signed-in result yet.
+- rs.js: 695 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
+- LWS: 25 Node tests and browser offline/reconnect journey (open-mode fixture).
+- OneDrive: 22 mocked Graph/MSAL tests; real sign-in navigation only, no signed-in result yet.
 - Nextgraph: 9 adapter tests; actual pinned SDK browser channel check uses a simulated wallet.
 - Widget: 11 browser checks, including native chooser, import, local status and mobile width.
 - Launcher preview: 26 browser checks on the staged all-backend bundle.
@@ -171,8 +171,9 @@ locally. Umai, Media Kraken and Solid Memo receive the equivalent browser bundle
 These are committed dependency previews on draft review branches; per-app
 builds and browser acceptance are tracked separately in
 [the review inventory](storage-app-preview-checks.md). No deployment or all-app certification follows from
-resolving lockfiles. The launcher workflow keeps the published source pin until
-the rs.js changes have a reviewable published commit.
+resolving lockfiles. The launcher draft workflow now pins the published Ponder Source core/widget
+review commits and builds the all-backend bundle. The deployed site is unchanged
+until the draft is accepted and merged.
 
 The optional module-native Solid view reads and edits original upstream document
 URLs through the Solid backend's authenticated fetch, with root write fences and

@@ -153,8 +153,9 @@ The SDK supports `Agent.fromSecret`, authenticated Store connections, and a
 native offline outbox. Durable local storage requires its client-DB worker and
 WASM/OPFS initialization; constructing Store alone does not enable that layer.
 This path bypasses the remoteStorage plugin, so the plugin HTTP precondition
-race fix is not required for the native backend. Publication of that server
-patch is held while this alternative is evaluated. The user explicitly exempted
+race fix is not required for the native backend. The server fix is published separately as
+[AtomicServer #2645](https://github.com/ontola/atomic-server/pull/2645),
+without a merge or deployment, while this alternative is evaluated. The user explicitly exempted
 AtomicServer from the Ponder Source forking policy.
 
 The document-first model still needs immutable revisions and retained concurrent

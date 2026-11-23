@@ -22,10 +22,11 @@ def package(checkout, version, files, metadata):
     checkout = checkout.resolve()
     sources = sorted(path for path in checkout.glob('src/**/*') if path.is_file())
     digest = hashlib.sha256()
-    for path in [*sources, checkout / 'package.json', checkout / 'package-lock.json']:
+    build_inputs = [checkout / name for name in ['package.json', 'package-lock.json', 'tsconfig.json', 'webpack.config.js', 'scripts/nextgraph-csp-loader.cjs'] if (checkout / name).is_file()]
+    for path in [*sources, *build_inputs]:
         digest.update(str(path.relative_to(checkout)).encode() + b'\0' + path.read_bytes())
     provenance = {
-        'status': 'experimental local preview; no npm publication or deployment',
+        'status': 'experimental fork preview; no npm publication or deployment',
         'baseCommit': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
         'sourceSha256': digest.hexdigest(),
         'artifacts': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in files.items()},
@@ -48,12 +49,12 @@ def package(checkout, version, files, metadata):
     print(output)
 
 rsfiles = {str(p.relative_to(args.rs)): p for p in (args.rs / 'release/types').glob('**/*') if p.is_file()}
-for filename in ['LICENSE', 'README.md', 'docs/lws-experimental.md', 'docs/nextgraph-experimental.md']:
+for filename in ['LICENSE', 'README.md', 'docs/lws-experimental.md', 'docs/nextgraph-experimental.md', 'webpack.config.js', 'scripts/nextgraph-csp-loader.cjs']:
     rsfiles[filename] = args.rs / filename
 for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js']:
     rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
 for suffix in ['.map', '.LICENSE.txt']:
     rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
-package(args.rs, '2.0.0-beta.10-pondersource.7-preview.2', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+package(args.rs, '2.0.0-beta.10-pondersource.7-preview.3', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
 widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
-package(args.widget, '1.8.2-pondersource.2-preview.2', widgetfiles, {})
+package(args.widget, '1.8.2-pondersource.2-preview.3', widgetfiles, {})
