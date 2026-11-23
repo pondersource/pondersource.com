@@ -1,9 +1,9 @@
 # Storage unification work
 
-Implementation verified on 2026-11-20; fork review branches and draft PRs
-published on 2026-11-23. No npm release or production rollout has been made.
-The deployed source remains `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`;
-the draft launcher workflow pins the reviewed Ponder Source all-backend builds.
+Implementation verified on 2026-11-20; fork PRs published and then merged
+after green CI on 2026-11-23. No upstream npm release was made. The launcher
+now deploys Ponder Source source `c97481060a30d7adcd6136525572cfeeb63927b0`,
+replacing the former deployed pin `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`.
 See [the app review inventory](storage-app-preview-checks.md).
 
 ## Implemented foundation
@@ -170,12 +170,12 @@ Local preview archives (with source and artifact provenance) are prepared for
 Litewrite, Inbox RS, Hyperdraft, Sharesome, Webmarks, Inspektor, Savr, Marco and
 Todonna. Their manifests, lockfiles and public OneDrive configuration are updated
 locally. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
-These are committed dependency previews on draft review branches; per-app
+These are merged dependency previews; per-app
 builds and browser acceptance are tracked separately in
 [the review inventory](storage-app-preview-checks.md). No deployment or all-app certification follows from
-resolving lockfiles. The launcher draft workflow now pins the published Ponder Source core/widget
-review commits and builds the all-backend bundle. The deployed site is unchanged
-until the draft is accepted and merged.
+resolving lockfiles. The merged launcher workflow pins the published Ponder Source core/widget
+commits and builds the all-backend bundle. Deployment and public artifact hashes
+were verified; live-account and full format acceptance remain in progress.
 
 The optional module-native Solid view reads and edits original upstream document
 URLs through the Solid backend's authenticated fetch, with root write fences and
