@@ -26,7 +26,7 @@ def package(checkout, version, files, metadata):
     for path in [*sources, *build_inputs]:
         digest.update(str(path.relative_to(checkout)).encode() + b'\0' + path.read_bytes())
     provenance = {
-        'status': 'experimental fork preview; no npm publication or deployment',
+        'status': 'experimental fork preview; not published to npm',
         'baseCommit': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
         'sourceSha256': digest.hexdigest(),
         'artifacts': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in files.items()},
@@ -55,6 +55,6 @@ for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js
     rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
 for suffix in ['.map', '.LICENSE.txt']:
     rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
-package(args.rs, '2.0.0-beta.10-pondersource.7-preview.4', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+package(args.rs, '2.0.0-beta.10-pondersource.7-preview.5', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
 widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
-package(args.widget, '1.8.2-pondersource.2-preview.4', widgetfiles, {})
+package(args.widget, '1.8.2-pondersource.2-preview.5', widgetfiles, {})

@@ -94,16 +94,36 @@ export async function discoverLWS(address, { fetch: request = globalThis.fetch, 
     resource = root;
   }
   const metadata = metadataLink(challenge);
-  let authorizationServers = [];
+  let metadataResponse;
   if (metadata) {
     const metadataURL = webURL(metadata);
     sameOrigin(metadataURL, requested);
-    const document = await json(await get(metadataURL, 'application/json'));
-    if (document.resource !== resource.href) throw new Error('Authorization metadata identifies a different resource.');
+    metadataResponse = await get(metadataURL, 'application/json');
+  } else {
+    // A public root can contain private data without sending a challenge.
+    // RFC 9728 also defines a metadata URL independently of a 401 response.
+    const metadataURL = new URL(resource.href);
+    metadataURL.pathname = '/.well-known/oauth-protected-resource' + resource.pathname;
+    metadataResponse = await get(metadataURL, 'application/json');
+    // Absence is compatible with an open-mode server. Malformed metadata,
+    // transport failures and denied discovery must not downgrade to anonymous.
+    if ([404, 410].includes(metadataResponse.status) && first.status !== 401 && challenge.status !== 401) {
+      metadataResponse = undefined;
+    }
+  }
+  let authorizationServers = [];
+  if (metadataResponse) {
+    const document = await json(metadataResponse);
+    if (document.resource !== resource.href) { throw new Error('Authorization metadata identifies a different resource.'); }
     if (!Array.isArray(document.authorization_servers) || !document.authorization_servers.length) {
       throw new Error('Authorization metadata has no authorization server.');
     }
-    authorizationServers = [...new Set(document.authorization_servers.map(value => webURL(value).href))];
+    authorizationServers = [...new Set(document.authorization_servers.map(value => {
+      // Issuer identifiers are exact strings: adding a trailing slash changes the issuer.
+      const url = webURL(value);
+      if (typeof value !== 'string' || url.search || value.includes('#')) { throw new Error('Invalid authorization server identifier.'); }
+      return value;
+    }))];
   } else if (challenge.status === 401) {
     throw new Error('The server did not expose its LWS authorization discovery header.');
   }

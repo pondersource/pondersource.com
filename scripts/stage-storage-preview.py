@@ -22,7 +22,10 @@ if output.exists():
 assets = [
     (args.rs / 'release/remotestorage-all.js', Path('dependencies/remotestoragejs/remotestorage.js')),
     (args.rs / 'release/remotestorage-all.js.LICENSE.txt', Path('dependencies/remotestoragejs/remotestorage-all.js.LICENSE.txt')),
+    (args.rs / 'release/remotestorage-all.js.map', Path('dependencies/remotestoragejs/remotestorage-all.js.map')),
     (args.widget / 'build/widget.js', Path('dependencies/remotestorage-widget/widget.js')),
+    (args.widget / 'build/widget.js.map', Path('dependencies/remotestorage-widget/widget.js.map')),
+    (args.widget / 'build/widget.js.LICENSE.txt', Path('dependencies/remotestorage-widget/widget.js.LICENSE.txt')),
 ]
 for path, _ in assets:
     if not path.is_file():
@@ -46,7 +49,7 @@ def provenance(checkout):
     return {'baseCommit': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
             'sourceSha256': digest.hexdigest()}
 
-manifest = {'status': 'local experimental preview, not deployed',
+manifest = {'status': 'experimental fork preview; source and artifact provenance',
             'remotestorage': provenance(args.rs), 'widget': provenance(args.widget),
             'artifacts': {str(target): hashlib.sha256((output / target).read_bytes()).hexdigest() for _, target in assets}}
 (output / 'storage-preview.json').write_text(json.dumps(manifest, indent=2) + '\n')
