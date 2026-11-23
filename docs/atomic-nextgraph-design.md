@@ -35,7 +35,7 @@ a second client sync queue. The plugin's own README records unresolved host
 limitations: `If-Match` is checked before the commit, so racing writers can both
 pass it; duplicate creation gives an unsuitable error; denial is not returned
 to the app; tokens have no expiry; PKCE is absent. Those are reported upstream
-limitations. A local host patch now validates the blob under the same subject
+limitations. The published draft host patch validates the blob under the same subject
 lock as ordinary signed writers. Conditional creates use the persistent localId
 property and its DB identity lock; a losing create returns 412. An intent's
 localId alone is not a persistent identity. Conditional multi-resource plans
@@ -143,7 +143,7 @@ See the rs.js `docs/nextgraph-experimental.md` for snapshot shape and API.
 Unit tests replace the SDK boundary; a browser protocol fixture uses the actual
 pinned SDKs with a simulated wallet channel. Neither establishes real broker
 synchronization. The Atomic entry uses normal rs.js discovery and consent, with
-no new Atomic agent-secret transport. No production deployment is claimed.
+no new Atomic agent-secret transport. No AtomicServer deployment or live Atomic/NextGraph certification is claimed.
 
 ## Atomic native SDK alternative under discussion
 
