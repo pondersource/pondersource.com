@@ -139,3 +139,14 @@ test('allows absent canonical metadata only for an unchallenged public root', as
     assert.deepEqual((await discoverLWS(storage, f)).authorizationServers, []);
   }
 });
+
+test('uses the canonical metadata URL without a trailing slash for an origin-root storage', async () => {
+  const address = 'https://storage.example/';
+  const canonical = 'https://storage.example/.well-known/oauth-protected-resource';
+  const fetch = async url => {
+    if (url === address) return response({ id: address, type: 'Storage', service: [{ type: 'StorageRoot', serviceEndpoint: address }] });
+    assert.equal(url, canonical);
+    return response({ resource: address, authorization_servers: [server] });
+  };
+  assert.deepEqual((await discoverLWS(address, { fetch })).authorizationServers, [server]);
+});

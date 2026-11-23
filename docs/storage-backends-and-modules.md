@@ -2,17 +2,16 @@
 
 Implementation verified on 2026-11-20; fork PRs published and then merged
 after green CI on 2026-11-23. No upstream npm release was made. The launcher workflow
-now pins Ponder Source source `d295cef9e41e1a3f0d3ff4dd784ba8599d77b787`
-for the authenticated LWS and JSON transport follow-up. The initial fork
+now pins Ponder Source source `9ba1311a2631e2053919bd4b1dac45ef60ad4d75`
+for the authenticated LWS, JSON readback and interrupted-write recovery follow-up. The initial fork
 rollout used `c97481060a30d7adcd6136525572cfeeb63927b0`.
 See [the app review inventory](storage-app-preview-checks.md).
 
 ## Implemented foundation
 
-The `integration/storage-backends` working branch in the rs.js checkout starts
-from that production pin. The LWS transport is ported from
-`pondersource/remotestorage.js:feat/lws-backend`, rather than reverting the
-newer cache, OAuth and Solid fixes to that branch's older baseline.
+The fork retains the newer cache, OAuth and Solid fixes while porting the LWS
+transport from `pondersource/remotestorage.js:feat/lws-backend`. It does not
+replace those fixes with that branch's older baseline.
 
 `npm run build:all` produces one browser bundle with remoteStorage, Dropbox,
 Google Drive, Solid, experimental LWS, experimental OneDrive and an experimental
@@ -136,12 +135,12 @@ can be changed only after the corresponding sources are published and tested.
 
 ## Verified locally
 
-- rs.js: 696 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
+- Latest rs.js source: 738 Mocha tests; existing legacy suites; source/spec lint; release, Solid and all-backend builds.
 - LWS: 25 Node tests and browser offline/reconnect journey (open-mode fixture).
 - OneDrive: 22 mocked Graph/MSAL tests; real sign-in navigation only, no signed-in result yet.
 - Nextgraph: 9 adapter tests; actual pinned SDK browser channel check uses a simulated wallet.
 - Widget: 11 browser checks, including native chooser, import, local status and mobile width.
-- Launcher preview: 26 browser checks on the staged all-backend bundle.
+- Launcher preview: 26 browser checks on the staged all-backend bundle and 14 discovery checks.
 - Data modules: 29 Node checks and one real Chromium module journey.
 - Atomic host: 2 DB lock tests and 24 actual plugin-runtime blob/write-route checks.
 
@@ -158,9 +157,9 @@ These numbers describe local checks, not all-app rollout or live service certifi
    configure the public app deployments or certify every issuer.
 3. Complete the upstream format round trips and connect each app to its domain
    module, keeping its upstream pointer and source licenses.
-4. Publish the verified source revisions behind the local preview distribution.
-   App packages and lockfiles are updated locally; finish acceptance and deploy each fork
-   before changing launcher claims. Todonna now has a GitHub mirror retaining its GitLab history.
+4. Track each follow-up merge and deployment in the app review inventory. Source
+   and archive checks do not replace deployed-artifact verification. Todonna has
+   a GitHub mirror retaining its GitLab history; GitLab hosting stays unchanged.
 5. Complete real Atomic plugin consent and Nextgraph wallet/broker acceptance
    for the implementations described in [the design discussion](atomic-nextgraph-design.md).
 
@@ -169,10 +168,10 @@ not an assertion that those apps have been forked, tested or deployed.
 
 ## App dependency previews
 
-Local preview archives (with source and artifact provenance) are prepared for
+Versioned preview archives (with source and artifact provenance) are prepared for
 Litewrite, Inbox RS, Hyperdraft, Sharesome, Webmarks, Inspektor, Savr, Marco and
-Todonna. Their manifests, lockfiles and public OneDrive configuration are updated
-locally. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
+Todonna. Their manifests and lockfiles record the supplied archives and the public
+OneDrive configuration. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
 These are versioned dependency previews; per-app
 builds and browser acceptance are tracked separately in
 [the review inventory](storage-app-preview-checks.md). No deployment or all-app certification follows from

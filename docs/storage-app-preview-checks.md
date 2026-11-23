@@ -1,57 +1,92 @@
 # App preview checks
 
-The initial `preview.4` rollout was verified on 2026-11-20; its PRs were
-published and merged after green CI on 2026-11-23 with the user's authorization.
-Ten app Pages deployments and the launcher deployment passed. Todonna's GitLab
-hosting stayed unchanged, and Solid Memo initially retained its earlier deployment
-while post-merge checks were investigated. The `preview.5` follow-up below adds
-real authenticated LWS acceptance and consistent JSON transport reads. No upstream npm release is included. The previews preserve each app's existing upstream
-pointer, module paths and native JSON schemas. Backend libraries are packaged
-with source and artifact provenance.
+The initial `preview.4` rollout was checked on 2026-11-20 and merged after green
+CI on 2026-11-23. Ten app Pages deployments and the launcher deployment passed.
+Todonna's GitLab hosting stayed unchanged. Solid Memo retained its earlier
+public deployment while an interrupted-upload failure was investigated.
 
-| App | Local validation | Limits |
+The follow-up reviews add authenticated LWS discovery, consistent transport
+readback, media-type comparison, durable cache commits and interrupted-write
+recovery. The original app schemas, module paths and upstream pointers remain
+recorded. No upstream npm release is included. Each preview archive records its
+source revision, source digest and artifact hashes.
+
+## App acceptance
+
+| App | Validation | Limits |
 | --- | --- | --- |
-| Launcher | 26 staged browser checks and 13 discovery checks | Merged workflow pins the reviewed Ponder Source core/widget revisions; deployment passed and the public core hash was verified. |
-| Litewrite | Production build, Standard lint, 6 browser journeys | Used an isolated test port and the installed Chromium. |
-| Inbox RS | Biome check, full production build and all 696 tests pass | Real pinned transcription assets downloaded and verified; Node fetch needed `NODE_USE_ENV_PROXY=1`. |
+| Launcher | 26 staged browser checks and 14 discovery checks | The workflow builds pinned Ponder Source core/widget source. Deployment and public artifact verification are separate gates. |
+| Litewrite | Production build, Standard lint, 6 browser journeys | Other providers still require live-account acceptance. |
+| Inbox RS | Biome, production build, all 696 unit tests and 47 desktop/mobile/WebKit PWA checks | The storage bundle stays offline within the unchanged 2.25 MiB precache budget. Large unrelated optional chunks still fail the guard. |
 | Hyperdraft | Rollup build and browser smoke checks | Existing accessibility warnings remain; full format acceptance is separate. |
-| Sharesome | Production build, 8 QUnit tests | Provider-specific public sharing remains subject to backend capabilities. OneDrive/Nextgraph do not publish private records. |
-| Webmarks | Build, 15 QUnit tests | New optional cross-format domain bundle has not yet replaced its native JSON module. |
+| Sharesome | Production build, 8 QUnit tests | Public sharing depends on backend capabilities; OneDrive/NextGraph private records are not published. |
+| Webmarks | Build, 15 QUnit tests | The optional cross-format domain bundle has not replaced its native JSON module. |
 | Inspektor | Build, 24 QUnit tests | Wildcard inspection remains intentional. |
-| Savr | Build including TypeScript, 472 Jest tests | Skipped unrelated GPU-runtime install scripts after a failed binary download; the browser build succeeds. Raised the precache asset limit to retain the storage bundle offline. |
-| Marco | 428 browser tests through `pnpm test` | No release-only `pnpm build` was run. |
-| Todonna | Build, 3 browser journeys including fresh-device remote changes/deletion | GitHub mirror now retains the GitLab history and upstream attribution; hosting remains unchanged. |
-| Umai | Vite build, 28 tests on its Node 16 runtime and post-deployment private Pod journeys | Public core hash matches the final shared artifact; other providers still require live-account acceptance. |
-| Media Kraken | Build, 6 tests on its Node 14 runtime and post-deployment native import/fresh-browser Pod journeys | Public core hash matches the final shared artifact. It uses Dart Sass rather than the obsolete node-sass binary. |
-| Solid Memo | All 36 task checks, all repository checks; lint passed | Initial parallel execution exhausted memory; the successful task run used concurrency 2. The final preview passed 110 web tests with 100% coverage, build and REUSE lint. All PR checks passed before merging. One post-merge Chromium journey passed on an unchanged rerun and under controlled local latency. The native LWS suites now use an explicit native composition: all 60 original journeys pass. Both default-widget private-persistence/fresh-device journeys pass against the exact final preview.5 bundle. Production LWS registration remains separate. |
+| Savr | TypeScript/build, 472 Jest tests | The precache asset limit retains the storage bundle offline. |
+| Marco | 428 browser tests through `pnpm test` | No release-only `pnpm build` is used. |
+| Todonna | Build, 3 browser journeys including fresh-device edits/deletion | The GitHub mirror retains GitLab history and attribution; GitLab hosting remains unchanged. |
+| Umai | Vite build, 28 tests on Node 16 and private Pod journeys | Other providers require live-account acceptance. |
+| Media Kraken | Build, 6 tests on Node 14 and native-import/fresh-browser Pod journeys | Uses Dart Sass in place of obsolete node-sass. |
+| Solid Memo | All 36 task checks, repository/lint/REUSE checks, build and 113 web tests with full coverage | The explicit native composition passes 60 original journeys. Separately, two default-widget journeys cover real LWS login, private persistence, anonymous denial and a fresh browser. Disposable registrations do not configure production issuers. |
 
-The backend library's tests verify its new behavior separately from app UI
-checks. No signed-in OneDrive, production LWS issuer registration, real Atomic consent
-or Nextgraph broker certification follows from the table. The configured
-CSS-LWS test registrations are disposable local fixtures. The latest storage
-artifact revision was staged and passed all 26 launcher checks. Live-provider acceptance remains separate from merging and deploying these
-fork previews.
+Nine apps consume versioned package archives with lockfile integrity; three
+consume static bundles with source/license/hash records. Installed or extracted
+core bytes must match the shared artifact. The OneDrive test ZIP uses those same
+core/widget bytes and the user's registered localhost callback.
 
-The pending Solid data migration choice affects the three former Solid-only
-apps. Their current connection adapter remains compatible with existing fork
-records until that choice is implemented. A new optional module-native view can
-read and edit original document URLs; it is not silently substituted for an
-existing user's JSON-adapter data.
+## Provider and recovery evidence
 
-The final preview uses `preview.5` archives with matching lockfile integrity and
-identical installed core bundle hashes across all nine package consumers. The
-three static consumers include artifact hashes. The OneDrive test ZIP contains
-the same verified core/widget builds. Review links track the follow-up merges. The rs.js and widget distribution branches retain
-the experimental backends without adding them to their upstream PR heads.
+The merged [rs.js #9](https://github.com/pondersource/remotestorage.js/pull/9)
+fixes canonical protected-resource metadata discovery for public LWS roots,
+index discovery when container listings report generic MIME, and JSON text
+readback through LWS, OneDrive, NextGraph, Dropbox and Google Drive. The module
+object API still parses JSON. Semantic media-type comparison accepts legal
+normalization without equating different bytes or meaningful parameter values.
 
-Final artifact verification: all nine dependency installs completed; package
-archive integrity matches every npm lockfile. Litewrite, Hyperdraft, Inbox RS
-web, Savr, Umai, Media Kraken and Solid Memo builds pass. The refreshed browser
-suites pass for Litewrite (6), Todonna (3), Sharesome (8), Webmarks (15),
-Inspektor (24) and Marco (428). Inspektor initially shared a test-server port
-with another suite; its sequential retry passes. Solid Memo adds 110 web tests
-with full coverage after the artifact refresh. Earlier broader checks remain
-listed above. The Inbox model-asset download is now resolved, and the full suite passes.
+The explicitly patched Java LWS fixture passes 706 Maven tests, including nine
+provider regressions, plus actual SDK CRUD/concurrent-write and browser checks.
+Its source patch and licensing are retained in the Ponder Source SDK fork.
+Unmodified upstream and raw LWSD concurrency failures are not certified by those
+results. See the [concurrency audit](backend-concurrency-audit.md).
+
+Solid Memo's upload/reload failure was reproduced on CSS 7.3.0's default file
+accessor: an incomplete replacement could truncate the original document. Its
+reference fixture now uses CSS's supported `AtomicFileDataAccessor`, which
+receives the body in a temporary file before rename. Controlled tests preserve
+body, metadata and ETag after an aborted request. This proves incomplete-upload
+safety for that fixture, not a body-and-metadata transaction across every crash.
+The default file accessor is not certified safe.
+
+The frozen recovery source also passes 738 Mocha tests, legacy suites,
+source/spec lint, all production builds, 11 actual recovery browser scenarios,
+five native IndexedDB durability/lock cases, SDK/CSP/startup checks and the
+patched Java provider's CRUD/concurrency and all 11 browser cases. The app's
+original and controlled upload/reload journeys keep their original assertions.
+CI and the exact committed source remain the merge gates.
+
+The `preview.6` source is
+`9ba1311a2631e2053919bd4b1dac45ef60ad4d75` in
+[rs.js #10](https://github.com/pondersource/remotestorage.js/pull/10), with core
+SHA-256 `9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db`.
+The widget source remains `045c78cd752593e58fffed7386ddcbb4ba74dd2e`, with SHA-256
+`7a070705f828684e16de500610ed8874c1c8943e8416e87babb7b6a810340bb6`.
+Final archives are handed off only after all required producer CI passes.
+Individual review links track consumer merges and deployment outcomes.
+
+## Remaining acceptance limits
+
+- Signed-in OneDrive, including final-commit concurrency, is pending. Production
+  app callbacks must be added to the same personal-account registration.
+- Production LWS issuers, clients and callbacks need their own configuration
+  and acceptance; the CSS test registrations are disposable local fixtures.
+- AtomicServer's plugin atomicity improvement is a separate draft, with no
+  deployed server or completed real-user consent test. Native Atomic SDK use
+  remains a distinct design option.
+- NextGraph SDK/CSP/startup tests use a simulated wallet channel. Real two-device
+  wallet/broker divergence and delivery remain pending.
+- Complete cross-app format interoperability and consumer adoption of the new
+  optional domains bundle remain unfinished. The native document-URL view is
+  explicit; it does not silently migrate existing JSON-adapter records.
 
 ## Review links
 
@@ -79,89 +114,11 @@ the direct native SDK connection and synchronization flow is evaluated. It is
 not a prerequisite for a native Atomic SDK backend. No AtomicServer fork was
 created; the user exempted it from the fork policy.
 
-## Concurrency and startup follow-up
+## App dependency follow-ups
 
-The distribution also includes the upstream Solid review fixes, server-enforced
-Dropbox mutation conditions, the shared unknown-body/lost-acknowledgement fix,
-and LWS HTTP cache isolation. The pinned NextGraph SDK now builds under strict
-CSP without dynamic evaluation. OneDrive authentication initializes only after
-explicit connection, so optional configuration cannot break guest startup on
-insecure HTTP test origins.
-
-These changes do not establish atomic writes on an arbitrary server. The
-[concurrency audit](backend-concurrency-audit.md) distinguishes client bugs,
-provider primitives and CRDT conflict retention. The pinned Java LWS reference
-server exposed a separate blob-lifetime read race (HTTP 500 during concurrent
-index replacement); required interoperability checks retain that evidence.
-
-The final preview also defers NextGraph SDK evaluation until explicit connection,
-so missing modern SDK features do not break guest use or other backends. The
-Node 20 import and browser guest regression cover a missing `Set.union` without
-adding global polyfills. Inbox retains its storage bundle offline with a bounded
-2.25 MiB precache budget; unrelated large optional chunks still fail the guard.
-
-## Initial rollout merge outcome
-
-All twelve listed app PRs and the launcher/core/widget/module rollout PRs are
-merged after green checks. Sharesome, Inspektor, Marco and Todonna received
-read-only CI workflows that run their existing browser suites before merging.
-The standalone recipes and flashcard-schema PRs also merged. Conflicting older
-bookmark-topic and LWS-widget PRs, and the failing older LWS core PR, remain
-unmerged.
-
-Core and widget changes live on their fork's `distribution` branches; their
-`master` branches remain unchanged where they feed upstream review. The copied
-OneDrive implementation merged into its separate review baseline after real
-Node 22/24/26 CI, without replacing the MSAL/app-folder prototype.
-
-The module fork's npm publication and documentation Pages deployment jobs now
-require the canonical upstream repository. Fork builds and documentation checks
-still run. Upstream Solid/widget PRs and AtomicServer #2645 remain open for review.
-
-
-## Authenticated LWS and JSON transport follow-up
-
-The shared [rs.js follow-up](https://github.com/pondersource/remotestorage.js/pull/9)
-uses source `d295cef9e41e1a3f0d3ff4dd784ba8599d77b787`. Its bundle is
-1,072,397 bytes with SHA-256
-`f4d2fb86d353d225ad5855638647961be1bd529563fa36ea1b1c14c138821746`.
-The widget source/bundle and module bundle are unchanged; preview archives have
-new versioned provenance. Static apps' SOURCES.txt files now agree with their
-actual archive-derived source revisions and hashes.
-
-Real CSS-LWS testing exposed three concrete issues:
-
-- A public root needs canonical protected-resource metadata discovery before
-  anonymous access can be assumed.
-- A root listing's generic MIME value must not hide an existing private index;
-  authoritative HEAD metadata identifies it without reading foreign file bodies.
-- JSON transport reads must retain text so sync can compare an acknowledged
-  body with its readback before adopting a missing write validator. The same
-  pending-edit loss was reproduced and fixed in LWS, OneDrive, NextGraph,
-  Dropbox and Google Drive; the module object API still parses JSON.
-
-The final shared source passes 702 Mocha tests, legacy suites, lint/types and
-all production builds; missing-validator/conflict browser checks, actual
-NextGraph SDK/CSP/startup checks and Node 20 import checks also pass. OneDrive
-and NextGraph provider boundaries in the new cache regressions are mocked;
-they do not establish live Microsoft or wallet/broker behavior.
-
-Solid Memo's explicit native build passes all 60 unchanged native journeys
-across CSS-LWS and LWS-only. Separately, both default-widget journeys pass real
-native login/consent, private deck/card/study persistence, anonymous denial and
-fresh-browser reconnect on the exact final archive bundle. The test supplies a
-disposable public client registration and supported ES256 configuration; app
-operators still need their chosen production registration.
-
-Follow-up reviews: [launcher](https://github.com/pondersource/pondersource.com/pull/28),
-[Inbox RS](https://github.com/pondersource/inbox-rs/pull/7), and
-[Solid Memo](https://github.com/pondersource/solid-memo/pull/6).
-All consumer merges depend on the shared source's full green CI. Individual
-review links provide current merge and deployment status.
-
-
-App dependency follow-ups:
-
+- [Launcher #28](https://github.com/pondersource/pondersource.com/pull/28)
+- [Inbox RS #7](https://github.com/pondersource/inbox-rs/pull/7)
+- [Solid Memo #6](https://github.com/pondersource/solid-memo/pull/6)
 - [Litewrite #8](https://github.com/pondersource/litewrite/pull/8)
 - [Hyperdraft #13](https://github.com/pondersource/hyperdraft/pull/13)
 - [Sharesome #2](https://github.com/pondersource/sharesome/pull/2)
@@ -172,3 +129,15 @@ App dependency follow-ups:
 - [Todonna #2](https://github.com/pondersource/todonna/pull/2)
 - [Umai #6](https://github.com/pondersource/umai/pull/6)
 - [Media Kraken #5](https://github.com/pondersource/media-kraken/pull/5)
+
+## Fork and upstream boundaries
+
+Core and widget changes live on the Ponder Source `distribution` branches.
+Their upstream-review `master` branches retain the narrower Solid changes.
+The copied OneDrive implementation merged into a separate review baseline with
+Node 22/24/26 CI; it does not replace the incompatible MSAL/app-folder prototype.
+
+Fork module builds and docs checks run, while npm publication and documentation
+Pages deployment require the canonical upstream repository. Upstream Solid
+#1403, widget #136 and AtomicServer #2645 remain open. Conflicting older
+bookmark/widget reviews and the failing older LWS core review remain unmerged.

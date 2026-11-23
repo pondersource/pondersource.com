@@ -49,12 +49,12 @@ def package(checkout, version, files, metadata):
     print(output)
 
 rsfiles = {str(p.relative_to(args.rs)): p for p in (args.rs / 'release/types').glob('**/*') if p.is_file()}
-for filename in ['LICENSE', 'README.md', 'docs/lws-experimental.md', 'docs/nextgraph-experimental.md', 'webpack.config.js', 'scripts/nextgraph-csp-loader.cjs']:
+for filename in ['LICENSE', 'README.md', 'docs/lws-experimental.md', 'docs/nextgraph-experimental.md', 'docs/interrupted-writes.md', 'webpack.config.js', 'scripts/nextgraph-csp-loader.cjs']:
     rsfiles[filename] = args.rs / filename
 for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js']:
     rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
 for suffix in ['.map', '.LICENSE.txt']:
     rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
-package(args.rs, '2.0.0-beta.10-pondersource.7-preview.5', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+package(args.rs, '2.0.0-beta.10-pondersource.7-preview.6', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
 widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
-package(args.widget, '1.8.2-pondersource.2-preview.5', widgetfiles, {})
+package(args.widget, '1.8.2-pondersource.2-preview.6', widgetfiles, {})

@@ -103,7 +103,7 @@ export async function discoverLWS(address, { fetch: request = globalThis.fetch, 
     // A public root can contain private data without sending a challenge.
     // RFC 9728 also defines a metadata URL independently of a 401 response.
     const metadataURL = new URL(resource.href);
-    metadataURL.pathname = '/.well-known/oauth-protected-resource' + resource.pathname;
+    metadataURL.pathname = '/.well-known/oauth-protected-resource' + (resource.pathname === '/' ? '' : resource.pathname);
     metadataResponse = await get(metadataURL, 'application/json');
     // Absence is compatible with an open-mode server. Malformed metadata,
     // transport failures and denied discovery must not downgrade to anonymous.
