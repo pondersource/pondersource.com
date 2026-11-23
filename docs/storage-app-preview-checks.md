@@ -33,7 +33,7 @@ records until that choice is implemented. A new optional module-native view can
 read and edit original document URLs; it is not silently substituted for an
 existing user's JSON-adapter data.
 
-The final preview uses `preview.3` archives with matching lockfile integrity and
+The final preview uses `preview.4` archives with matching lockfile integrity and
 identical installed core bundle hashes across all nine package consumers. The
 three static consumers include artifact hashes. The OneDrive test ZIP contains
 the same verified core/widget builds. These files are published only on the draft review branches.
@@ -87,3 +87,9 @@ These changes do not establish atomic writes on an arbitrary server. The
 provider primitives and CRDT conflict retention. The pinned Java LWS reference
 server exposed a separate blob-lifetime read race (HTTP 500 during concurrent
 index replacement); required interoperability checks retain that evidence.
+
+The final preview also defers NextGraph SDK evaluation until explicit connection,
+so missing modern SDK features do not break guest use or other backends. The
+Node 20 import and browser guest regression cover a missing `Set.union` without
+adding global polyfills. Inbox retains its storage bundle offline with a bounded
+2.25 MiB precache budget; unrelated large optional chunks still fail the guard.

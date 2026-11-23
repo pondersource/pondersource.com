@@ -133,7 +133,7 @@ can be changed only after the corresponding sources are published and tested.
 
 ## Verified locally
 
-- rs.js: 695 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
+- rs.js: 696 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
 - LWS: 25 Node tests and browser offline/reconnect journey (open-mode fixture).
 - OneDrive: 22 mocked Graph/MSAL tests; real sign-in navigation only, no signed-in result yet.
 - Nextgraph: 9 adapter tests; actual pinned SDK browser channel check uses a simulated wallet.

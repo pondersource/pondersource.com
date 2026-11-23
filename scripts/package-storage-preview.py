@@ -55,6 +55,6 @@ for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js
     rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
 for suffix in ['.map', '.LICENSE.txt']:
     rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
-package(args.rs, '2.0.0-beta.10-pondersource.7-preview.3', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+package(args.rs, '2.0.0-beta.10-pondersource.7-preview.4', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
 widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
-package(args.widget, '1.8.2-pondersource.2-preview.3', widgetfiles, {})
+package(args.widget, '1.8.2-pondersource.2-preview.4', widgetfiles, {})
