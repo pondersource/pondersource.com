@@ -1,8 +1,10 @@
 # Storage unification work
 
-Status on 2026-11-20: local implementation and design work. Nothing in this
-change has been committed, published to npm, deployed, or rolled out to every
-app. The production pin remains `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`.
+Implementation verified on 2026-11-20; fork review branches and draft PRs
+published on 2026-11-23. No npm release or production rollout has been made.
+The deployed source remains `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`;
+the draft launcher workflow pins the reviewed Ponder Source all-backend builds.
+See [the app review inventory](storage-app-preview-checks.md).
 
 ## Implemented foundation
 
