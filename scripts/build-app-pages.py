@@ -22,6 +22,7 @@ DETAILS = {
     "umai": ("Your recipe collection", "Bring recipes together in a personal cookbook. Umai helps you collect recipes and plan your cooking, with your cookbook saved to your connected storage.", ["Collect recipes", "Plan your cooking", "Save your cookbook to your chosen storage"]),
     "media-kraken": ("Track movies and what to watch next", "Keep a record of movies you have watched and a collection of films to watch later. Media Kraken saves your collection to your connected storage.", ["Track watched movies", "Keep a watch-later collection", "Save your collection to your chosen storage"]),
     "solid-memo": ("Spaced-repetition flashcards", "Study with flashcards and spaced repetition. You can try Solid Memo as a guest, or connect storage to keep your progress across devices.", ["Study with flashcards", "Review using spaced repetition", "Try guest mode or save progress across devices"]),
+    "focus": ("Tasks, lists and workspaces", "Create tasks, set priorities and due dates, and organize your work into lists and workspaces. Try Focus as a guest or connect storage to keep your projects across devices.", ["Tasks with priorities and due dates", "Lists and workspaces for different projects", "Complete guest project export and import"]),
 }
 
 
@@ -109,6 +110,7 @@ def build():
         path = f"/apps/{app_id}/"
         assert len(app["sources"]) == 2, f"Missing source links: {app_id}"
         assert (ROOT / app["icon"].lstrip("/")).is_file(), f"Missing icon: {app_id}"
+        license_link = ('\n      <p><a href="/assets/apps/focus.LICENSE.txt">Focus logo GPL license and upstream source</a></p>' if app_id == "focus" else "")
         feature_list = "\n".join(f"        <li>{escape(item)}</li>" for item in features)
         outputs[f"apps/{app_id}/index.html"] = page(
             f'{app["name"]} — {subtitle} | Ponder Source', app["description"], path,
@@ -127,7 +129,7 @@ def build():
       <p>Installing adds a shortcut to your launcher. Removing it does not delete your data in the app.</p>
       <h2>Open source, maintained by Ponder Source</h2>
       <p>This is Ponder Source’s hosted fork of {name}. Explore our version or the upstream project:</p>
-      <ul><li><a href="{escape(app['sources'][0], quote=True)}">{name}: Ponder Source fork</a></li><li><a href="{escape(app['sources'][1], quote=True)}">{name}: upstream source</a></li></ul>
+      <ul><li><a href="{escape(app['sources'][0], quote=True)}">{name}: Ponder Source fork</a></li><li><a href="{escape(app['sources'][1], quote=True)}">{name}: upstream source</a></li></ul>{license_link}
     </div>''')
         cards.append(f'''      <article class="app-card">
         <img class="app-icon" src="{app['icon']}" alt="" width="88" height="88" loading="lazy">

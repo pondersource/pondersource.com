@@ -160,8 +160,9 @@ These numbers describe local checks, not all-app rollout or live service certifi
 4. Track each follow-up merge and deployment in the app review inventory. Source
    and archive checks do not replace deployed-artifact verification. Todonna has
    a GitHub mirror retaining its GitLab history; GitLab hosting stays unchanged.
-5. Complete real Atomic plugin consent and Nextgraph wallet/broker acceptance
-   for the implementations described in [the design discussion](atomic-nextgraph-design.md).
+5. Extend the passing pinned Atomic consent/storage fixture to browser account
+   creation and production hosts. Complete actual Nextgraph wallet/broker
+   acceptance for [the agreed flows](atomic-nextgraph-design.md).
 
 The [additional app research](additional-app-research.md) is a candidate list,
 not an assertion that those apps have been forked, tested or deployed.
@@ -182,17 +183,21 @@ Live-account and full format acceptance remain in progress.
 
 The optional module-native Solid view reads and edits original upstream document
 URLs through the Solid backend's authenticated fetch, with root write fences and
-unauthenticated foreign reads. Consumers still use their existing copy-based
-adapter while the user chooses how to keep/import legacy JSON-adapter data.
-These native-view tests use protocol fixtures, not certified real-Pod sessions.
+unauthenticated foreign reads. Focus and SolidMemo integrate this native view; their actual CSS journeys
+preserve original document URLs and unknown RDF. Other consumers retain the
+copy-based adapter until their native profile/discovery integration is ready.
+Umai and Media Kraken still need that integration. Cross-app format acceptance
+remains separate from a successful connection or deployment.
 
 New internal resource-record filenames use bounded SHA-256 keys; complete original
 identities remain in the same atomic records. Existing URL-encoded names remain
 readable/writable. Opening a record does not migrate its representation.
 
-The Nextgraph guest snapshot includes only the rs.js local cache. Separate app
-guest stores need per-app export adapters before complete first-import coverage
-can be claimed. No snapshot source is deleted by the import.
+The default Nextgraph guest snapshot covers the rs.js local cache. The launcher
+and Focus now supply complete app-owned guest archives through widget hooks;
+Focus retains complete original JSON-LD documents and history. Other separate
+app guest stores still need export adapters before complete first-import
+coverage can be claimed. No source snapshot is deleted by import.
 
 On 2026-11-23, upstream OneDrive draft
 [#1435](https://github.com/remotestorage/remotestorage.js/pull/1435) was closed

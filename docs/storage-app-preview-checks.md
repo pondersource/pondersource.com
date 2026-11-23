@@ -53,7 +53,8 @@ redirect away from a guest library, validates imported documents, and merges
 them using the existing per-app timestamp/removal rules. Local persistence
 finishes before import succeeds; the message does not claim broker delivery.
 The exact runtime passes 27 staged browser checks and 20 state/discovery checks.
-Publication and deployed-byte verification remain separate gates.
+The launcher is deployed; all six runtime artifacts and the launcher script
+match the reviewed source. App publication is tracked separately.
 
 An actual pinned Atomic plugin host passed native installation review, app
 consent, exact scoped JSON/MIME and binary storage, anonymous/scope denial,
@@ -63,6 +64,49 @@ the native Rust API; browser new-account genesis onboarding remains broken at
 that host revision. The recorded run used the prior core preview bytes; see
 [the acceptance fixture](https://github.com/pondersource/remotestorage.js/pull/12)
 for precise source/runtime bindings. No server deployment is certified.
+
+
+### Consumer rollout after preview 7
+
+All twelve existing app fork PRs merged after green CI. Eight package consumers
+and Marco use immutable archives with lockfile integrity; Umai, Media Kraken
+and SolidMemo use equivalent vendored browser artifacts.
+
+| App | Source update |
+| --- | --- |
+| Litewrite | [PR 9](https://github.com/pondersource/litewrite/pull/9) |
+| Inbox RS | [PR 8](https://github.com/pondersource/inbox-rs/pull/8) |
+| Hyperdraft | [PR 14](https://github.com/pondersource/hyperdraft/pull/14) |
+| Sharesome | [PR 3](https://github.com/pondersource/sharesome/pull/3) |
+| Webmarks | [PR 4](https://github.com/pondersource/webmarks/pull/4) |
+| Inspektor | [PR 3](https://github.com/pondersource/inspektor/pull/3) |
+| Savr | [PR 3](https://github.com/pondersource/savr/pull/3) |
+| Marco | [PR 3](https://github.com/pondersource/marco/pull/3) |
+| Todonna | [PR 4](https://github.com/pondersource/todonna/pull/4) |
+| Umai | [PR 7](https://github.com/pondersource/umai/pull/7) |
+| Media Kraken | [PR 7](https://github.com/pondersource/media-kraken/pull/7) |
+| SolidMemo | [PR 9](https://github.com/pondersource/solid-memo/pull/9) |
+
+Published runtime markers are verified for Litewrite, Inbox, Hyperdraft,
+Sharesome, Webmarks, Inspektor, Savr and Marco. Umai and Media Kraken passed
+publication and live Pod journeys; their public core/widget files match the
+producer hashes. Todonna needs Pages enabled by its owner before its GitHub
+preview can be tested and its existing domain moved. SolidMemo's workflow skips untagged pushes; its supported manual fork
+deployment passed and its three public runtime/module files match the reviewed
+hashes.
+A green workflow whose deployment job was skipped is not publication evidence.
+
+The Pages handoff fixes are [Sharesome 4](https://github.com/pondersource/sharesome/pull/4),
+[Hyperdraft 15](https://github.com/pondersource/hyperdraft/pull/15),
+[Umai 8](https://github.com/pondersource/umai/pull/8) and
+[Media Kraken 8](https://github.com/pondersource/media-kraken/pull/8).
+They complete upload before a separate deployment job and pass the exact
+attempt-specific artifact name, avoiding ambiguous artifacts on reruns.
+
+Production Microsoft callbacks are listed in
+[OneDrive SPA callbacks](onedrive-production-callbacks.md). Registration and
+signed-in Graph acceptance remain pending. The updated localhost test archive
+uses the same preview 7 core/widget bytes and retains the confirmed callback.
 
 ### Native formats and hosting follow-up
 
@@ -74,7 +118,14 @@ The module owns the SolidFocus schemas and Soukai operations, including task
 history, lists and workspaces. SolidMemo's exact candidate passed actual CSS
 native-format and widget/fresh-browser/publishing journeys; SolidFocus's exact
 candidate passed guest persistence and native task edit/fresh-browser journeys.
-These source/module checks do not establish deployment of the app integrations.
+Focus [PR 2](https://github.com/pondersource/solid-focus/pull/2) is merged and
+deployed at [focus.pondersource.com](https://focus.pondersource.com/). All three
+journeys also pass on that public origin, including native Solid edits and a
+fresh signed-in browser. Public core, widget and domains hashes match the
+reviewed artifacts exactly. Its full CI includes 42 Cypress tests and six
+unit/native-format tests. SolidMemo's native integration is merged and published through its supported
+manual fork deployment. The public core/widget and native module hashes match
+the reviewed artifacts (`b38d6acf`, `ba56426d` and `53d04813`).
 
 [Todonna PR 3](https://github.com/pondersource/todonna/pull/3) merged after its
 build and browser checks passed, including the `/todonna/` project path. The
@@ -126,16 +177,18 @@ Individual review links track consumer merges and deployment outcomes.
   app callbacks must be added to the same personal-account registration.
 - Production LWS issuers, clients and callbacks need their own configuration
   and acceptance; the CSS test registrations are disposable local fixtures.
-- AtomicServer's plugin atomicity improvement is a separate draft, with no
-  deployed server or completed real-user consent test. Native Atomic SDK use
-  remains a distinct design option.
-- NextGraph SDK/CSP/startup tests use a simulated wallet channel. Real two-device
-  wallet/broker divergence and delivery remain pending.
+- AtomicServer's conditional-write improvement remains a separate draft. The
+  actual pinned host/plugin passed native consent and storage acceptance with
+  a disposable Rust-bootstrapped account; new-account browser genesis and
+  production deployment remain unverified. Native SDK use is a separate option.
+- NextGraph SDK/CSP/startup tests include a simulated wallet channel and actual
+  native-engine/journal recovery. Real wallet consent and two-device broker
+  divergence and delivery remain pending.
 - Complete cross-app format interoperability and consumer adoption of the new
   optional domains bundle remain unfinished. The native document-URL view is
   explicit; it does not silently migrate existing JSON-adapter records.
 
-## Review links
+## Initial preview review links
 
 - [litewrite](https://github.com/pondersource/litewrite/pull/7)
 - [hyperdraft](https://github.com/pondersource/hyperdraft/pull/12)
