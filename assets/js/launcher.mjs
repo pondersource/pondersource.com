@@ -279,7 +279,8 @@ try {
   } }] });
   rs.access.claim('launcher', 'rw');
   rs.caching.enable('/launcher/');
-  rs.setApiKeys(storageApiKeys);
+  // The production CI pin may still be an older rs.js build during rollout.
+  rs.setApiKeys(Object.fromEntries(Object.entries(storageApiKeys).filter(([name])=>name!=='onedrive'||rs.onedrive)));
   launcher = rs.launcher;
   launcher.declareType('installed-apps', {
     type: 'object', properties: {

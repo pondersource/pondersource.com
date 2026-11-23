@@ -1,4 +1,4 @@
-name: Solid launcher preview
+name: Storage launcher preview
 on:
   push:
     branches: [main]
@@ -15,14 +15,21 @@ jobs:
         run: python3 scripts/build-app-pages.py --check
       - uses: actions/checkout@v4
         with:
-          repository: remotestorage/remotestorage.js
-          ref: 92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d
+          repository: pondersource/remotestorage.js
+          ref: c97481060a30d7adcd6136525572cfeeb63927b0
           path: rs-solid-source
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm ci && npm run build:solid
+      - run: npm ci && npm run build:all
         working-directory: rs-solid-source
+      - uses: actions/checkout@v4
+        with:
+          repository: pondersource/remotestorage-widget
+          ref: 045c78cd752593e58fffed7386ddcbb4ba74dd2e
+          path: rs-widget-source
+      - run: npm ci && npm run build
+        working-directory: rs-widget-source
       - run: npm ci
         working-directory: rs-solid-source/examples/solid
       - run: npx playwright install --with-deps chromium
@@ -32,8 +39,9 @@ jobs:
         run: |
           mkdir preview
           git archive HEAD | tar -x -C preview
-          cp rs-solid-source/release/remotestorage-solid.js preview/dependencies/remotestoragejs/remotestorage.js
-          cp rs-solid-source/release/remotestorage-solid.js.LICENSE.txt preview/dependencies/remotestoragejs/
+          cp rs-solid-source/release/remotestorage-all.js preview/dependencies/remotestoragejs/remotestorage.js
+          cp rs-solid-source/release/remotestorage-all.js.LICENSE.txt rs-solid-source/release/remotestorage-all.js.map preview/dependencies/remotestoragejs/
+          cp rs-widget-source/build/widget.js rs-widget-source/build/widget.js.map rs-widget-source/build/widget.js.LICENSE.txt preview/dependencies/remotestorage-widget/
       - name: Test launcher against Community Solid Server
         run: |
           (cd rs-solid-source/examples/solid && exec node tests/server.cjs) &
