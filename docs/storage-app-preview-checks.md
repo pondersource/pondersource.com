@@ -158,3 +158,17 @@ Follow-up reviews: [launcher](https://github.com/pondersource/pondersource.com/p
 [Solid Memo](https://github.com/pondersource/solid-memo/pull/6).
 All consumer merges depend on the shared source's full green CI. Individual
 review links provide current merge and deployment status.
+
+
+App dependency follow-ups:
+
+- [Litewrite #8](https://github.com/pondersource/litewrite/pull/8)
+- [Hyperdraft #13](https://github.com/pondersource/hyperdraft/pull/13)
+- [Sharesome #2](https://github.com/pondersource/sharesome/pull/2)
+- [Webmarks #3](https://github.com/pondersource/webmarks/pull/3)
+- [Inspektor #2](https://github.com/pondersource/inspektor/pull/2)
+- [Savr #2](https://github.com/pondersource/savr/pull/2)
+- [Marco #2](https://github.com/pondersource/marco/pull/2)
+- [Todonna #2](https://github.com/pondersource/todonna/pull/2)
+- [Umai #6](https://github.com/pondersource/umai/pull/6)
+- [Media Kraken #5](https://github.com/pondersource/media-kraken/pull/5)
