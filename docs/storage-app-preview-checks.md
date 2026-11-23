@@ -15,7 +15,7 @@ source revision, source digest and artifact hashes.
 
 | App | Validation | Limits |
 | --- | --- | --- |
-| Launcher | 26 staged browser checks and 14 discovery checks | The workflow builds pinned Ponder Source core/widget source. Deployment and public artifact verification are separate gates. |
+| Launcher | 26 staged browser checks and 14 discovery checks | The workflow builds pinned source, verifies vendored hashes and deploys those reviewed bytes. Deployment and public artifact verification are separate gates. |
 | Litewrite | Production build, Standard lint, 6 browser journeys | Other providers still require live-account acceptance. |
 | Inbox RS | Biome, production build, all 696 unit tests and 47 desktop/mobile/WebKit PWA checks | The storage bundle stays offline within the unchanged 2.25 MiB precache budget. Large unrelated optional chunks still fail the guard. |
 | Hyperdraft | Rollup build and browser smoke checks | Existing accessibility warnings remain; full format acceptance is separate. |
@@ -141,3 +141,11 @@ Fork module builds and docs checks run, while npm publication and documentation
 Pages deployment require the canonical upstream repository. Upstream Solid
 #1403, widget #136 and AtomicServer #2645 remain open. Conflicting older
 bookmark/widget reviews and the failing older LWS core review remain unmerged.
+
+
+The launcher deploys the verified vendored preview bytes and public
+`storage-preview.json`, rather than substituting a fresh bundle during staging.
+Webpack module IDs differed between a symlinked development dependency directory
+and a clean CI installation, so rebuilding the same source did not preserve the
+archive hash. Source builds remain checked; artifact hashes and source pins are
+verified before the launcher browser tests and deployment.

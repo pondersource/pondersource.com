@@ -35,13 +35,13 @@ jobs:
       - run: npx playwright install --with-deps chromium
         working-directory: rs-solid-source/examples/solid
       - run: node --test tests/lws-discovery.test.mjs
+      - name: Verify vendored storage artifacts
+        run: python3 scripts/verify-storage-preview.py --rs rs-solid-source --widget rs-widget-source
       - name: Stage site
         run: |
           mkdir preview
           git archive HEAD | tar -x -C preview
-          cp rs-solid-source/release/remotestorage-all.js preview/dependencies/remotestoragejs/remotestorage.js
-          cp rs-solid-source/release/remotestorage-all.js.LICENSE.txt rs-solid-source/release/remotestorage-all.js.map preview/dependencies/remotestoragejs/
-          cp rs-widget-source/build/widget.js rs-widget-source/build/widget.js.map rs-widget-source/build/widget.js.LICENSE.txt preview/dependencies/remotestorage-widget/
+          # git archive includes the reviewed preview artifacts and their manifest.
       - name: Test launcher against Community Solid Server
         run: |
           (cd rs-solid-source/examples/solid && exec node tests/server.cjs) &
