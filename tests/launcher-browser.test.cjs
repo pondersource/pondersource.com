@@ -39,6 +39,38 @@ async function install(page, id) {
 async function library(page) {
   await page.getByRole('tab', { name: /My apps/ }).click();
 }
+
+test('the app-owned guest archive transfers the local library and blocks connection until export', async t => {
+  const { page } = await open(t);
+  await page.goto(base);
+  await localReady(page);
+  await install(page, 'webmarks');
+  await page.locator('.rs-choose-nextgraph').click();
+  await page.waitForFunction(() => document.querySelector('.rs-storage-error').textContent.includes('Export your app library'));
+  assert.match(await page.locator('.rs-storage-error').innerText(), /Export your app library/);
+  assert.equal(new URL(page.url()).origin, new URL(base).origin);
+  const downloading = page.waitForEvent('download');
+  await page.locator('.rs-export-guest').click();
+  const downloaded = await downloading;
+  assert.equal(downloaded.suggestedFilename(), 'pondersource-app-library.json');
+  const bytes = await require('node:fs/promises').readFile(await downloaded.path());
+  const saved = JSON.parse(bytes);
+  assert.equal(saved.version, 1);
+  assert.equal(saved.apps.find(app => app.id === 'webmarks').installed, true);
+  const second = (await open(t)).page;
+  await second.goto(base);
+  await localReady(second);
+  // Test the app-owned File hook independently of the native wallet UI.
+  const input = second.locator('.rs-nextgraph-import input');
+  await input.setInputFiles({ name: 'library.json', mimeType: 'application/json', buffer: bytes });
+  await second.waitForFunction(() => document.querySelector('.rs-nextgraph-import [role=status]').textContent.startsWith('Imported'));
+  await second.reload();
+  await localReady(second);
+  assert.equal(await second.locator('#installed-apps [data-app-id="webmarks"]').count(), 1);
+  await input.setInputFiles({ name: 'future.json', mimeType: 'application/json', buffer: Buffer.from('{"version":99,"apps":[]}') });
+  await second.waitForFunction(() => document.querySelector('.rs-nextgraph-import [role=status]').textContent.includes('Choose a Ponder Source'));
+  assert.equal(await second.locator('#installed-apps [data-app-id="webmarks"]').count(), 1);
+});
 async function waitFor(fn) {
   const deadline = Date.now() + 10000;
   while (!fn()) {

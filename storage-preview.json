@@ -1,19 +1,19 @@
 {
   "status": "experimental fork preview; verified vendored artifacts",
   "remotestorage": {
-    "baseCommit": "27fda517eceda07c3a2df085a129ddd531272993",
-    "sourceSha256": "24759f5b278cfcf60677e01277f4b441e35f31f77852f7739a95035f305eaa48"
+    "baseCommit": "2517fe04cd66f27c430ec451167efd6b0c73393d",
+    "sourceSha256": "67bf44adbf3eec91ade3be0a47b30f5dc620433437d04ea8c9df8d7cd00a96ae"
   },
   "widget": {
-    "baseCommit": "045c78cd752593e58fffed7386ddcbb4ba74dd2e",
-    "sourceSha256": "40bb0fb37ff5a39db1f97adf373de3e4a5c382fba979f402ef77b080e291a076"
+    "baseCommit": "18a22cf75e54bef68620c7e6968b38fc3e4c20bf",
+    "sourceSha256": "e388a84a7b15d792a19ec1373f013681b2191ec1ac53e408800c3c7da44b5540"
   },
   "artifacts": {
-    "dependencies/remotestoragejs/remotestorage.js": "9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db",
-    "dependencies/remotestoragejs/remotestorage-all.js.map": "915372c6c56e1ae3bb367c5deff63cb82ec6d674e9309e8107718b8dc0a54c2a",
+    "dependencies/remotestoragejs/remotestorage.js": "b38d6acff0ad303b0ec484e52781a528c3bbd21cea4efce3f51013d440e88030",
+    "dependencies/remotestoragejs/remotestorage-all.js.map": "f8f60115de3efd6e75c8405fc382a8de7f7777d799c87ce03acba17384b478fd",
     "dependencies/remotestoragejs/remotestorage-all.js.LICENSE.txt": "6195b4dad315ff229e5ade11dcbdc157538c0fd5401d66df4d9748532e38fa86",
-    "dependencies/remotestorage-widget/widget.js": "7a070705f828684e16de500610ed8874c1c8943e8416e87babb7b6a810340bb6",
-    "dependencies/remotestorage-widget/widget.js.map": "29d9633d018935b9dcfbd009d40c5e44536467e33d356acd744c628ac949819b",
+    "dependencies/remotestorage-widget/widget.js": "ba56426df06e42c218cde6f3e2d108229d1c18f190c078aa424c50d4960ed417",
+    "dependencies/remotestorage-widget/widget.js.map": "18ecfd124f426d6efcd49c243ce5011afc092c4918d27bf58a494e73f0225979",
     "dependencies/remotestorage-widget/widget.js.LICENSE.txt": "8c9946dfc859a2bfb26cc541125631cd96e7110fa20a702eb19275c9d1658805"
   },
   "sourceRepositories": {
