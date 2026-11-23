@@ -2,7 +2,7 @@
 
 Implementation verified on 2026-11-20; review branches and PRs published
 on 2026-11-23, then merged after green CI with the user's authorization.
-Eleven app Pages deployments passed after merging. Todonna's existing GitLab
+Ten app Pages deployments and the launcher deployment passed after merging. Todonna's existing GitLab
 hosting is unchanged, and Solid Memo's deployment remains separately gated. No upstream npm release is included. The previews preserve each app's existing upstream
 pointer, module paths and native JSON schemas. Backend libraries are packaged
 with source and artifact provenance.
