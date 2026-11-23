@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Package local storage builds with source provenance; never publish or deploy."""
+import argparse
+import gzip
+import hashlib
+import io
+import json
+from pathlib import Path
+import subprocess
+import tarfile
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--rs', type=Path, required=True)
+parser.add_argument('--widget', type=Path, required=True)
+parser.add_argument('--output', type=Path, required=True)
+args = parser.parse_args()
+if args.output.exists():
+    parser.error('output exists; choose a new directory')
+args.output.mkdir(parents=True)
+
+def package(checkout, version, files, metadata):
+    checkout = checkout.resolve()
+    sources = sorted(path for path in checkout.glob('src/**/*') if path.is_file())
+    digest = hashlib.sha256()
+    for path in [*sources, checkout / 'package.json', checkout / 'package-lock.json']:
+        digest.update(str(path.relative_to(checkout)).encode() + b'\0' + path.read_bytes())
+    provenance = {
+        'status': 'experimental local preview; no npm publication or deployment',
+        'baseCommit': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
+        'sourceSha256': digest.hexdigest(),
+        'artifacts': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in files.items()},
+    }
+    data = json.loads((checkout / 'package.json').read_text())
+    for key in ['scripts', 'devDependencies', 'overrides', 'optionalDependencies']:
+        data.pop(key, None)
+    data.update(version=version, **metadata)
+    contents = {name: path.read_bytes() for name, path in files.items()}
+    contents.update({str(path.relative_to(checkout)): path.read_bytes() for path in sources})
+    contents['package.json'] = (json.dumps(data, indent=2) + '\n').encode()
+    contents['storage-preview.json'] = (json.dumps(provenance, indent=2) + '\n').encode()
+    output = args.output / (data['name'] + '-' + version + '.tgz')
+    with output.open('wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', mtime=0, filename='') as zipped, tarfile.open(fileobj=zipped, mode='w') as archive:
+        for name, body in sorted(contents.items()):
+            info = tarfile.TarInfo('package/' + name)
+            info.size = len(body)
+            info.mode = 0o644
+            archive.addfile(info, io.BytesIO(body))
+    print(output)
+
+rsfiles = {str(p.relative_to(args.rs)): p for p in (args.rs / 'release/types').glob('**/*') if p.is_file()}
+for filename in ['LICENSE', 'README.md', 'docs/lws-experimental.md', 'docs/nextgraph-experimental.md']:
+    rsfiles[filename] = args.rs / filename
+for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js']:
+    rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
+for suffix in ['.map', '.LICENSE.txt']:
+    rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
+package(args.rs, '2.0.0-beta.10-pondersource.7-preview.2', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
+package(args.widget, '1.8.2-pondersource.2-preview.2', widgetfiles, {})
