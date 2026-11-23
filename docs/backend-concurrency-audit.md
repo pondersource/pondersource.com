@@ -104,3 +104,25 @@ user's existing-repository exception. No server is deployed. The Java LWS
 reference server also exhibited a separate obsolete-blob read race; its test
 failure is retained as compatibility evidence. Native SDK use bypasses a plugin
 HTTP path but does not repair that path for other clients.
+
+
+## Authenticated LWS follow-up
+
+The next fork revision, [rs.js #9](https://github.com/pondersource/remotestorage.js/pull/9),
+also fixes public-root OAuth metadata discovery and index rediscovery when the
+server's container projection reports generic MIME. Exact resource/issuer
+binding, duplicate-index refusal and conditional updates are retained.
+
+Real private-persistence tests then exposed a client representation bug: LWS
+parsed JSON downloads before sync compared them with acknowledged JSON text.
+Without a write ETag, this produced a false conflict and discarded a queued
+local update. JSON text readback now matches the cache contract. Focused actual
+adapter-to-cache regressions reproduced the same pending-edit loss in OneDrive,
+NextGraph, Dropbox and Google Drive and went red-to-green with bounded raw-text
+fixes. Object module APIs still parse JSON; native file formats are unchanged.
+These client changes do not prove any new provider-side CAS guarantee.
+
+Both configured CSS-LWS widget journeys now pass real login, private study
+writes, anonymous denial and entirely fresh-browser recovery on the final
+artifact. The transactional Java host's separate blob-lifetime race remains
+documented, and its required check is not relaxed or relabeled as certification.

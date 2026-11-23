@@ -1,9 +1,10 @@
 # Storage unification work
 
 Implementation verified on 2026-11-20; fork PRs published and then merged
-after green CI on 2026-11-23. No upstream npm release was made. The launcher
-now deploys Ponder Source source `c97481060a30d7adcd6136525572cfeeb63927b0`,
-replacing the former deployed pin `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`.
+after green CI on 2026-11-23. No upstream npm release was made. The launcher workflow
+now pins Ponder Source source `d295cef9e41e1a3f0d3ff4dd784ba8599d77b787`
+for the authenticated LWS and JSON transport follow-up. The initial fork
+rollout used `c97481060a30d7adcd6136525572cfeeb63927b0`.
 See [the app review inventory](storage-app-preview-checks.md).
 
 ## Implemented foundation
@@ -56,7 +57,7 @@ Graph behavior is still pending; mock responses do not establish live support.
 The shared desktop tool failed to start, so a standalone test ZIP was provided
 for the user's local browser.
 
-Before app rollout, add these **SPA** callbacks to the same registration (no
+Before production OneDrive sign-in, add these **SPA** callbacks to the same registration (no
 client secret). Sharing one registration is necessary to share one app folder.
 
 ```text
@@ -151,8 +152,10 @@ These numbers describe local checks, not all-app rollout or live service certifi
 1. Complete the signed-in OneDrive checks, including two devices, interrupted
    writes, token renewal, account switching and offline recovery. Add the SPA
    callbacks. Implement or clearly restrict public-sharing app features.
-2. Test authenticated LWS against the chosen real issuer/server. Existing
-   open-mode interoperability does not establish production authentication.
+2. Configure the chosen production LWS issuer, public client and callback.
+   Real authentication/private persistence/fresh-browser tests now pass against
+   two configured CSS-LWS fixtures; their disposable registrations do not
+   configure the public app deployments or certify every issuer.
 3. Complete the upstream format round trips and connect each app to its domain
    module, keeping its upstream pointer and source licenses.
 4. Publish the verified source revisions behind the local preview distribution.
@@ -170,12 +173,13 @@ Local preview archives (with source and artifact provenance) are prepared for
 Litewrite, Inbox RS, Hyperdraft, Sharesome, Webmarks, Inspektor, Savr, Marco and
 Todonna. Their manifests, lockfiles and public OneDrive configuration are updated
 locally. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
-These are merged dependency previews; per-app
+These are versioned dependency previews; per-app
 builds and browser acceptance are tracked separately in
 [the review inventory](storage-app-preview-checks.md). No deployment or all-app certification follows from
-resolving lockfiles. The merged launcher workflow pins the published Ponder Source core/widget
-commits and builds the all-backend bundle. Deployment and public artifact hashes
-were verified; live-account and full format acceptance remain in progress.
+resolving lockfiles. The launcher workflow pins the published Ponder Source core/widget
+commits and builds the all-backend bundle. The initial deployment and public
+artifact hashes were verified; follow-up review links track the latest rollout.
+Live-account and full format acceptance remain in progress.
 
 The optional module-native Solid view reads and edits original upstream document
 URLs through the Solid backend's authenticated fetch, with root write fences and
