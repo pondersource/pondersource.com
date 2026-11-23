@@ -2,8 +2,8 @@
 
 Implementation verified on 2026-11-20; review branches and PRs published
 on 2026-11-23, then merged after green CI with the user's authorization.
-Configured Pages deployments followed those merges; Todonna's existing GitLab
-hosting is unchanged. No upstream npm release is included. The previews preserve each app's existing upstream
+Eleven app Pages deployments passed after merging. Todonna's existing GitLab
+hosting is unchanged, and Solid Memo's deployment remains separately gated. No upstream npm release is included. The previews preserve each app's existing upstream
 pointer, module paths and native JSON schemas. Backend libraries are packaged
 with source and artifact provenance.
 
@@ -12,16 +12,16 @@ with source and artifact provenance.
 | Launcher | 26 staged browser checks | Merged workflow pins the reviewed Ponder Source core/widget revisions; deployment passed and the public core hash was verified. |
 | Litewrite | Production build, Standard lint, 6 browser journeys | Used an isolated test port and the installed Chromium. |
 | Inbox RS | Biome check, full production build and all 696 tests pass | Real pinned transcription assets downloaded and verified; Node fetch needed `NODE_USE_ENV_PROXY=1`. |
-| Hyperdraft | Rollup build | Existing accessibility warnings remain. Browser/format acceptance still needed. |
+| Hyperdraft | Rollup build and browser smoke checks | Existing accessibility warnings remain; full format acceptance is separate. |
 | Sharesome | Production build, 8 QUnit tests | Provider-specific public sharing remains subject to backend capabilities. OneDrive/Nextgraph do not publish private records. |
 | Webmarks | Build, 15 QUnit tests | New optional cross-format domain bundle has not yet replaced its native JSON module. |
 | Inspektor | Build, 24 QUnit tests | Wildcard inspection remains intentional. |
 | Savr | Build including TypeScript, 472 Jest tests | Skipped unrelated GPU-runtime install scripts after a failed binary download; the browser build succeeds. Raised the precache asset limit to retain the storage bundle offline. |
 | Marco | 428 browser tests through `pnpm test` | No release-only `pnpm build` was run. |
 | Todonna | Build, 3 browser journeys including fresh-device remote changes/deletion | GitHub mirror now retains the GitLab history and upstream attribution; hosting remains unchanged. |
-| Umai | Vite build, 28 tests on its Node 16 runtime | Real Pod/application acceptance still needed for the changed shared artifacts. |
-| Media Kraken | Build, 6 tests on its Node 14 runtime | Native install scripts skipped; it uses configured Dart Sass, not the obsolete node-sass binary. |
-| Solid Memo | All 36 task checks, all repository checks; lint passed | Initial parallel execution exhausted memory. The successful task run used concurrency 2. REUSE lint also passes. After the final artifact refresh, the web typecheck, 110 web tests with 100% coverage, production build and REUSE lint pass. |
+| Umai | Vite build, 28 tests on its Node 16 runtime and post-deployment private Pod journeys | Public core hash matches the final shared artifact; other providers still require live-account acceptance. |
+| Media Kraken | Build, 6 tests on its Node 14 runtime and post-deployment native import/fresh-browser Pod journeys | Public core hash matches the final shared artifact. It uses Dart Sass rather than the obsolete node-sass binary. |
+| Solid Memo | All 36 task checks, all repository checks; lint passed | Initial parallel execution exhausted memory; the successful task run used concurrency 2. The final preview passed 110 web tests with 100% coverage, build and REUSE lint. All PR checks passed before merging. Post-merge CI then found one Chromium draft journey failure and LWS interoperability failures; investigation is in progress, and deployment has not been verified. |
 
 The backend library's tests verify its new behavior separately from app UI
 checks. No signed-in OneDrive, authenticated LWS issuer, real Atomic consent or
