@@ -383,8 +383,8 @@ lwsForm.addEventListener('submit', async event => {
       result.append(label, value);
     }
     status.textContent = found.authorizationServers.length ?
-      'LWS storage found. Discovery is complete. Syncing the launcher with LWS will require LWS sign-in support.' :
-      'LWS storage found. No authorization server was advertised. Syncing the launcher with LWS will require LWS sign-in support.';
+      'LWS storage and sign-in service found.' :
+      'LWS storage found. No sign-in service was advertised.';
   } catch (error) {
     if (lwsRequest !== request) return;
     status.textContent = error.name === 'TimeoutError' ? 'LWS discovery timed out. Please try again.' :

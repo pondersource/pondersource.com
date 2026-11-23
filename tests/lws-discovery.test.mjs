@@ -6,6 +6,7 @@ const storage = 'https://pods.example/alice';
 const root = 'https://pods.example/alice/data/';
 const file = root + 'notes';
 const metadata = 'https://pods.example/.well-known/oauth-protected-resource/alice';
+const canonicalMetadata = 'https://pods.example/.well-known/oauth-protected-resource/alice/data/';
 const server = 'https://login.example/tenant/';
 const relation = 'https://www.w3.org/ns/lws#storage';
 const description = { id: storage, type: ['Storage'], service: [{ type: 'StorageRoot', serviceEndpoint: root }] };
@@ -22,6 +23,7 @@ function fixture(overrides = {}) {
     [storage]: () => response(description),
     [root]: () => response('', 401, { 'WWW-Authenticate': 'Bearer resource_metadata="' + metadata + '"' }),
     [metadata]: () => response({ resource: file, authorization_servers: [server] }),
+    [canonicalMetadata]: () => response('', 404),
     ...overrides
   };
   return { calls, fetch: async (url, options) => {
@@ -94,7 +96,7 @@ test('rejects malformed descriptions, conflicting links and missing authorizatio
 
 test('supports localhost development and fails closed on refused documents', async () => {
   const local = 'http://127.0.0.1:3126/lws/';
-  const fetch = async () => response({ id: local, type: 'Storage', service: [{ type: ['StorageRoot'], serviceEndpoint: local }] });
+  const fetch = async url => new URL(url).pathname.startsWith('/.well-known/') ? response('', 404) : response({ id: local, type: 'Storage', service: [{ type: ['StorageRoot'], serviceEndpoint: local }] });
   assert.equal((await discoverLWS(local, { fetch })).root, local);
   const f = fixture({ [storage]: () => response('', 403) });
   await assert.rejects(discoverLWS(file, f), /403/);
@@ -106,4 +108,45 @@ test('propagates cancellation and network errors', async () => {
   await assert.rejects(discoverLWS(storage, { signal: controller.signal, fetch: async (_, options) => {
     options.signal.throwIfAborted();
   } }), /abort/i);
+});
+
+
+test('discovers sign-in for a public root through canonical resource metadata and preserves the issuer identifier', async () => {
+  const issuer = 'https://login.example';
+  const f = fixture({
+    [root]: () => response({ items: [] }),
+    [canonicalMetadata]: () => response({ resource: root, authorization_servers: [issuer] })
+  });
+  assert.deepEqual((await discoverLWS(storage, f)).authorizationServers, [issuer]);
+  assert.equal(f.calls.at(-1).url, canonicalMetadata);
+});
+
+test('does not downgrade refused or invalid public-root authorization metadata to anonymous', async () => {
+  for (const status of [401, 403, 500]) {
+    const f = fixture({ [root]: () => response({ items: [] }), [canonicalMetadata]: () => response('', status) });
+    await assert.rejects(discoverLWS(storage, f), /refused/);
+  }
+  const f = fixture({
+    [root]: () => response({ items: [] }),
+    [canonicalMetadata]: () => response({ resource: storage, authorization_servers: [server] })
+  });
+  await assert.rejects(discoverLWS(storage, f), /different resource/);
+});
+
+test('allows absent canonical metadata only for an unchallenged public root', async () => {
+  for (const status of [404, 410]) {
+    const f = fixture({ [root]: () => response({ items: [] }), [canonicalMetadata]: () => response('', status) });
+    assert.deepEqual((await discoverLWS(storage, f)).authorizationServers, []);
+  }
+});
+
+test('uses the canonical metadata URL without a trailing slash for an origin-root storage', async () => {
+  const address = 'https://storage.example/';
+  const canonical = 'https://storage.example/.well-known/oauth-protected-resource';
+  const fetch = async url => {
+    if (url === address) return response({ id: address, type: 'Storage', service: [{ type: 'StorageRoot', serviceEndpoint: address }] });
+    assert.equal(url, canonical);
+    return response({ resource: address, authorization_servers: [server] });
+  };
+  assert.deepEqual((await discoverLWS(address, { fetch })).authorizationServers, [server]);
 });

@@ -1,17 +1,17 @@
 # Storage unification work
 
 Implementation verified on 2026-11-20; fork PRs published and then merged
-after green CI on 2026-11-23. No upstream npm release was made. The launcher
-now deploys Ponder Source source `c97481060a30d7adcd6136525572cfeeb63927b0`,
-replacing the former deployed pin `92e1fc4dc0526d5c29bfef11dfc2bf9ad646347d`.
+after green CI on 2026-11-23. No upstream npm release was made. The launcher workflow
+now pins Ponder Source source `27fda517eceda07c3a2df085a129ddd531272993`
+for the authenticated LWS, JSON readback and interrupted-write recovery follow-up. The initial fork
+rollout used `c97481060a30d7adcd6136525572cfeeb63927b0`.
 See [the app review inventory](storage-app-preview-checks.md).
 
 ## Implemented foundation
 
-The `integration/storage-backends` working branch in the rs.js checkout starts
-from that production pin. The LWS transport is ported from
-`pondersource/remotestorage.js:feat/lws-backend`, rather than reverting the
-newer cache, OAuth and Solid fixes to that branch's older baseline.
+The fork retains the newer cache, OAuth and Solid fixes while porting the LWS
+transport from `pondersource/remotestorage.js:feat/lws-backend`. It does not
+replace those fixes with that branch's older baseline.
 
 `npm run build:all` produces one browser bundle with remoteStorage, Dropbox,
 Google Drive, Solid, experimental LWS, experimental OneDrive and an experimental
@@ -56,7 +56,7 @@ Graph behavior is still pending; mock responses do not establish live support.
 The shared desktop tool failed to start, so a standalone test ZIP was provided
 for the user's local browser.
 
-Before app rollout, add these **SPA** callbacks to the same registration (no
+Before production OneDrive sign-in, add these **SPA** callbacks to the same registration (no
 client secret). Sharing one registration is necessary to share one app folder.
 
 ```text
@@ -135,12 +135,12 @@ can be changed only after the corresponding sources are published and tested.
 
 ## Verified locally
 
-- rs.js: 696 Mocha tests; existing legacy suites; source and spec lint; all-backend build.
+- Latest rs.js source: 738 Mocha tests; existing legacy suites; source/spec lint; release, Solid and all-backend builds.
 - LWS: 25 Node tests and browser offline/reconnect journey (open-mode fixture).
 - OneDrive: 22 mocked Graph/MSAL tests; real sign-in navigation only, no signed-in result yet.
 - Nextgraph: 9 adapter tests; actual pinned SDK browser channel check uses a simulated wallet.
 - Widget: 11 browser checks, including native chooser, import, local status and mobile width.
-- Launcher preview: 26 browser checks on the staged all-backend bundle.
+- Launcher preview: 26 browser checks on the staged all-backend bundle and 14 discovery checks.
 - Data modules: 29 Node checks and one real Chromium module journey.
 - Atomic host: 2 DB lock tests and 24 actual plugin-runtime blob/write-route checks.
 
@@ -151,13 +151,15 @@ These numbers describe local checks, not all-app rollout or live service certifi
 1. Complete the signed-in OneDrive checks, including two devices, interrupted
    writes, token renewal, account switching and offline recovery. Add the SPA
    callbacks. Implement or clearly restrict public-sharing app features.
-2. Test authenticated LWS against the chosen real issuer/server. Existing
-   open-mode interoperability does not establish production authentication.
+2. Configure the chosen production LWS issuer, public client and callback.
+   Real authentication/private persistence/fresh-browser tests now pass against
+   two configured CSS-LWS fixtures; their disposable registrations do not
+   configure the public app deployments or certify every issuer.
 3. Complete the upstream format round trips and connect each app to its domain
    module, keeping its upstream pointer and source licenses.
-4. Publish the verified source revisions behind the local preview distribution.
-   App packages and lockfiles are updated locally; finish acceptance and deploy each fork
-   before changing launcher claims. Todonna now has a GitHub mirror retaining its GitLab history.
+4. Track each follow-up merge and deployment in the app review inventory. Source
+   and archive checks do not replace deployed-artifact verification. Todonna has
+   a GitHub mirror retaining its GitLab history; GitLab hosting stays unchanged.
 5. Complete real Atomic plugin consent and Nextgraph wallet/broker acceptance
    for the implementations described in [the design discussion](atomic-nextgraph-design.md).
 
@@ -166,16 +168,17 @@ not an assertion that those apps have been forked, tested or deployed.
 
 ## App dependency previews
 
-Local preview archives (with source and artifact provenance) are prepared for
+Versioned preview archives (with source and artifact provenance) are prepared for
 Litewrite, Inbox RS, Hyperdraft, Sharesome, Webmarks, Inspektor, Savr, Marco and
-Todonna. Their manifests, lockfiles and public OneDrive configuration are updated
-locally. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
-These are merged dependency previews; per-app
+Todonna. Their manifests and lockfiles record the supplied archives and the public
+OneDrive configuration. Umai, Media Kraken and Solid Memo receive the equivalent browser bundles.
+These are versioned dependency previews; per-app
 builds and browser acceptance are tracked separately in
 [the review inventory](storage-app-preview-checks.md). No deployment or all-app certification follows from
-resolving lockfiles. The merged launcher workflow pins the published Ponder Source core/widget
-commits and builds the all-backend bundle. Deployment and public artifact hashes
-were verified; live-account and full format acceptance remain in progress.
+resolving lockfiles. The launcher workflow pins the published Ponder Source core/widget
+commits and builds the all-backend bundle. The initial deployment and public
+artifact hashes were verified; follow-up review links track the latest rollout.
+Live-account and full format acceptance remain in progress.
 
 The optional module-native Solid view reads and edits original upstream document
 URLs through the Solid backend's authenticated fetch, with root write fences and

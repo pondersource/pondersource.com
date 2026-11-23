@@ -1,9 +1,9 @@
 # Backend concurrency audit
 
-Read-only source audit on 2026-11-23. Inspected distribution source:
+Initial read-only source audit on 2026-11-23, followed by implementation notes below. Inspected distribution source:
 HEAD `340f6392c71b686da20f0c3c24ee80ca0949640f` plus its integration changes. The separately copied OneDrive
 draft is at `37e547df64aff768181c9f9c95cb7e28dc8bbf7d`.
-No source edits, commits, provider-account writes, or new tests were made for this audit.
+The initial audit made no source edits or provider-account writes; subsequent fixes and tests are recorded separately.
 Line numbers refer to the inspected files; subsequent edits may move them.
 
 ## Answer
@@ -28,9 +28,10 @@ condition at the final mutation.
 RFC 9110 sections 13.1.1 and 13.2.1 describe lost-update prevention and checking
 preconditions just before processing request content or performing the action.
 They do not explicitly define transaction isolation between concurrent requests.
-Two successes against the same earlier version therefore demonstrate a
-lost-update gap, but are not presented here as conclusive proof of a strict
-RFC violation. To provide compare-and-swap, the condition and mutation need
+Two distinct competing writes accepted against the same earlier version can
+lose an update. Two successes alone are not conclusive proof of a strict RFC
+violation: equivalent changes may also be acknowledged successfully. The timing
+wording leaves an atomicity gap rather than explicitly specifying isolation. To provide compare-and-swap, the condition and mutation need
 one atomic operation relative to competing writes. Checking only when a request
 starts cannot provide that guarantee.
 
@@ -100,7 +101,94 @@ These changes preserve native document bytes and paths.
 
 The separate Atomic host fix is published in
 [AtomicServer #2645](https://github.com/ontola/atomic-server/pull/2645) under the
-user's existing-repository exception. No server is deployed. The Java LWS
-reference server also exhibited a separate obsolete-blob read race; its test
-failure is retained as compatibility evidence. Native SDK use bypasses a plugin
-HTTP path but does not repair that path for other clients.
+user's existing-repository exception. No server is deployed. Native SDK use bypasses a plugin HTTP path but does not
+repair that path for other clients. The Java LWS reference server also exhibited
+a separate obsolete-blob read race; the patched fixture described below fixes
+that host defect without claiming the unmodified upstream is safe.
+
+
+## Authenticated LWS follow-up
+
+The merged fork revision, [rs.js #9](https://github.com/pondersource/remotestorage.js/pull/9),
+also fixes public-root OAuth metadata discovery and index rediscovery when the
+server's container projection reports generic MIME. Exact resource/issuer
+binding, duplicate-index refusal and conditional updates are retained.
+
+Real private-persistence tests then exposed a client representation bug: LWS
+parsed JSON downloads before sync compared them with acknowledged JSON text.
+Without a write ETag, this produced a false conflict and discarded a queued
+local update. JSON text readback now matches the cache contract. Focused actual
+adapter-to-cache regressions reproduced the same pending-edit loss in OneDrive,
+NextGraph, Dropbox and Google Drive and went red-to-green with bounded raw-text
+fixes. Object module APIs still parse JSON; native file formats are unchanged.
+These client changes do not prove any new provider-side CAS guarantee.
+
+Both configured CSS-LWS widget journeys pass real login, private study writes,
+anonymous denial and entirely fresh-browser recovery. These disposable local
+registrations do not configure production issuers or app callbacks.
+
+The same PR includes an Apache-licensed patch for the independent Java LWS
+server pinned at `97e8ace5f7b0da890b4f8cd96eadec505e1fb16e`. Reads pin the selected
+blob before replacement can retire it, then release it on completion, conditional
+responses and errors. Blob I/O stays outside the database write lock. The
+patched host passes 706 Maven tests, including nine deterministic regressions,
+and the actual SDK CRUD/concurrent-write and browser cases. CI explicitly names
+and verifies this modified fixture; it does not certify unmodified upstream.
+The patch is retained in the existing Ponder Source SDK fork because GitHub
+rejected creation of the separate provider fork with HTTP 403.
+
+## Interrupted uploads and provider durability
+
+A separate Solid Memo reload failure exposed CSS 7.3.0's default file accessor:
+an interrupted upload could truncate an existing document before receiving its
+complete replacement. Conditional-write checks do not repair truncated storage.
+The supported `AtomicFileDataAccessor` writes to a temporary file, renames only
+after receiving the complete body, and then updates metadata. Solid Memo's
+reference fixture now selects that accessor. Controlled upload/reload tests
+retain the previous body, metadata and ETag after an incomplete request.
+This establishes incomplete-upload safety for that fixture, not a transaction
+spanning body and metadata across every server crash. The default file accessor
+is not certified safe by these results.
+
+JSON readback comparison also now tolerates legal media-type normalization
+without equating different bytes, profile values or binary content. This keeps
+provider formatting changes from producing false conflicts while preserving
+meaningful representation differences.
+
+
+## Durable client recovery
+
+[rs.js #10](https://github.com/pondersource/remotestorage.js/pull/10) retains a
+versioned operation ID, destination identity, immutable base and pending bytes.
+A per-path browser Web Lock establishes ownership across documents; a separate
+short cache lock serializes local edits and acknowledgements. IndexedDB writes
+settle only after actual commit or abort, including partial-batch clone errors
+and canceled request errors. A completed overlay cannot hide another tab's rows.
+
+Fresh remote readback precedes replay: an exact candidate confirms an applied
+write, an unchanged base permits a fresh conditional retry, and a different or
+empty representation remains a durable conflict. Google Drive and NextGraph
+missing creates are not blindly recreated. Newer local edits and late responses
+for older operations cannot discard one another. Empty text, deletion and
+unknown bodies remain distinct; IndexedDB and localStorage retain binary pending
+and base snapshots across reload.
+
+Applications can inspect/export retained candidates and explicitly retry or
+resolve reviewed operations through the documented recovery APIs. Legacy,
+unowned or no-Web-Locks cases require an application recovery/export interface;
+the SDK does not guess that another writer died. These client guarantees do not
+add atomicity to a provider's final mutation or repair its interrupted-body
+storage behavior.
+
+
+The same pinned provider now also receives a separate early-response patch.
+Before an HTTP/1 response commits with unread request content, it announces
+`Connection: close`. This prevents an early refusal from leaving the client to
+reuse a socket that the server closes afterwards. It does not drain unauthorized
+uploads, change HTTP/2 connection rules or disable successful keepalive.
+The combined fixture passes 714 tests, including eight new early-response and
+exception-cleanup cases, on the exact CI JDK. Unfiltered stress controls reproduce
+the connection failure; both filtered protocol variants complete 5,000 requests.
+Native SDK acceptance and all 11 browser cases also pass with the same client
+runtime. These are additional provider transport fixes, separate from mutation
+atomicity and retained client candidates.
