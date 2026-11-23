@@ -23,6 +23,21 @@ and adopts the fetched validator only if the body still matches (`603–612`).
 Those are useful shared defenses, but the adapter/server must enforce the
 condition at the final mutation.
 
+## Conditional-header semantics
+
+RFC 9110 sections 13.1.1 and 13.2.1 describe lost-update prevention and checking
+preconditions just before processing request content or performing the action.
+They do not explicitly define transaction isolation between concurrent requests.
+Two successes against the same earlier version therefore demonstrate a
+lost-update gap, but are not presented here as conclusive proof of a strict
+RFC violation. To provide compare-and-swap, the condition and mutation need
+one atomic operation relative to competing writes. Checking only when a request
+starts cannot provide that guarantee.
+
+AtomicServer #2645 hardens existing header handling on the plugin-host branch.
+It does not add conditional HTTP writes to the native Atomic commit API, and
+does not target current develop, which lacks those route modules.
+
 ## Findings
 
 | Backend | Source evidence and present contract | Evidence limits / action |
@@ -35,7 +50,7 @@ condition at the final mutation.
 | OneDrive local appfolder prototype | `src/onedrive.ts:249–268` sends If-Match on content PUT/delete and create-only conflictBehavior=fail, mapping409 to412. Unlike Google, reads re-fetch metadata after download before returning the revision (`209–215`). | Those Graph operations are intended CAS, not verified CAS. Unit tests (`test/unit/onedrive.test.mjs:100–108,131–136`) mock the service. The simple-content endpoint reference does not itself document the full conditional contract; general driveItem annotations are not proof that this exact URL honors them. Keep experimental until real two-client/race tests pass; use a documented final-commit conditional flow if simple PUT cannot establish it. |
 | Copied OneDrive draft | Separate `src/onedrive.ts:340–379` opens deferCommit upload, streams chunks, requires202 for deferred content, then explicitly commits to destination parent with If-Match/conflictBehavior and the upload URL. Conditional delete is sent directly (`387–395`). It uses native bytes/shared directory instead of the local appfolder JSON envelope. | More explicit concurrency design, still draft pending real Microsoft acceptance. A mocked successful conditional commit is not service certification, and it must not be mechanically merged into the incompatible appfolder layout. Test final commit against a native edit during chunk upload and competing creation. |
 | NextGraph | `src/nextgraph.ts:173–224` serializes local SDK transactions, checks known heads, and writes a new immutable UUID revision record (`182–188`), with tombstones for deletion. Concurrent remote histories retain multiple heads and GET409 (`163–169`); explicit resolution parents all reviewed heads (`240–248`). | This is **retention/eventual convergence**, not global online CAS: offline devices can both return success, then expose a conflict after sync. Tests inject merged concurrent records (`test/unit/nextgraph.test.mjs:52–71`); actual pinned SDK browser test uses a simulated wallet channel. Real two-device wallet/broker offline divergence remains pending. Do not require immediate one-winner/one412 as the CRDT contract. |
-| Atomic remoteStorage plugin | Current host patch in `/workspace/atomic-server` moves the current-blob check under the ordinary DB subject lock and uses the existing parent/localId identity lock for create. | All26 targeted DB/runtime routes pass and exact staged-snapshot Clippy passes. It remains staged, uncommitted and unpublished while architecture discussion is open. Native @tomic/lib+OPFS/Loro could bypass that HTTP path, but requires a separate rs.js adapter and immutable document-version design; storing a whole opaque document in one LWW property is insufficient conflict retention. |
+| Atomic remoteStorage plugin | Current host patch in `/workspace/atomic-server` moves the current-blob check under the ordinary DB subject lock and uses the existing parent/localId identity lock for create. | All26 targeted DB/runtime routes pass and exact staged-snapshot Clippy passes. Published subsequently as draft AtomicServer #2645 on the plugin-host feature branch; current develop lacks these HTTP plugin routes. Native @tomic/lib+OPFS/Loro could bypass that HTTP path, but requires a separate rs.js adapter and immutable document-version design; storing a whole opaque document in one LWW property is insufficient conflict retention. |
 
 ## Primary API references checked
 
