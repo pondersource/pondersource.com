@@ -91,8 +91,9 @@ Published runtime markers are verified for Litewrite, Inbox, Hyperdraft,
 Sharesome, Webmarks, Inspektor, Savr and Marco. Umai and Media Kraken passed
 publication and live Pod journeys; their public core/widget files match the
 producer hashes. Todonna needs Pages enabled by its owner before its GitHub
-preview can be tested and its existing domain moved. SolidMemo's deployment
-workflow skips untagged pushes; its supported manual fork deployment is running.
+preview can be tested and its existing domain moved. SolidMemo's workflow skips untagged pushes; its supported manual fork
+deployment passed and its three public runtime/module files match the reviewed
+hashes.
 A green workflow whose deployment job was skipped is not publication evidence.
 
 The Pages handoff fixes are [Sharesome 4](https://github.com/pondersource/sharesome/pull/4),
@@ -122,8 +123,9 @@ deployed at [focus.pondersource.com](https://focus.pondersource.com/). All three
 journeys also pass on that public origin, including native Solid edits and a
 fresh signed-in browser. Public core, widget and domains hashes match the
 reviewed artifacts exactly. Its full CI includes 42 Cypress tests and six
-unit/native-format tests. SolidMemo's native integration is merged; its fork
-manual publication is still running and must be checked separately.
+unit/native-format tests. SolidMemo's native integration is merged and published through its supported
+manual fork deployment. The public core/widget and native module hashes match
+the reviewed artifacts (`b38d6acf`, `ba56426d` and `53d04813`).
 
 [Todonna PR 3](https://github.com/pondersource/todonna/pull/3) merged after its
 build and browser checks passed, including the `/todonna/` project path. The
