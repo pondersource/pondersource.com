@@ -35,5 +35,7 @@ origin. Backend-specific requirements and unavailable source are recorded as
 evidence; untested apps are not described as broken.
 
 The existing [Solid rollout inventory](solid-app-rollout.md) remains the wider
-list of Solid candidates. SolidFocus and Mashlib already have Ponder Source
-forks; they still need their remaining module integration and deployment checks.
+list of Solid candidates. [Focus](https://focus.pondersource.com/) now has its Tasks module integration,
+complete guest archives, green full CI, and actual public-origin browser
+acceptance. Its launcher entry follows that verification. Mashlib retains its
+separate module-integration and deployment work.

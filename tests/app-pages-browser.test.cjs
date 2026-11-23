@@ -13,8 +13,8 @@ test('all apps are discoverable and usable without JavaScript on mobile and desk
   await page.goto(base);
   await page.getByRole('link', { name: 'Explore all apps', exact: true }).click();
   const paths = await page.locator('.app-card h2 a').evaluateAll(links => links.map(a => a.getAttribute('href')));
-  assert.equal(paths.length, 12);
-  assert.equal(new Set(paths).size, 12);
+  assert.equal(paths.length, 13);
+  assert.equal(new Set(paths).size, 13);
   const sitemapResponse = await context.request.get(base + '/sitemap.xml');
   assert.equal(sitemapResponse.status(), 200);
   const sitemap = await sitemapResponse.text();

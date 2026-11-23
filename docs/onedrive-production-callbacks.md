@@ -35,9 +35,9 @@ https://solid-memo.pondersource.com/
 https://focus.pondersource.com/
 ```
 
-Focus's URI is prepared for its pending deployment. Todonna's production origin
-stays the same when hosting moves from GitLab to GitHub Pages. Its interim
-GitHub project preview is not a production OneDrive callback.
+Focus is deployed at its listed origin. Todonna's production origin stays the
+same when hosting moves from GitLab to GitHub Pages. Its interim GitHub project
+preview is not a production OneDrive callback.
 
 The same registration gives the apps the same OneDrive app folder;
 remoteStorage modules retain their separate scope paths. Callback registration

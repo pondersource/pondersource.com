@@ -119,6 +119,8 @@ function remoteFixture(context, initial, fixture = { data: initial, puts: 0, fai
 }
 async function connect(page) {
   if (await page.locator('.rs-choose-rs').isVisible()) await page.locator('.rs-choose-rs').click();
+  // Wait for pointer access to the animated form before focusing its input.
+  await page.locator('[name=rs-user-address]').click();
   await page.locator('[name=rs-user-address]').fill('alice@storage.example');
   await page.locator('.rs-connect').click();
   await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to remoteStorage'));
@@ -168,6 +170,7 @@ for (const [id, name, url] of [
   ['savr', 'Savr', 'https://savr.pondersource.com'],
   ['marco', 'Marco', 'https://marco.pondersource.com'],
   ['solid-memo', 'Solid Memo', 'https://solid-memo.pondersource.com'],
+  ['focus', 'Focus', 'https://focus.pondersource.com'],
   ['umai', 'Umai', 'https://umai.pondersource.com'],
   ['media-kraken', 'Media Kraken', 'https://media-kraken.pondersource.com']
 ]) {
@@ -193,7 +196,7 @@ for (const [id, name, url] of [
   });
 }
 
-for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['media-kraken', 'Media Kraken']]) {
+for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['media-kraken', 'Media Kraken'], ['focus', 'Focus']]) {
   test(name + ' receives the remoteStorage account hint from the launcher', async t => {
     const { context, page } = await open(t);
     await remoteFixture(context, {
