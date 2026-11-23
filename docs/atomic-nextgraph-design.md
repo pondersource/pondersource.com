@@ -111,14 +111,25 @@ The index must survive another browser's sign-in and must not depend solely on
 the original browser's local lookup table. Large binary records should use
 native immutable blobs once the SDK's upload/readback semantics are verified.
 
-Nextgraph's engine owns encrypted local persistence and broker replication.
-rs.js observes and adapts that store. Do not run an independent PUT polling loop
-over the same state or claim an HTTP-like server acknowledgement from a local
-CRDT update. Extend the widget to show **Saved on this device**, **Waiting to
-sync**, **Synced** only when the SDK can establish broker delivery, and
-**Needs attention**. SDK persistence errors must reach the app. A failed local transaction marks
-the collection as needing a full app reload before it can be reopened. This
-avoids reusing a failed SDK subscription or reporting an unsaved edit as saved.
+Actual pinned WASM/ORM tests exposed a durability gap: native commits can resolve
+after encrypted outbox persistence fails, and pending sessionStorage events can
+disappear when a tab closes. A wallet export does not recover those documents.
+The engine still owns encrypted broker replication, but its completion cannot
+serve as a durable local-save acknowledgement.
+
+[rs.js fork PR 11](https://github.com/pondersource/remotestorage.js/pull/11) adds
+an append-only IndexedDB recovery journal keyed by native private store and
+collection. Writes await the actual transaction completion, retain revisions and
+tombstones, and reject quota errors and aborts. Preconditions and revision
+appends share one local transaction. Separate Web Locks coordinate first
+collection selection. Unknown older cache candidates block silent assignment
+and remain explicitly exportable. Missing immutable IDs replay through the SDK
+when the native graph returns; no independent broker queue or peer-sequence
+mutation is introduced.
+
+Neither journal completion nor a CRDT update proves broker delivery. The widget
+uses **Saved on this device** and **Needs attention**. An explicitly failed SDK
+view needs a reload, while journal readback and recovery export remain available.
 Only one adapter owns a mutable SDK collection in a page at a time.
 
 Byte strings are not semantically mergeable just because their container is a
@@ -142,7 +153,19 @@ versions and explicit resolution. Its status reports local acceptance only.
 See the rs.js `docs/nextgraph-experimental.md` for snapshot shape and API.
 Unit tests replace the SDK boundary; a browser protocol fixture uses the actual
 pinned SDKs with a simulated wallet channel. Neither establishes real broker
-synchronization. The Atomic entry uses normal rs.js discovery and consent, with
+synchronization. A separate actual-engine fixture passes adapter recovery tests
+through reload, tab close and cold browser restart, transaction failures,
+old-cache preservation, account fencing and concurrent local tabs. Its pinned
+engine-only strict durability contract remains deliberately failing. Native
+wallet consent and successful real-broker replication remain unverified.
+
+The widget's [fork PR 3](https://github.com/pondersource/remotestorage-widget/pull/3)
+is merged after green CI. It adds app-owned guest export/import hooks for data
+outside the remoteStorage cache, plus a cancellable connection preflight.
+Individual apps still need complete archive implementations; a deck-only export
+must not be presented as a complete guest-data transfer.
+
+The Atomic entry uses normal rs.js discovery and consent, with
 no new Atomic agent-secret transport. No AtomicServer deployment or live Atomic/NextGraph certification is claimed.
 
 ## Atomic native SDK alternative under discussion

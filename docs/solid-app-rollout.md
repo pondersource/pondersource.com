@@ -35,7 +35,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | NotePod (ANU) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | HealthPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | MovieStar | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| SolidFocus | [fork](https://github.com/pondersource/solid-focus) | Fork created 2026-11-18; not yet deployed or browser-tested; next candidate | Task Action/Vtodo reader merged [PR 5](https://github.com/pondersource/data-modules/pull/5); lists/workspaces/history/writes pending. Existing SolidOS writer fixes merged [PR 6](https://github.com/pondersource/data-modules/pull/6) |
+| SolidFocus | [fork](https://github.com/pondersource/solid-focus) | Local widget integration passes actual CSS guest-persistence and native task edit/fresh-browser journeys; deployment and complete guest handoff remain pending | Module-owned Action/Vtodo and legacy schemas, list/workspace operations and history merged in [PR 10](https://github.com/pondersource/data-modules/pull/10). Existing SolidOS writer fixes merged [PR 6](https://github.com/pondersource/data-modules/pull/6) |
 | Portable LibreChat | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Proxion | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Tired Bike | Not yet forked | Not yet tested; not classified broken | Not yet audited |

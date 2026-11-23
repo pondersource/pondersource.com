@@ -36,6 +36,25 @@ core/widget bytes and the user's registered localhost callback.
 
 ## Provider and recovery evidence
 
+### Native formats and hosting follow-up
+
+[Data modules PR 10](https://github.com/pondersource/data-modules/pull/10) merged
+after green CI. Native-aware apps can keep original Solid document URLs while
+also discovering retained remoteStorage adapter records. Native mode is an
+internal integration option; other consumers retain their previous behavior.
+The module owns the SolidFocus schemas and Soukai operations, including task
+history, lists and workspaces. SolidMemo's exact candidate passed actual CSS
+native-format and widget/fresh-browser/publishing journeys; SolidFocus's exact
+candidate passed guest persistence and native task edit/fresh-browser journeys.
+These source/module checks do not establish deployment of the app integrations.
+
+[Todonna PR 3](https://github.com/pondersource/todonna/pull/3) merged after its
+build and browser checks passed, including the `/todonna/` project path. The
+repository is now public. Pages is still disabled: the integration receives
+HTTP 403 when enabling it. Settings → Pages must select GitHub Actions before
+the prepared workflow can deploy. Verify the GitHub project preview before
+moving the custom domain; its existing GitLab DNS remains unchanged.
+
 The merged [rs.js #9](https://github.com/pondersource/remotestorage.js/pull/9)
 fixes canonical protected-resource metadata discovery for public LWS roots,
 index discovery when container listings report generic MIME, and JSON text
