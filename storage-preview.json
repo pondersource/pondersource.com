@@ -1,0 +1,27 @@
+{
+  "status": "experimental fork preview; verified vendored artifacts",
+  "remotestorage": {
+    "baseCommit": "27fda517eceda07c3a2df085a129ddd531272993",
+    "sourceSha256": "24759f5b278cfcf60677e01277f4b441e35f31f77852f7739a95035f305eaa48"
+  },
+  "widget": {
+    "baseCommit": "045c78cd752593e58fffed7386ddcbb4ba74dd2e",
+    "sourceSha256": "40bb0fb37ff5a39db1f97adf373de3e4a5c382fba979f402ef77b080e291a076"
+  },
+  "artifacts": {
+    "dependencies/remotestoragejs/remotestorage.js": "9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db",
+    "dependencies/remotestoragejs/remotestorage-all.js.map": "915372c6c56e1ae3bb367c5deff63cb82ec6d674e9309e8107718b8dc0a54c2a",
+    "dependencies/remotestoragejs/remotestorage-all.js.LICENSE.txt": "6195b4dad315ff229e5ade11dcbdc157538c0fd5401d66df4d9748532e38fa86",
+    "dependencies/remotestorage-widget/widget.js": "7a070705f828684e16de500610ed8874c1c8943e8416e87babb7b6a810340bb6",
+    "dependencies/remotestorage-widget/widget.js.map": "29d9633d018935b9dcfbd009d40c5e44536467e33d356acd744c628ac949819b",
+    "dependencies/remotestorage-widget/widget.js.LICENSE.txt": "8c9946dfc859a2bfb26cc541125631cd96e7110fa20a702eb19275c9d1658805"
+  },
+  "sourceRepositories": {
+    "remotestorage": "https://github.com/pondersource/remotestorage.js",
+    "widget": "https://github.com/pondersource/remotestorage-widget"
+  },
+  "upstreamRepositories": {
+    "remotestorage": "https://github.com/remotestorage/remotestorage.js",
+    "widget": "https://github.com/remotestorage/remotestorage-widget"
+  }
+}
