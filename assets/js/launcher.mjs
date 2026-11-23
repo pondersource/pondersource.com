@@ -36,9 +36,54 @@ let busy = false;
 let epoch = 0;
 let mode = 'local';
 let queue = Promise.resolve();
+let guestExport;
 const localReady = openLocalStore().then(store => {
   localStore = store;
 });
+
+const guestData = {
+  accept: 'application/json,.json',
+  async export() {
+    await localReady;
+    await queue;
+    const body = JSON.stringify(await localStore.read());
+    guestExport = body;
+    return { filename: 'pondersource-app-library.json', type: 'application/json', body };
+  },
+  async beforeConnect() {
+    await localReady;
+    await queue;
+    const saved = await localStore.read();
+    if (saved.apps.length && JSON.stringify(saved) !== guestExport) {
+      throw new Error('Export your app library before connecting Nextgraph. Export again if you change it.');
+    }
+  },
+  async import(file) {
+    if (file.size > 50 * 1024 * 1024) throw new Error('App library files must be smaller than 50 MiB.');
+    const parsed = JSON.parse(await file.text());
+    if (!parsed || parsed.version !== 1 || !Array.isArray(parsed.apps)) throw new Error('Choose a Ponder Source app library file.');
+    const imported = readState(parsed);
+    await localReady;
+    const generation = epoch;
+    const operation = queue.then(async () => {
+      if (!ready || generation !== epoch) throw new Error('The selected library changed. Import again after it opens.');
+      const save = async () => {
+        const saved = await readCurrent();
+        if (generation !== epoch) throw new Error('The selected library changed. Import again after it opens.');
+        const merged = mergeStates(state, saved, imported);
+        await writeCurrent(merged);
+        if (generation !== epoch) throw new Error('The selected library changed. Your export file has been kept.');
+        state = merged;
+        render();
+      };
+      if (mode === 'local' && navigator.locks) await navigator.locks.request('pondersource-launcher', save);
+      else await save();
+    });
+    queue = operation.catch(error => showError(error.message || String(error)));
+    await operation;
+    return { message: 'Imported your app library on this device. Keep your export file until remote recovery is verified.' };
+  }
+};
 
 function showError(message) {
   $('library-error').textContent = message;
@@ -295,6 +340,7 @@ try {
   });
   const widget = new Widget(rs, {
     solidProviders: { allowAnyProvider: true }, skipInitial: true, leaveOpen: true,
+    guestData,
   });
   widget.attach('launcher-storage-widget');
   if (storageFirstAccount) {

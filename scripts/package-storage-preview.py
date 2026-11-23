@@ -13,7 +13,12 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--rs', type=Path, required=True)
 parser.add_argument('--widget', type=Path, required=True)
 parser.add_argument('--output', type=Path, required=True)
+parser.add_argument('--rs-version', default='2.0.0-beta.10-pondersource.7-preview.6')
+parser.add_argument('--widget-version', default='1.8.2-pondersource.2-preview.6')
 args = parser.parse_args()
+for version in [args.rs_version, args.widget_version]:
+    if not version or any(char not in '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-+' for char in version):
+        parser.error('versions must contain only letters, digits, dots, hyphens and plus signs')
 if args.output.exists():
     parser.error('output exists; choose a new directory')
 args.output.mkdir(parents=True)
@@ -55,6 +60,6 @@ for name in ['remotestorage.js', 'remotestorage-all.js', 'remotestorage-solid.js
     rsfiles['release/' + name] = args.rs / 'release/remotestorage-all.js'
 for suffix in ['.map', '.LICENSE.txt']:
     rsfiles['release/remotestorage-all.js' + suffix] = args.rs / ('release/remotestorage-all.js' + suffix)
-package(args.rs, '2.0.0-beta.10-pondersource.7-preview.6', rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
+package(args.rs, args.rs_version, rsfiles, {'types':'./release/types/remotestorage-all.d.ts'})
 widgetfiles = {name: args.widget / name for name in ['build/widget.js', 'build/widget.js.map', 'build/widget.js.LICENSE.txt', 'README.md', 'index.d.ts']}
-package(args.widget, '1.8.2-pondersource.2-preview.6', widgetfiles, {})
+package(args.widget, args.widget_version, widgetfiles, {})

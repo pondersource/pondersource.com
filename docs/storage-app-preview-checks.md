@@ -36,6 +36,34 @@ core/widget bytes and the user's registered localhost callback.
 
 ## Provider and recovery evidence
 
+### Preview 7
+
+The next fork preview uses rs.js source `2517fe04` (merged in
+[PR 11](https://github.com/pondersource/remotestorage.js/pull/11)) and widget
+source `18a22cf7` (merged in
+[PR 3](https://github.com/pondersource/remotestorage-widget/pull/3)). The core's
+nine CI jobs passed, including actual NextGraph engine/journal recovery. Local
+producer archives are byte-identical across two fresh output directories, and
+all three core entry aliases contain the same reviewed all-backend bytes.
+The previous preview archives remain unchanged.
+
+The launcher now exports its actual local app-library document through the
+widget's app-owned hooks. It requires a current export before Nextgraph can
+redirect away from a guest library, validates imported documents, and merges
+them using the existing per-app timestamp/removal rules. Local persistence
+finishes before import succeeds; the message does not claim broker delivery.
+The exact runtime passes 27 staged browser checks and 20 state/discovery checks.
+Publication and deployed-byte verification remain separate gates.
+
+An actual pinned Atomic plugin host passed native installation review, app
+consent, exact scoped JSON/MIME and binary storage, anonymous/scope denial,
+provider-outage/reload recovery, fresh-browser readback, and concurrent writes
+yielding one success and one 412. Its disposable account was bootstrapped with
+the native Rust API; browser new-account genesis onboarding remains broken at
+that host revision. The recorded run used the prior core preview bytes; see
+[the acceptance fixture](https://github.com/pondersource/remotestorage.js/pull/12)
+for precise source/runtime bindings. No server deployment is certified.
+
 ### Native formats and hosting follow-up
 
 [Data modules PR 10](https://github.com/pondersource/data-modules/pull/10) merged
