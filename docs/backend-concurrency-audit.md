@@ -179,3 +179,16 @@ unowned or no-Web-Locks cases require an application recovery/export interface;
 the SDK does not guess that another writer died. These client guarantees do not
 add atomicity to a provider's final mutation or repair its interrupted-body
 storage behavior.
+
+
+The same pinned provider now also receives a separate early-response patch.
+Before an HTTP/1 response commits with unread request content, it announces
+`Connection: close`. This prevents an early refusal from leaving the client to
+reuse a socket that the server closes afterwards. It does not drain unauthorized
+uploads, change HTTP/2 connection rules or disable successful keepalive.
+The combined fixture passes 714 tests, including eight new early-response and
+exception-cleanup cases, on the exact CI JDK. Unfiltered stress controls reproduce
+the connection failure; both filtered protocol variants complete 5,000 requests.
+Native SDK acceptance and all 11 browser cases also pass with the same client
+runtime. These are additional provider transport fixes, separate from mutation
+atomicity and retained client candidates.

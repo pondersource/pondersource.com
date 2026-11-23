@@ -29,7 +29,7 @@ def package(checkout, version, files, metadata):
         'status': 'experimental fork preview; not published to npm',
         'baseCommit': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
         'sourceSha256': digest.hexdigest(),
-        'artifacts': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in files.items()},
+        'artifacts': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in sorted(files.items())},
     }
     data = json.loads((checkout / 'package.json').read_text())
     for key in ['scripts', 'devDependencies', 'overrides', 'optionalDependencies']:

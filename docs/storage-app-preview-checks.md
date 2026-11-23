@@ -43,7 +43,7 @@ readback through LWS, OneDrive, NextGraph, Dropbox and Google Drive. The module
 object API still parses JSON. Semantic media-type comparison accepts legal
 normalization without equating different bytes or meaningful parameter values.
 
-The explicitly patched Java LWS fixture passes 706 Maven tests, including nine
+The explicitly patched Java LWS fixture passes 714 Maven tests, including 17
 provider regressions, plus actual SDK CRUD/concurrent-write and browser checks.
 Its source patch and licensing are retained in the Ponder Source SDK fork.
 Unmodified upstream and raw LWSD concurrency failures are not certified by those
@@ -65,7 +65,7 @@ original and controlled upload/reload journeys keep their original assertions.
 CI and the exact committed source remain the merge gates.
 
 The `preview.6` source is
-`9ba1311a2631e2053919bd4b1dac45ef60ad4d75` in
+`27fda517eceda07c3a2df085a129ddd531272993` in
 [rs.js #10](https://github.com/pondersource/remotestorage.js/pull/10), with core
 SHA-256 `9e3d17d894765cb9eca44264ee700b8182f06f50a80139f19ca0599e178762db`.
 The widget source remains `045c78cd752593e58fffed7386ddcbb4ba74dd2e`, with SHA-256

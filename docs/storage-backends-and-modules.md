@@ -2,7 +2,7 @@
 
 Implementation verified on 2026-11-20; fork PRs published and then merged
 after green CI on 2026-11-23. No upstream npm release was made. The launcher workflow
-now pins Ponder Source source `9ba1311a2631e2053919bd4b1dac45ef60ad4d75`
+now pins Ponder Source source `27fda517eceda07c3a2df085a129ddd531272993`
 for the authenticated LWS, JSON readback and interrupted-write recovery follow-up. The initial fork
 rollout used `c97481060a30d7adcd6136525572cfeeb63927b0`.
 See [the app review inventory](storage-app-preview-checks.md).

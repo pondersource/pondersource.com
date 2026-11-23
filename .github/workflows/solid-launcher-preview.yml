@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: pondersource/remotestorage.js
-          ref: 9ba1311a2631e2053919bd4b1dac45ef60ad4d75
+          ref: 27fda517eceda07c3a2df085a129ddd531272993
           path: rs-solid-source
       - uses: actions/setup-node@v4
         with:
