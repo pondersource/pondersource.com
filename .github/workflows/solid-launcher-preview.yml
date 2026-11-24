@@ -7,6 +7,8 @@ on:
 jobs:
   launcher:
     runs-on: ubuntu-latest
+    outputs:
+      pages_artifact: ${{ steps.pages_artifact.outputs.name }}
     env:
       RS_SOLID_TEST_PASSWORD: disposable-launcher-test-password
     steps:
@@ -54,6 +56,15 @@ jobs:
         with:
           name: solid-launcher-preview
           path: preview/
+      - name: Select the Pages artifact for this attempt
+        id: pages_artifact
+        run: echo "name=github-pages-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+      - run: touch preview/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          name: ${{ steps.pages_artifact.outputs.name }}
+          path: preview/
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -66,14 +77,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: solid-launcher-preview
-          path: site
-      - run: touch site/.nojekyll
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
       - uses: actions/deploy-pages@v4
         id: deployment
+        with:
+          artifact_name: ${{ needs.launcher.outputs.pages_artifact }}
