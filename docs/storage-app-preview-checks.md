@@ -261,3 +261,10 @@ The launcher guest-export guard now runs when the wallet form is submitted.
 Its complete archive remains required before leaving the standalone app.
 Real wallet consent, broker delivery, two-device divergence/offline recovery and
 signed-in OneDrive acceptance still require separate acceptance sessions.
+
+The mobile wallet follow-up uses widget source
+`14acf28d44851a5984dbfa91ba71e35a5b3a0b79`. It waits for the tall chooser's
+finite layout animations before bringing the wallet form into view. This avoids
+leaving the form above the viewport on a long mobile page. All 16 widget cases
+and 30 launcher/app-directory browser checks pass, including a full-page mobile
+regression and preserving a custom address through back/reopen.
