@@ -188,3 +188,20 @@ to a separate local store, expose local-persistence and server-sync failures,
 and handle explicit first import without deleting the source. App-scoped agent
 grants can use the native SDK grant flow where available. No native Atomic
 backend implementation or live two-device acceptance is claimed yet.
+
+## Configurable wallet frontend and calendar contracts
+
+The fork widget now asks for a NextGraph wallet server, defaulting to
+`https://nextgraph.net`. Core PR13 and widget PR4/5 use the same selected HTTPS
+origin for redirect and wallet RPC. The app URL carries a public destination hint
+through iframe storage partitions; a first visit in a new partition requires
+confirmation again. A live SDK session cannot change wallet origins without a
+reload. This configures the frontend, not a broker or private-store identity.
+
+The first calendar module is in pondersource/data-modules PR11. It provides JSON
+Schema, open ShEx shapes, Atomic Classes/Properties, explicit field mappings and
+lossless JSON/RDF/Atomic/iCalendar conversions. Native RDF edits retain source
+quads and use ETags. The current NextGraph document backend remains in place.
+The pinned NextGraph ShEx compiler rejects a string/langString union; native
+semantic graph binding still needs that limitation handled. No data migration
+or live Atomic schema registration is claimed by the schema/codec tests.

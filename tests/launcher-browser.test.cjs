@@ -46,8 +46,11 @@ test('the app-owned guest archive transfers the local library and blocks connect
   await localReady(page);
   await install(page, 'webmarks');
   await page.locator('.rs-choose-nextgraph').click();
-  await page.waitForFunction(() => document.querySelector('.rs-storage-error').textContent.includes('Export your app library'));
-  assert.match(await page.locator('.rs-storage-error').innerText(), /Export your app library/);
+  assert.equal(await page.locator('[name=rs-nextgraph-wallet]').inputValue(), 'https://nextgraph.net');
+  await page.locator('.rs-nextgraph-connect').click();
+  await page.waitForFunction(() => document.querySelector('.rs-nextgraph-error').textContent.includes('Export your app library'));
+  assert.match(await page.locator('.rs-nextgraph-error').innerText(), /Export your app library/);
+  await page.locator('.rs-nextgraph-back').click();
   assert.equal(new URL(page.url()).origin, new URL(base).origin);
   const downloading = page.waitForEvent('download');
   await page.locator('.rs-export-guest').click();
