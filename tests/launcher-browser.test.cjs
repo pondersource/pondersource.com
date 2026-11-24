@@ -399,3 +399,21 @@ test('Google Drive: empty account, install, upload, reload and restore after sig
   await page.locator('#rs-login-error').waitFor({ state: 'hidden' });
   assert.ok(fixture.writes > 0);
 });
+
+test('mobile wallet selection stays visible after the provider list collapses', async t => {
+  const { page } = await open(t, { viewport: { width: 390, height: 844 } });
+  await page.goto(base);
+  await localReady(page);
+  await page.locator('.rs-choose-nextgraph').click();
+  await page.waitForFunction(() => {
+    const bounds = document.querySelector('.rs-nextgraph-form').getBoundingClientRect();
+    return bounds.top >= 0 && bounds.bottom <= innerHeight;
+  });
+  const input = page.locator('[name=rs-nextgraph-wallet]');
+  assert.equal(await input.inputValue(), 'https://nextgraph.net');
+  await input.fill('https://wallet.example.test');
+  await page.locator('.rs-nextgraph-back').click();
+  await page.locator('.rs-choose-nextgraph').click();
+  await page.waitForFunction(() => document.querySelector('.rs-nextgraph-form').getBoundingClientRect().top >= 0);
+  assert.equal(await input.inputValue(), 'https://wallet.example.test');
+});
