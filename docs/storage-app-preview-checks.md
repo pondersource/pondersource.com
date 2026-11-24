@@ -249,3 +249,15 @@ Webpack module IDs differed between a symlinked development dependency directory
 and a clean CI installation, so rebuilding the same source did not preserve the
 archive hash. Source builds remain checked; artifact hashes and source pins are
 verified before the launcher browser tests and deployment.
+
+## Wallet selector follow-up
+
+Preview 9 adds the configurable NextGraph wallet frontend: rs.js source
+`47cf02b312902298efcbfc8c7c6cd1bfb637e11c`, widget source
+`4857d1b236d159d9b00c2f18792851cacc70593e`. Default and custom wallet origins pass
+strict-CSP protocol tests using the actual pinned web/ORM SDKs. All three actual
+engine recovery scenarios, 754 Mocha cases and 15 widget browser tests pass.
+The launcher guest-export guard now runs when the wallet form is submitted.
+Its complete archive remains required before leaving the standalone app.
+Real wallet consent, broker delivery, two-device divergence/offline recovery and
+signed-in OneDrive acceptance still require separate acceptance sessions.
