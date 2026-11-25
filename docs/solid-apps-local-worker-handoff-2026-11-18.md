@@ -1,5 +1,7 @@
 # Solid apps — local worker handoff
 
+Current continuation: [25 November storage worker handoff](storage-worker-handoff-2026-11-25.md). Its current status and later user decisions supersede conflicting older notes below.
+
 ## Bookmarks/backend continuation — 19 November 2026
 
 The module-first priority below remains current. Do not start the app-wide migration or Atomic schemas yet.

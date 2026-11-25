@@ -1,5 +1,7 @@
 # Storage unification work
 
+Current continuation: [25 November storage worker handoff](storage-worker-handoff-2026-11-25.md). Its current status and later user decisions supersede conflicting older notes below.
+
 Implementation verified on 2026-11-20; fork PRs published and then merged
 after green CI on 2026-11-23. No upstream npm release was made. The launcher workflow
 now pins Ponder Source source `27fda517eceda07c3a2df085a129ddd531272993`
