@@ -1,6 +1,8 @@
 # pondersource.com
 The https://pondersource.com/ website
 
+Current storage implementation, tests, source revisions and remaining blockers: [worker handoff](docs/storage-worker-handoff-2026-11-25.md).
+
 ## Local development
 
 This is a static site, with dependencies checked in. No build or application
