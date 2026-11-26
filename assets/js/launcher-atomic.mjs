@@ -100,21 +100,20 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
   const { collections, core } = api;
   const drive = driveId(connection.drive);
   const origin = httpsOrigin(connection.node);
+  if (globalThis.location?.origin === origin) throw new Error('Use an Atomic node on its own origin.');
   const agent = api.Agent.fromCryptoKeyPair(connection.keyPair, connection.agent);
   if (api.agentSubjectFromPublicKey(await agent.getPublicKey()).subject !== agent.subject) {
     throw new Error('The saved Atomic app key is invalid. Disconnect it and connect again.');
   }
   await api.LoroLoader.initializeLoro();
-  const fetchNode = (input, options) => {
+  const fetchNode = (input, options = {}) => {
     if (new URL(input).origin !== origin) throw new Error('An Atomic request left the selected node.');
-    return transport(input, { ...options, credentials: 'omit', redirect: 'error' });
+    const deadline = AbortSignal.timeout(20_000);
+    const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline;
+    return transport(input, { ...options, signal, credentials: 'omit', redirect: 'error' });
   };
   const client = new api.Client(fetchNode);
   const endpoint = new URL('/commit', origin).href;
-  const store = new api.Store({
-    agent, serverUrl: origin, connect: false, requireOnlineWrites: true,
-    commitTransport: commit => client.postCommit(commit, endpoint)
-  });
   const get = async subject => {
     const { resource } = await client.fetchResourceHTTP(subject, { signInfo: { agent, serverURL: origin } });
     if (resource.error) throw resource.error;
@@ -136,13 +135,23 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
         !resource.getSubjects(core.properties.write).includes(agent.subject)) {
       throw new Error('In Atomic, select the same drive and approve Read and edit for this app key.');
     }
+    return resource;
   }
 
-  await ensureGrant();
+  const root = await ensureGrant();
+  // The Store signs and builds commits only. The Client above sends them
+  // and reads from the selected node, without an Atomic session cookie.
+  const store = new api.Store({
+    agent, serverUrl: origin, noServer: true, requireOnlineWrites: true,
+    commitTransport: commit => client.postCommit(commit, endpoint)
+  });
+  store.addResource(root);
   return {
     async read() {
       await ensureGrant();
       let state = readState();
+      let expectedTotal;
+      const seen = new Set();
       for (let page = 0; ; page++) {
         const query = new URL('/query', origin);
         query.search = new URLSearchParams({
@@ -156,8 +165,12 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
         if (!Number.isSafeInteger(total) || total < 0 || subjects.length !== Math.min(pageSize, Math.max(0, total - page * pageSize))) {
           throw new Error('Atomic returned an incomplete library page. Try loading it again.');
         }
+        expectedTotal ??= total;
+        if (total !== expectedTotal) throw new Error('The Atomic library changed while loading. Try loading it again.');
         for (const subject of subjects) {
           if (driveId(subject) !== subject) throw new Error('Atomic returned an invalid library record ID.');
+          if (seen.has(subject)) throw new Error('The Atomic library changed while loading. Try loading it again.');
+          seen.add(subject);
         }
         const resources = await Promise.all(subjects.map(subject => get(subject)));
         for (const resource of resources) {
@@ -171,6 +184,8 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
     },
     async write(next) {
       await ensureGrant();
+      // Each acknowledged launcher's snapshot adds a resource. Independent
+      // devices can write at once without replacing one shared JSON property.
       const record = await store.newResource({ parent: drive, propVals: {
         [core.properties.name]: libraryName,
         [core.properties.description]: JSON.stringify(readState(next))

@@ -71,9 +71,11 @@ function fixture({ write = true, badCertificate = false, failedWrite = false, wr
     },
     Store: class {
       constructor(options) { this.options = options; }
+      addResource(resource) { assert.equal(resource.subject, drive); }
       async newResource(options) {
         assert.equal(options.parent, drive);
         assert.equal(this.options.requireOnlineWrites, true);
+        assert.equal(this.options.noServer, true);
         pending.push(options);
         return {
           save: async () => {
