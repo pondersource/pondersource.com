@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate crawlable HTML from the launcher's catalog; no third-party dependencies."""
 import argparse
+import re
 from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -109,6 +110,12 @@ def build():
         subtitle, intro, features = DETAILS[app_id]
         path = f"/apps/{app_id}/"
         assert len(app["sources"]) == 2, f"Missing source links: {app_id}"
+        assert re.fullmatch(r"https://github\.com/pondersource/[\w.-]+/?", app["sources"][0]), (
+            f"Missing Ponder Source fork link for {app_id}"
+        )
+        assert app["url"] == f"https://{app_id}.pondersource.com", (
+            f"Expected a Ponder Source app origin for {app_id}"
+        )
         assert (ROOT / app["icon"].lstrip("/")).is_file(), f"Missing icon: {app_id}"
         license_link = ('\n      <p><a href="/assets/apps/focus.LICENSE.txt">Focus logo GPL license and upstream source</a></p>' if app_id == "focus" else "")
         feature_list = "\n".join(f"        <li>{escape(item)}</li>" for item in features)

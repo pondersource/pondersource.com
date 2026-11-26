@@ -6,11 +6,11 @@ Last checked: 2026-11-18. Source catalog: https://solidproject.org/apps (37 entr
 
 For each app:
 1. Verify source availability, licence and a useful user-visible operation backed by a Pod.
-2. Fork into Ponder Source and deploy an identifiable revision.
+2. Create the fork under the `pondersource` GitHub organization and deploy an identifiable revision of that fork to a Ponder Source app origin.
 3. Add Playwright for real Solid login, a useful create/update/read operation, remote-write verification and recovery in a clean browser context. Check unauthorised access where the data should be private. Mocked login and local-only persistence are insufficient.
 4. Use an existing suitable Solid Data Module or remoteStorage module, preserving fields, RDF term kinds, relations, document boundaries and discovery. Record partial coverage honestly.
 5. Evaluate the pinned rs.js Solid backend. Its presence alone does not translate a native RDF model into remoteStorage JSON. Keep native RDF where the current backend cannot preserve it.
-6. List in the launcher only after the deployment and meaningful behaviour have been verified.
+6. List in the launcher only after the hosted fork and meaningful behaviour have been verified. Link to the upstream project separately as source attribution.
 
 An app may be postponed for an evidenced blocker: unavailable source, unsuitable licence, abandoned dependencies, a broken auth/data path, no useful Pod behaviour, or being a tool rather than an end-user app. Record what was attempted and the error; “not yet tested” is not “broken”.
 
@@ -29,7 +29,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | Mnera.io | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | dokieli | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Pod Pro | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| PodOS Browser | Not yet forked | Not yet tested; not classified broken | Not yet audited |
+| PodOS Browser | [fork](https://github.com/pondersource/PodOS) | Forked 2026-11-26. Standalone build and deployed Solid read/write still to verify. | Native RDF browser |
 | Solid File Manager (Otto AA) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Solidflix | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | NotePod (ANU) | Not yet forked | Not yet tested; not classified broken | Not yet audited |
@@ -53,7 +53,7 @@ New module **names and scopes require Michiel's sign-off**. No new module is aut
 | GeoPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | SecureDialog | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | TodoPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
-| RoloPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
+| RoloPod | [fork](https://github.com/pondersource/rolopod) | Forked 2026-11-26. Flutter web deployment and encrypted contact recovery still to verify. | Native Solid with encrypted address books |
 | KonaPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | BilliPod | Not yet forked | Not yet tested; not classified broken | Not yet audited |
 | Solid Memo | [fork](https://github.com/pondersource/solid-memo) | [Live deployment](https://solid-memo.pondersource.com); separate worker owns validation | Separate worker owns flashcards module integration |
@@ -73,3 +73,7 @@ This does not complete the rollout. SolidFocus and Mashlib now have forks but st
 - SolidFocus 0.3.3 uses Vue, Aerogel and Soukai; it already has task UI Cypress scenarios. Its modern dependency stack differs from our older Umai and Media Kraken forks.
 - Mashlib 3.1.0 delegates app-specific work to solid-panes and separate pane packages. Its root test script only echoes a message, so it needs meaningful browser coverage.
 - Umai's accepted recipe schema and Media Kraken's movie/watch-action schema should be tested through shared module readers before attempting write-path replacements.
+
+## Unhosted directory candidates
+
+[Grouptabs](https://github.com/pondersource/grouptabs) was forked on 2026-11-26. It uses PouchDB for local storage and a CouchDB endpoint for sharing tabs. Before listing it, deploy the fork with a Ponder Source sync endpoint and verify tab creation, expense persistence and share-by-ID from a clean browser.
