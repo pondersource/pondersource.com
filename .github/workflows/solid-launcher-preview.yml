@@ -32,11 +32,23 @@ jobs:
           path: rs-widget-source
       - run: npm ci && npm run build
         working-directory: rs-widget-source
+      - uses: actions/checkout@v4
+        with:
+          repository: ontola/atomic-server
+          ref: fb640fb54657ef826db8ec7ca55e24587faab1da
+          path: atomic-launcher-source
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: atomic-launcher-source/browser/package.json
+      - run: pnpm install --frozen-lockfile
+        working-directory: atomic-launcher-source/browser
+      - run: pnpm --filter @tomic/utils build
+        working-directory: atomic-launcher-source/browser
       - run: npm ci
         working-directory: rs-solid-source/examples/solid
       - run: npx playwright install --with-deps chromium
         working-directory: rs-solid-source/examples/solid
-      - run: node --test tests/lws-discovery.test.mjs
+      - run: node --test tests/lws-discovery.test.mjs tests/launcher-atomic.test.mjs
       - name: Verify vendored storage artifacts
         run: python3 scripts/verify-storage-preview.py --rs rs-solid-source --widget rs-widget-source
       - name: Stage site
@@ -44,6 +56,7 @@ jobs:
           mkdir preview
           git archive HEAD | tar -x -C preview
           # git archive includes the reviewed preview artifacts and their manifest.
+          node scripts/build-atomic-launcher-sdk.mjs atomic-launcher-source preview/assets/js/atomic-sdk
       - name: Test launcher against Community Solid Server
         run: |
           (cd rs-solid-source/examples/solid && exec node tests/server.cjs) &

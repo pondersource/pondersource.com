@@ -441,3 +441,23 @@ test('mobile wallet selection stays visible after the provider list collapses', 
   await page.waitForFunction(() => document.querySelector('.rs-nextgraph-form').getBoundingClientRect().top >= 0);
   assert.equal(await input.inputValue(), 'https://wallet.example.test');
 });
+
+test('Atomic chooser prepares the native app-key approval link', async t => {
+  const { page } = await open(t);
+  await page.goto(base);
+  await localReady(page);
+  await page.locator('.rs-choose-atomic').click();
+  const dialog = page.getByRole('dialog', { name: 'Connect Atomic' });
+  const drive = 'atomic:' + 'A'.repeat(86);
+  await dialog.getByLabel('Drive DID or link').fill(drive);
+  await dialog.getByLabel('Atomic node', { exact: true }).fill('https://node.example');
+  await dialog.getByRole('button', { name: 'Prepare app key' }).click();
+  const link = dialog.getByRole('link', { name: 'Approve in Atomic' });
+  await link.waitFor();
+  const grant = new URL(await link.getAttribute('href'));
+  assert.equal(grant.origin, 'https://app.atomic.place');
+  assert.equal(grant.pathname, '/app/connect-agent');
+  assert.equal(grant.searchParams.get('target'), drive);
+  assert.equal(grant.searchParams.get('write'), '1');
+  assert.ok(grant.searchParams.get('key'));
+});
