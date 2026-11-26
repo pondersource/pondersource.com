@@ -40,3 +40,18 @@ test('all apps are discoverable and usable without JavaScript on mobile and desk
   await page.goto(base + '/index.html');
   assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://pondersource.com/');
 });
+
+test('the launcher links to the published apps privacy notice', async t => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  t.after(() => context.close());
+  const page = await context.newPage();
+  await page.goto(base);
+
+  const link = page.getByRole('link', { name: 'Apps privacy notice', exact: true });
+  const [response] = await Promise.all([
+    page.waitForResponse(new URL('/privacy.html', base).href),
+    link.click()
+  ]);
+  assert.equal(response.status(), 200);
+  assert.equal(await page.getByRole('heading', { level: 1 }).textContent(), 'PonderSource apps privacy notice');
+});
