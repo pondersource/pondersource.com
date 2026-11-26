@@ -23,6 +23,9 @@ DETAILS = {
     "media-kraken": ("Track movies and what to watch next", "Keep a record of movies you have watched and a collection of films to watch later. Media Kraken saves your collection to your connected storage.", ["Track watched movies", "Keep a watch-later collection", "Save your collection to your chosen storage"]),
     "solid-memo": ("Spaced-repetition flashcards", "Study with flashcards and spaced repetition. You can try Solid Memo as a guest, or connect storage to keep your progress across devices.", ["Study with flashcards", "Review using spaced repetition", "Try guest mode or save progress across devices"]),
     "focus": ("Tasks, lists and workspaces", "Create tasks, set priorities and due dates, and organize your work into lists and workspaces. Try Focus as a guest or connect storage to keep your projects across devices.", ["Tasks with priorities and due dates", "Lists and workspaces for different projects", "Complete guest project export and import"]),
+    "podos-browser": ("Browse linked data", "Open a resource URL to explore the linked data web. Sign in separately in PodOS Browser to work with resources on a Solid Pod.", ["Explore public RDF resources", "Browse your Solid Pod", "Create and edit linked data"]),
+    "rolopod": ("A private address book", "Keep contacts in an address book on your Solid Pod. RoloPod manages its own Solid sign-in and supports sharing selected parts of your address book.", ["Collect and organise contacts", "Store your address book in a Solid Pod", "Share selected contacts"]),
+    "grouptabs": ("Split group expenses", "Share a tab for a trip, household or group activity. Open Grouptabs and choose Start using Grouptabs. The app syncs shared tabs through its CouchDB service.", ["Record who paid and who participated", "Share a tab with friends", "Keep working offline after opening a tab"]),
 }
 
 
@@ -38,7 +41,11 @@ class CatalogParser(HTMLParser):
         attrs = dict(attrs)
         if tag == "div":
             if "data-app-id" in attrs:
-                self.app = {"id": attrs["data-app-id"], "sources": []}
+                self.app = {
+                    "id": attrs["data-app-id"],
+                    "upstream": attrs.get("data-hosting") == "upstream",
+                    "sources": [],
+                }
                 self.depth = 0
             if self.app is not None:
                 self.depth += 1
@@ -51,6 +58,8 @@ class CatalogParser(HTMLParser):
             self.app["icon"] = "/" + attrs["src"].lstrip("/")
         if tag == "button" and "data-base-href" in attrs:
             self.app["url"] = attrs["data-base-href"]
+            if self.app["upstream"]:
+                assert attrs.get("data-storage-handoff") == "none", "Upstream apps manage their own storage"
         if tag == "a" and attrs.get("target") == "_blank":
             self.app["sources"].append(attrs["href"])
 
@@ -108,16 +117,30 @@ def build():
         description = escape(app["description"])
         subtitle, intro, features = DETAILS[app_id]
         path = f"/apps/{app_id}/"
-        assert len(app["sources"]) == 2, f"Missing source links: {app_id}"
+        assert len(app["sources"]) == (1 if app["upstream"] else 2), f"Incorrect source links: {app_id}"
         assert (ROOT / app["icon"].lstrip("/")).is_file(), f"Missing icon: {app_id}"
         license_link = ('\n      <p><a href="/assets/apps/focus.LICENSE.txt">Focus logo GPL license and upstream source</a></p>' if app_id == "focus" else "")
         feature_list = "\n".join(f"        <li>{escape(item)}</li>" for item in features)
+        source_links = app["sources"]
+        upstream_url = escape(source_links[-1], quote=True)
+        app_url = escape(app["url"].rstrip("/") + "/", quote=True)
+        if app["upstream"]:
+            source_title = "Community app"
+            source_description = f"{name} runs on its upstream website and manages its own storage."
+            source_items = f'<li><a href="{upstream_url}">{name}: upstream source</a></li>'
+            license_link = f'\n      <p><a href="/assets/apps/{app_id}.LICENSE.txt">App icon license and source</a></p>'
+            assert (ROOT / f"assets/apps/{app_id}.LICENSE.txt").is_file(), f"Missing icon license: {app_id}"
+        else:
+            source_title = "Open source, maintained by Ponder Source"
+            source_description = f"This is Ponder Source’s hosted fork of {name}. Explore our version or the upstream project:"
+            fork_url = escape(source_links[0], quote=True)
+            source_items = f'<li><a href="{fork_url}">{name}: Ponder Source fork</a></li><li><a href="{upstream_url}">{name}: upstream source</a></li>'
         outputs[f"apps/{app_id}/index.html"] = page(
             f'{app["name"]} — {subtitle} | Ponder Source', app["description"], path,
             f'''    <img class="app-icon" src="{app['icon']}" alt="" width="88" height="88">
     <h1>{name}</h1>
     <p class="intro">{description}</p>
-    <div class="actions"><a class="button" href="{app['url']}/">Open {name}</a><a href="/">Go to your app launcher</a></div>
+    <div class="actions"><a class="button" href="{app_url}">Open {name}</a><a href="/">Go to your app launcher</a></div>
     <div class="details">
       <h2>{escape(subtitle)}</h2>
       <p>{escape(intro)}</p>
@@ -127,9 +150,9 @@ def build():
       <h2>Get started</h2>
       <p>Open {name} to use the app on its own website. To keep a shortcut, visit the Ponder Source launcher, choose App store, and install {name}.</p>
       <p>Installing adds a shortcut to your launcher. Removing it does not delete your data in the app.</p>
-      <h2>Open source, maintained by Ponder Source</h2>
-      <p>This is Ponder Source’s hosted fork of {name}. Explore our version or the upstream project:</p>
-      <ul><li><a href="{escape(app['sources'][0], quote=True)}">{name}: Ponder Source fork</a></li><li><a href="{escape(app['sources'][1], quote=True)}">{name}: upstream source</a></li></ul>{license_link}
+      <h2>{source_title}</h2>
+      <p>{source_description}</p>
+      <ul>{source_items}</ul>{license_link}
     </div>''')
         cards.append(f'''      <article class="app-card">
         <img class="app-icon" src="{app['icon']}" alt="" width="88" height="88" loading="lazy">
@@ -140,7 +163,7 @@ def build():
     outputs["apps/index.html"] = page(
         "Independent Open Source Apps | Ponder Source",
         "Browse open source apps for notes, bookmarks, tasks, recipes, movies and more. Find an app and open it directly from Ponder Source.",
-        "/apps/", '    <h1>Independent apps for everyday life</h1>\n    <p class="intro">Find an open source app for writing, organising, reading or learning. Explore what each app does, then open it directly. Ponder Source maintains these community projects as hosted forks.</p>\n    <div class="app-grid">\n' + "\n".join(cards) + "\n    </div>")
+        "/apps/", '    <h1>Independent apps for everyday life</h1>\n    <p class="intro">Find an open source app for writing, organising, reading or learning. Explore what each app does, then open it directly. The catalog includes Ponder Source forks and apps hosted by their upstream projects.</p>\n    <div class="app-grid">\n' + "\n".join(cards) + "\n    </div>")
     paths = ["/", "/apps/"] + [f"/apps/{a['id']}/" for a in apps] + ["/2020-2025/index.html"]
     outputs["sitemap.xml"] = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{ORIGIN}{path}</loc></url>\n" for path in paths) + "</urlset>\n"
     outputs["robots.txt"] = f"User-agent: *\nAllow: /\n\nSitemap: {ORIGIN}/sitemap.xml\n"
