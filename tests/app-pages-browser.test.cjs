@@ -13,14 +13,8 @@ test('all apps are discoverable and usable without JavaScript on mobile and desk
   await page.goto(base);
   await page.getByRole('link', { name: 'Explore all apps', exact: true }).click();
   const paths = await page.locator('.app-card h2 a').evaluateAll(links => links.map(a => a.getAttribute('href')));
-  assert.equal(paths.length, 16);
-  assert.equal(new Set(paths).size, paths.length);
-  const upstream = new Map([
-    ['podos-browser', 'https://browser.pod-os.org/'],
-    ['rolopod', 'https://rolopod.solidcommunity.au/'],
-    ['grouptabs', 'https://grouptabs.net/'],
-  ]);
-  for (const id of upstream.keys()) assert.ok(paths.includes(`/apps/${id}/`));
+  assert.equal(paths.length, 13);
+  assert.equal(new Set(paths).size, 13);
   const sitemapResponse = await context.request.get(base + '/sitemap.xml');
   assert.equal(sitemapResponse.status(), 200);
   const sitemap = await sitemapResponse.text();
@@ -39,12 +33,7 @@ test('all apps are discoverable and usable without JavaScript on mobile and desk
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no horizontal overflow');
       if (path !== '/apps/') {
         const id = path.split('/')[2];
-        const url = upstream.get(id) || 'https://' + id + '.pondersource.com/';
-        assert.equal(await page.getByRole('link', { name: /^Open / }).getAttribute('href'), url);
-        if (upstream.has(id)) {
-          assert.equal(await page.getByRole('heading', { name: 'Community app' }).count(), 1);
-          assert.equal(await page.getByRole('link', { name: /Ponder Source fork/ }).count(), 0);
-        }
+        assert.equal(await page.getByRole('link', { name: /^Open / }).getAttribute('href'), 'https://' + id + '.pondersource.com/');
       }
     }
   }

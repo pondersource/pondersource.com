@@ -215,33 +215,6 @@ for (const [id, name] of [['solid-memo', 'Solid Memo'], ['umai', 'Umai'], ['medi
   });
 }
 
-test('community apps install and launch without receiving the connected account hint', async t => {
-  const { context, page } = await open(t);
-  const fixture = await remoteFixture(context);
-  await page.goto(base);
-  await localReady(page);
-  await connect(page);
-  const communityApps = [
-    ['podos-browser', 'PodOS Browser', 'https://browser.pod-os.org/'],
-    ['rolopod', 'RoloPod', 'https://rolopod.solidcommunity.au/'],
-    ['grouptabs', 'Grouptabs', 'https://grouptabs.net/'],
-  ];
-  for (const [id] of communityApps) await install(page, id);
-  await waitFor(() => communityApps.every(([id]) => fixture.data?.apps.some(app => app.id === id && app.installed)));
-  await page.reload();
-  await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('connected to remoteStorage'));
-  for (const [, name, url] of communityApps) {
-    await context.route(url + '**', route => route.fulfill({ body: 'Upstream app' }));
-    const launch = page.getByRole('link', { name: 'Launch ' + name, exact: true });
-    assert.equal(await launch.getAttribute('href'), url);
-    const popupReady = context.waitForEvent('page');
-    await launch.click();
-    const popup = await popupReady;
-    await popup.waitForURL(url);
-    await popup.close();
-  }
-});
-
 test('browser-storage fallback persists installs without OPFS', async t => {
   const { context, page } = await open(t);
   await context.addInitScript(() => Object.defineProperty(navigator.storage, 'getDirectory', { value: undefined }));
