@@ -106,16 +106,23 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
     throw new Error('The saved Atomic app key is invalid. Disconnect it and connect again.');
   }
   await api.LoroLoader.initializeLoro();
-  const fetchNode = (input, options = {}) => {
-    if (new URL(input).origin !== origin) throw new Error('An Atomic request left the selected node.');
+  const fetchNode = async (input, options = {}) => {
+    const url = new URL(input);
+    if (url.origin !== origin) throw new Error('An Atomic request left the selected node.');
+    const method = options.method ?? 'GET';
+    // Require native DID authorization even if a proxy drops the header the
+    // SDK would use to negotiate legacy authentication.
+    const headers = method === 'GET'
+      ? await api.signRequest(url.href, agent, options.headers, { method })
+      : options.headers;
     const deadline = AbortSignal.timeout(20_000);
     const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline;
-    return transport(input, { ...options, signal, credentials: 'omit', redirect: 'error' });
+    return transport(url.href, { ...options, headers, signal, credentials: 'omit', redirect: 'error' });
   };
   const client = new api.Client(fetchNode);
   const endpoint = new URL('/commit', origin).href;
   const get = async subject => {
-    const { resource } = await client.fetchResourceHTTP(subject, { signInfo: { agent, serverURL: origin } });
+    const { resource } = await client.fetchResourceHTTP(subject, { serverURL: origin });
     if (resource.error) throw resource.error;
     return resource;
   };

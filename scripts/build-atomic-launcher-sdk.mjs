@@ -16,7 +16,7 @@ await esbuild.build({
   stdin: {
     contents: `export { Agent, Client, LoroLoader, Store, agentSubjectFromPublicKey, collections,
       connectAgentUrl, core, decodeB64, decodeGenesisCert, genesisSignerDid, resolveDriveOrigins,
-      parseCommitJSON, serializeDeterministically, server, verifyGenesisCert } from './lib/src/index.ts';`,
+      parseCommitJSON, serializeDeterministically, server, signRequest, verifyGenesisCert } from './lib/src/index.ts';`,
     resolveDir: browser,
     sourcefile: 'launcher-atomic-sdk.ts'
   },

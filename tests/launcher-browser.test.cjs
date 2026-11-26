@@ -452,7 +452,12 @@ test('Atomic approval signs browser requests and a native commit and restores th
   const drive = 'atomic:' + sign(null, cert, owner.privateKey).toString('base64url');
   const property = name => 'https://atomicdata.dev/properties/' + name;
   const records = new Map();
-  const allowed = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET, POST' };
+  const allowed = {
+    'access-control-allow-origin': '*', 'access-control-allow-headers': '*',
+    'access-control-allow-methods': 'GET, POST',
+    'access-control-expose-headers': 'X-Atomic-Server-Version',
+    'x-atomic-server-version': '0.41.0'
+  };
   let publicKey;
   let appAgent;
   let writes = 0;
@@ -462,7 +467,9 @@ test('Atomic approval signs browser requests and a native commit and restores th
     const json = data => route.fulfill({ json: data, headers: allowed });
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: allowed });
     if (url.pathname === '/resource') {
-      assert.ok(request.headers()['x-atomic-signature']);
+      const headers = await request.allHeaders();
+      assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
+      assert.equal(headers['x-atomic-signature-version'], '2');
       assert.equal(request.headers()['cookie'], undefined);
       const subject = url.searchParams.get('subject');
       if (subject === drive) return json({
@@ -477,7 +484,9 @@ test('Atomic approval signs browser requests and a native commit and restores th
       return json({ '@id': subject, ...records.get(subject) });
     }
     if (url.pathname === '/query') {
-      assert.ok(request.headers()['x-atomic-signature']);
+      const headers = await request.allHeaders();
+      assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
+      assert.equal(headers['x-atomic-signature-version'], '2');
       return json({
         '@id': url.href,
         [property('collection/members')]: [...records.keys()],
@@ -528,7 +537,14 @@ test('Atomic approval signs browser requests and a native commit and restores th
   publicKey = Buffer.from(grant.searchParams.get('key'), 'base64');
   appAgent = 'atomic:agent:' + publicKey.toString('base64url');
   await dialog.getByRole('button', { name: 'Finish connecting' }).click();
-  const connected = () => page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('saved to your Atomic drive'));
+  const connected = async () => {
+    try {
+      await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('saved to your Atomic drive'), undefined, { timeout: 12_000 });
+    } catch (error) {
+      const details = await page.locator('#atomic-connect-status, #library-error, #rs-login-error').allTextContents();
+      throw new Error('Atomic library did not open. ' + details.filter(Boolean).join(' '), { cause: error });
+    }
+  };
   await connected();
   await install(page, 'webmarks');
   assert.equal(writes, 1);

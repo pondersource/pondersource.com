@@ -39,12 +39,21 @@ function fixture({ write = true, badCertificate = false, failedWrite = false, wr
     verifyGenesisCert: async (cert, signature) => !badCertificate && cert === 'certificate' && signature === drive.slice(7),
     genesisSignerDid: () => 'atomic:agent:owner',
     server: { classes: { drive: 'drive' } },
+    async signRequest(url, signer, headers, { method }) {
+      assert.equal(new URL(url).origin, node);
+      assert.equal(signer.subject, agent);
+      assert.equal(method, 'GET');
+      return { ...headers, 'x-atomic-signature': 'test signature' };
+    },
     LoroLoader: { initializeLoro: async () => undefined },
     Client: class {
       constructor(transport) { this.transport = transport; }
-      async fetchResourceHTTP(subject, { signInfo }) {
-        assert.equal(signInfo.agent.subject, agent);
-        assert.equal(signInfo.serverURL, node);
+      async fetchResourceHTTP(subject, { serverURL }) {
+        assert.equal(serverURL, node);
+        const urlToSign = subject.startsWith('atomic:')
+          ? node + '/resource?subject=' + encodeURIComponent(subject)
+          : subject;
+        await this.transport(urlToSign, { method: 'GET', headers: { Accept: 'application/ad+json' } });
         calls.push(subject);
         if (subject === drive) return { resource: record(drive, {
           [property('genesis')]: 'certificate', [property('createdBy')]: 'atomic:agent:owner',
@@ -87,7 +96,12 @@ function fixture({ write = true, badCertificate = false, failedWrite = false, wr
     }
   };
   const transport = (url, options) => {
-    assert.equal(url, node + '/commit');
+    if (options.method === 'GET') {
+      assert.equal(new URL(url).origin, node);
+      assert.equal(options.headers['x-atomic-signature'], 'test signature');
+    } else {
+      assert.equal(url, node + '/commit');
+    }
     assert.equal(options.credentials, 'omit');
     assert.equal(options.redirect, 'error');
     return Promise.resolve();
