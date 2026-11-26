@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: pondersource/remotestorage-widget
-          ref: 14acf28d44851a5984dbfa91ba71e35a5b3a0b79
+          ref: bce15da652105ddfcface5463b31468559b7c356
           path: rs-widget-source
       - run: npm ci && npm run build
         working-directory: rs-widget-source
