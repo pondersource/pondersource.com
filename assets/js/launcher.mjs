@@ -92,7 +92,9 @@ function showError(message) {
 }
 
 function enqueue(task) {
+  const generation = epoch;
   queue = queue.then(task).catch(error => {
+    if (generation !== epoch) return;
     console.error('App library:', error);
     showError('Could not save or load your app library. ' + (error?.message || String(error)) + ' Please try again.');
   });
@@ -228,13 +230,17 @@ function changeApp(id, action) {
       if (mode === 'local' && navigator.locks) await navigator.locks.request('pondersource-launcher', save);
       else await save();
     } finally {
-      busy = false;
-      render();
+      if (generation === epoch) {
+        busy = false;
+        render();
+      }
     }
   });
 }
 
 function switchLibrary(remote) {
+  // A stalled account request must not hold up reopening the device library.
+  if (!remote && mode === 'remote') queue = Promise.resolve();
   const generation = ++epoch;
   ready = false;
   busy = false;
@@ -300,8 +306,10 @@ $('copy-device-apps').addEventListener('click', () => {
       showError('');
       $('library-message').textContent = 'Your device’s apps were copied to this account.';
     } finally {
-      busy = false;
-      render();
+      if (generation === epoch) {
+        busy = false;
+        render();
+      }
     }
   });
 });
@@ -323,6 +331,12 @@ try {
     return { exports: { getObject: client.getObject.bind(client), storeObject: client.storeObject.bind(client), on: client.on.bind(client), declareType: client.declareType.bind(client) } };
   } }] });
   rs.access.claim('launcher', 'rw');
+  rs.on('features-loaded', () => {
+    // The pinned rs.js build leaves other tabs' IndexedDB handles open when
+    // disconnect deletes the cache. Let that deletion finish in the caller.
+    const database = rs.local?.db;
+    database?.addEventListener?.('versionchange', () => database.close(), { once: true });
+  });
   rs.caching.enable('/launcher/');
   // The production CI pin may still be an older rs.js build during rollout.
   rs.setApiKeys(Object.fromEntries(Object.entries(storageApiKeys).filter(([name])=>name!=='onedrive'||rs.onedrive)));
@@ -353,6 +367,7 @@ try {
       storageFirstAccount = '';
       ++epoch;
       ready = false;
+      $('storage-status').textContent = 'Disconnecting storage…';
       render();
     }, true);
   });

@@ -295,6 +295,30 @@ test('real remoteStorage.js: authorize, load account library, copy device apps, 
   assert.equal(await page.getByRole('link', { name: 'Launch Hyperdraft' }).count(), 0);
 });
 
+test('disconnect restores the device library with another connected tab open', async t => {
+  const { context, page } = await open(t);
+  await remoteFixture(context, { version: 1, apps: [
+    { id: 'hyperdraft', installed: true, updatedAt: 100, lastOpened: 0 }
+  ] });
+  await page.goto(base);
+  await localReady(page);
+  await install(page, 'litewrite');
+  await connect(page);
+
+  const second = await context.newPage();
+  await second.goto(base);
+  await second.getByRole('link', { name: 'Launch Hyperdraft' }).waitFor();
+
+  await page.getByRole('button', { name: 'Disconnect', exact: true }).click();
+  await page.getByRole('link', { name: 'Launch Litewrite' }).waitFor();
+  assert.equal(await page.getByRole('link', { name: 'Launch Hyperdraft' }).count(), 0);
+
+  await page.reload();
+  await localReady(page);
+  assert.equal(await page.getByRole('link', { name: 'Launch Litewrite' }).count(), 1);
+  assert.equal(await page.getByRole('link', { name: 'Launch Hyperdraft' }).count(), 0);
+});
+
 test('invalid remote library blocks writes instead of resetting account data', async t => {
   const { context, page } = await open(t);
   const fixture = await remoteFixture(context, { version: 99, apps: [] });
