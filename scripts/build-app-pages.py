@@ -110,7 +110,7 @@ def build():
         subtitle, intro, features = DETAILS[app_id]
         path = f"/apps/{app_id}/"
         assert len(app["sources"]) == 2, f"Missing source links: {app_id}"
-        assert re.fullmatch(r"https://github\.com/pondersource/[\w.-]+/?", app["sources"][0]), (
+        assert re.fullmatch(r"https://(?:github|gitlab)\.com/pondersource/[\w.-]+/?", app["sources"][0]), (
             f"Missing Ponder Source fork link for {app_id}"
         )
         assert app["url"] == f"https://{app_id}.pondersource.com", (
