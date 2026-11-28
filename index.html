@@ -295,6 +295,25 @@
     <section class="rs-login" id="rs-login" aria-live="polite">
       <p>Connect your storage to sync installed apps and recent launches across devices.</p>
       <div id="launcher-storage-widget"></div>
+      <button class="btn btn-secondary" id="atomic-disconnect" type="button" hidden>Disconnect Atomic</button>
+      <dialog id="atomic-connect-dialog" aria-labelledby="atomic-connect-title">
+        <h2 id="atomic-connect-title">Connect Atomic</h2>
+        <p>For a library saved with the Atomic remoteStorage plugin, close this dialog, choose remoteStorage, and enter your original storage address.</p>
+        <form id="atomic-connect-form">
+          <label>Drive DID or link <input name="drive" required autocomplete="off"></label>
+          <button class="btn btn-secondary" id="atomic-find-nodes" type="button">Find Atomic nodes</button>
+          <label>Atomic node <input name="node" type="url" list="atomic-node-choices" required value="https://node1.atomicserver.eu"></label>
+          <datalist id="atomic-node-choices"></datalist>
+          <label>Atomic approval site <input name="approvalSite" type="url" value="https://atomic.place" required></label>
+          <button class="btn btn-primary" type="submit">Prepare app key</button>
+        </form>
+        <p id="atomic-connect-status" role="status"></p>
+        <div id="atomic-approval" hidden>
+          <a class="btn btn-primary" id="atomic-approval-link" target="_blank" rel="noopener noreferrer">Approve in Atomic</a>
+          <button class="btn btn-secondary" id="atomic-connect-finish" type="button">Finish connecting</button>
+        </div>
+        <button class="btn btn-secondary" id="atomic-connect-cancel" type="button">Close</button>
+      </dialog>
       <form id="lws-discovery-form">
         <label class="rs-login-label" for="lws-address">Find your LWS storage</label>
         <div class="rs-login-row">

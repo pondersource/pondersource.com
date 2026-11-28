@@ -1,6 +1,7 @@
 import { discoverLWS } from './lws-discovery.mjs';
 import { emptyState, readState, mergeStates, updateApp, openLocalStore } from './launcher-storage.mjs';
 import { storageApiKeys } from './launcher-config.mjs';
+import { setupAtomicLauncher } from './launcher-atomic-ui.mjs';
 
 const $ = id => document.getElementById(id);
 const catalog = new Map();
@@ -28,6 +29,7 @@ if (storageFirstAccount) {
 
 let rs;
 let launcher;
+let atomicLibrary;
 let localStore;
 let localState = emptyState();
 let state = emptyState();
@@ -102,6 +104,7 @@ function enqueue(task) {
 }
 
 function currentAccount() {
+  if (mode === 'atomic') return '';
   // Google/Dropbox email addresses are not remoteStorage discovery addresses.
   if (rs?.connected) return rs.backend === 'remotestorage' ? rs.remote.userAddress : '';
   return storageFirstAccount;
@@ -113,6 +116,7 @@ function appHref(app) {
 }
 
 function providerName() {
+  if (mode === 'atomic') return 'Atomic';
   return { googledrive: 'Google Drive', dropbox: 'Dropbox', solid: 'Solid', remotestorage: 'remoteStorage' }[rs?.backend] || 'remoteStorage';
 }
 
@@ -171,7 +175,7 @@ function render() {
     $('recent-list').append(li);
   }
   $('recent-apps').hidden = recent.length === 0;
-  $('copy-device-apps').hidden = mode !== 'remote' || !localState.apps.some(entry => entry.installed && catalog.has(entry.id));
+  $('copy-device-apps').hidden = mode === 'local' || !localState.apps.some(entry => entry.installed && catalog.has(entry.id));
   $('copy-device-apps').disabled = !ready || busy;
 }
 
@@ -193,6 +197,7 @@ function launchLink(app, className) {
 
 async function readCurrent() {
   if (mode === 'local') return localStore.read();
+  if (mode === 'atomic') return atomicLibrary.read();
   // Default maxAge fetches the document when the initial sync is incomplete.
   // Never treat a missing cache entry as an empty remote library.
   return readState(await launcher.getObject('installed-apps'));
@@ -202,6 +207,8 @@ async function writeCurrent(next) {
   if (mode === 'local') {
     await localStore.write(next);
     localState = next;
+  } else if (mode === 'atomic') {
+    await atomicLibrary.write(next);
   } else {
     await launcher.storeObject('installed-apps', 'installed-apps', structuredClone(next));
   }
@@ -245,7 +252,7 @@ function switchLibrary(remote) {
   ready = false;
   busy = false;
   state = emptyState();
-  mode = remote ? 'remote' : 'local';
+  mode = atomicLibrary ? 'atomic' : remote ? 'remote' : 'local';
   $('library-message').textContent = '';
   $('storage-status').textContent = 'Opening your app library…';
   render();
@@ -261,8 +268,10 @@ function switchLibrary(remote) {
     if (!remote) localState = loaded;
     ready = true;
     showError('');
-    $('storage-status').textContent = remote ? 'Your app library is connected to ' + providerName() + '. Changes sync when online.' :
-      'Your apps are saved on this device. Connect your storage to use a library across devices.';
+    $('storage-status').textContent = mode === 'atomic'
+      ? 'Your app library is saved to your Atomic drive.'
+      : remote ? 'Your app library is connected to ' + providerName() + '. Changes sync when online.' :
+        'Your apps are saved on this device. Connect your storage to use a library across devices.';
     render();
   });
 }
@@ -284,9 +293,9 @@ document.querySelector('.launcher-tabs').addEventListener('keydown', event => {
   event.preventDefault();
   selectTab(event.key === 'Home' ? false : event.key === 'End' ? true : $('library-tab').getAttribute('aria-selected') === 'true', true);
 });
-$('retry-library').addEventListener('click', () => switchLibrary(mode === 'remote'));
+$('retry-library').addEventListener('click', () => switchLibrary(mode !== 'local'));
 window.addEventListener('focus', () => {
-  if (mode === 'local' && ready && !busy) switchLibrary(false);
+  if ((mode === 'local' || mode === 'atomic') && ready && !busy) switchLibrary(mode === 'atomic');
 });
 $('copy-device-apps').addEventListener('click', () => {
   const generation = epoch;
@@ -297,7 +306,7 @@ $('copy-device-apps').addEventListener('click', () => {
       await localReady;
       localState = await localStore.read();
       const saved = await readCurrent();
-      if (generation !== epoch || mode !== 'remote') return;
+      if (generation !== epoch || mode === 'local') return;
       let next = mergeStates(state, saved);
       for (const entry of localState.apps.filter(app => app.installed)) next = updateApp(next, entry.id, 'install');
       await writeCurrent(next);
@@ -319,6 +328,7 @@ function connectionError(message) {
   $('rs-login-error').hidden = !message;
 }
 function signedOut() {
+  if (atomicLibrary) return;
   storageFirstAccount = '';
   connectionError('');
   switchLibrary(false);
@@ -357,6 +367,23 @@ try {
     guestData,
   });
   widget.attach('launcher-storage-widget');
+  const restoreAtomic = setupAtomicLauncher({
+    widget,
+    connect(library) {
+      atomicLibrary = library;
+      storageFirstAccount = '';
+      connectionError('');
+      switchLibrary(true);
+    },
+    disconnect() {
+      atomicLibrary = undefined;
+      connectionError('');
+      switchLibrary(!!rs.connected);
+    },
+    mayConnect: () => !rs.connected,
+    onError: connectionError
+  });
+  void restoreAtomic();
   if (storageFirstAccount) {
     widget.rsAddressInput.value = storageFirstAccount;
     widget.setState('sign-in');
@@ -372,6 +399,7 @@ try {
     }, true);
   });
   rs.on('connected', () => {
+    if (atomicLibrary) return;
     connectionError('');
     switchLibrary(true);
   });
@@ -381,13 +409,14 @@ try {
   });
   rs.on('disconnected', signedOut);
   rs.on('error', error => {
+    if (atomicLibrary) return;
     connectionError(error.name === 'DiscoveryError' ? 'Could not find storage for that address. Please check it and try again.' :
       'Storage is unavailable. Your saved apps are kept; please reconnect or try again.');
   });
   rs.on('sync-done', result => {
     // A failed request can recover on the next cycle. Keep real failures
     // visible, but clear the connection warning after a completed sync.
-    if (result.completed && rs.connected) connectionError('');
+    if (result.completed && rs.connected && !atomicLibrary) connectionError('');
   });
   launcher.on('change', event => {
     if (event.relativePath !== 'installed-apps' || event.origin === 'window' || mode !== 'remote' || !ready) return;

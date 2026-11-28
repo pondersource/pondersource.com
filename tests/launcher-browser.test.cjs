@@ -441,3 +441,118 @@ test('mobile wallet selection stays visible after the provider list collapses', 
   await page.waitForFunction(() => document.querySelector('.rs-nextgraph-form').getBoundingClientRect().top >= 0);
   assert.equal(await input.inputValue(), 'https://wallet.example.test');
 });
+
+test('Atomic approval signs browser requests and a native commit and restores the library', async t => {
+  const { context, page } = await open(t);
+  const { createPublicKey, generateKeyPairSync, sign, verify } = require('node:crypto');
+  const owner = generateKeyPairSync('ed25519');
+  const ownerPublic = owner.publicKey.export({ type: 'spki', format: 'der' }).subarray(-32);
+  // V1 root genesis certificate: flags, signer, timestamp, nonce, empty parent and drive.
+  const cert = Buffer.concat([Buffer.from([1, 0]), ownerPublic, Buffer.alloc(28)]);
+  const drive = 'atomic:' + sign(null, cert, owner.privateKey).toString('base64url');
+  const property = name => 'https://atomicdata.dev/properties/' + name;
+  const records = new Map();
+  const allowed = {
+    'access-control-allow-origin': '*', 'access-control-allow-headers': '*',
+    'access-control-allow-methods': 'GET, POST',
+    'access-control-expose-headers': 'X-Atomic-Server-Version',
+    'x-atomic-server-version': '0.41.0'
+  };
+  let publicKey;
+  let appAgent;
+  let writes = 0;
+  await context.route('https://node.example/**', async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const json = data => route.fulfill({ json: data, headers: allowed });
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: allowed });
+    if (url.pathname === '/resource') {
+      const headers = await request.allHeaders();
+      assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
+      assert.equal(headers['x-atomic-signature-version'], undefined);
+      assert.equal(request.headers()['cookie'], undefined);
+      const subject = url.searchParams.get('subject');
+      if (subject === drive) return json({
+        '@id': drive,
+        [property('isA')]: ['https://atomicdata.dev/classes/Drive'],
+        [property('createdBy')]: 'atomic:agent:' + ownerPublic.toString('base64url'),
+        [property('genesis')]: cert.toString('base64url'),
+        [property('read')]: [appAgent],
+        [property('write')]: [appAgent]
+      });
+      assert.ok(records.has(subject));
+      return json({ '@id': subject, ...records.get(subject) });
+    }
+    if (url.pathname === '/query') {
+      const headers = await request.allHeaders();
+      assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
+      assert.equal(headers['x-atomic-signature-version'], undefined);
+      return json({
+        '@id': url.href,
+        [property('collection/members')]: [...records.keys()],
+        [property('collection/totalMembers')]: records.size
+      });
+    }
+    assert.equal(url.pathname, '/commit');
+    assert.equal(request.method(), 'POST');
+    assert.equal(request.headers()['content-type'], 'application/ad+json');
+    assert.equal(request.headers()['cookie'], undefined);
+    const result = await page.evaluate(async body => {
+      const { LoroLoader, parseCommitJSON, serializeDeterministically } = await import('/assets/js/atomic-sdk/index.mjs');
+      const commit = parseCommitJSON(body);
+      const doc = new LoroLoader.Loro.LoroDoc();
+      doc.import(commit.loroUpdate);
+      const { signature, ...unsigned } = commit;
+      return {
+        subject: commit.subject, signer: commit.signer, signature,
+        content: serializeDeterministically(unsigned), props: doc.getMap('properties').toJSON()
+      };
+    }, request.postData());
+    assert.equal(result.signer, appAgent);
+    const key = createPublicKey({
+      key: Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), publicKey]),
+      type: 'spki', format: 'der'
+    });
+    assert.ok(verify(null, Buffer.from(result.content), key, Buffer.from(result.signature, 'base64')));
+    assert.equal(result.props[property('parent')], drive);
+    assert.equal(JSON.parse(result.props[property('description')]).apps[0].id, 'webmarks');
+    records.set(result.subject, result.props);
+    writes++;
+    return route.fulfill({ body: request.postData(), headers: allowed });
+  });
+  await page.goto(base);
+  await localReady(page);
+  await page.getByRole('button', { name: 'Atomic', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Connect Atomic' });
+  await dialog.getByLabel('Drive DID or link').fill(drive);
+  await dialog.getByLabel('Atomic node', { exact: true }).fill('https://node.example');
+  await dialog.getByRole('button', { name: 'Prepare app key' }).click();
+  const link = dialog.getByRole('link', { name: 'Approve in Atomic' });
+  await link.waitFor();
+  const grant = new URL(await link.getAttribute('href'));
+  assert.equal(grant.origin, 'https://app.atomic.place');
+  assert.equal(grant.pathname, '/app/connect-agent');
+  assert.equal(grant.searchParams.get('target'), drive);
+  assert.equal(grant.searchParams.get('write'), '1');
+  publicKey = Buffer.from(grant.searchParams.get('key'), 'base64');
+  appAgent = 'atomic:agent:' + publicKey.toString('base64url');
+  await dialog.getByRole('button', { name: 'Finish connecting' }).click();
+  const connected = async () => {
+    try {
+      await page.waitForFunction(() => document.querySelector('#storage-status').textContent.includes('saved to your Atomic drive'), undefined, { timeout: 12_000 });
+    } catch (error) {
+      const details = await page.locator('#atomic-connect-status, #library-error, #rs-login-error').allTextContents();
+      throw new Error('Atomic library did not open. ' + details.filter(Boolean).join(' '), { cause: error });
+    }
+  };
+  await connected();
+  await install(page, 'webmarks');
+  assert.equal(writes, 1);
+  assert.ok(!(await context.cookies()).some(cookie => cookie.name === 'atomic_session'));
+  await page.reload();
+  await connected();
+  assert.equal(await page.locator('#installed-apps [data-app-id="webmarks"]').count(), 1);
+  await page.getByRole('button', { name: 'Disconnect Atomic' }).click();
+  await localReady(page);
+  assert.equal(await page.locator('#installed-apps [data-app-id="webmarks"]').count(), 0);
+});
