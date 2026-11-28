@@ -522,7 +522,7 @@ test('Atomic approval signs browser requests and a native commit and restores th
   });
   await page.goto(base);
   await localReady(page);
-  await page.locator('.rs-choose-atomic').click();
+  await page.getByRole('button', { name: 'Atomic', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Connect Atomic' });
   await dialog.getByLabel('Drive DID or link').fill(drive);
   await dialog.getByLabel('Atomic node', { exact: true }).fill('https://node.example');

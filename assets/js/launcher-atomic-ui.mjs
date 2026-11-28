@@ -27,6 +27,7 @@ export function setupAtomicLauncher({ widget, connect, disconnect, mayConnect, o
     signOut.hidden = !connected;
   }
   widget.rsChooseAtomicButton.hidden = false;
+  widget.rsChooseAtomicButton.querySelector('div').textContent = 'Atomic';
   // The pinned widget also serves apps using its older provider. Replace
   // the action only in this launcher while keeping its chooser and icon.
   widget.rsChooseAtomicButton.addEventListener('click', event => {

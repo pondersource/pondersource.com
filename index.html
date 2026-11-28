@@ -298,12 +298,13 @@
       <button class="btn btn-secondary" id="atomic-disconnect" type="button" hidden>Disconnect Atomic</button>
       <dialog id="atomic-connect-dialog" aria-labelledby="atomic-connect-title">
         <h2 id="atomic-connect-title">Connect Atomic</h2>
+        <p>For a library saved with the Atomic remoteStorage plugin, close this dialog, choose remoteStorage, and enter your original storage address.</p>
         <form id="atomic-connect-form">
           <label>Drive DID or link <input name="drive" required autocomplete="off"></label>
           <button class="btn btn-secondary" id="atomic-find-nodes" type="button">Find Atomic nodes</button>
-          <label>Atomic node <input name="node" type="url" list="atomic-node-choices" required placeholder="https://your-atomic-node.example"></label>
+          <label>Atomic node <input name="node" type="url" list="atomic-node-choices" required value="https://node1.atomicserver.eu"></label>
           <datalist id="atomic-node-choices"></datalist>
-          <label>Atomic approval site <input name="approvalSite" type="url" value="https://app.atomic.place" required></label>
+          <label>Atomic approval site <input name="approvalSite" type="url" value="https://atomic.place" required></label>
           <button class="btn btn-primary" type="submit">Prepare app key</button>
         </form>
         <p id="atomic-connect-status" role="status"></p>

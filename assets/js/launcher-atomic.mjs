@@ -85,9 +85,11 @@ export async function prepareAtomicConnection({ drive, node, approvalSite }, sdk
   const key = await api.Agent.fromCryptoKeyPair(keyPair).getPublicKey();
   const agent = api.agentSubjectFromPublicKey(key).subject;
   const connection = { drive: driveId(drive), node: httpsOrigin(node), agent, keyPair };
+  const origin = httpsOrigin(approvalSite);
+  const app = origin === 'https://atomic.place' ? 'https://app.atomic.place' : origin;
   return {
     connection,
-    grantUrl: api.connectAgentUrl(httpsOrigin(approvalSite), {
+    grantUrl: api.connectAgentUrl(app, {
       publicKey: key,
       name: 'Ponder Source launcher',
       write: true,
