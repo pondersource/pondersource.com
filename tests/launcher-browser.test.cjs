@@ -469,7 +469,7 @@ test('Atomic approval signs browser requests and a native commit and restores th
     if (url.pathname === '/resource') {
       const headers = await request.allHeaders();
       assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
-      assert.equal(headers['x-atomic-signature-version'], '2');
+      assert.equal(headers['x-atomic-signature-version'], undefined);
       assert.equal(request.headers()['cookie'], undefined);
       const subject = url.searchParams.get('subject');
       if (subject === drive) return json({
@@ -486,7 +486,7 @@ test('Atomic approval signs browser requests and a native commit and restores th
     if (url.pathname === '/query') {
       const headers = await request.allHeaders();
       assert.ok(headers['x-atomic-signature'], request.method() + ' ' + url.pathname + ' requires a signature');
-      assert.equal(headers['x-atomic-signature-version'], '2');
+      assert.equal(headers['x-atomic-signature-version'], undefined);
       return json({
         '@id': url.href,
         [property('collection/members')]: [...records.keys()],

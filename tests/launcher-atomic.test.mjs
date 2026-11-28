@@ -39,10 +39,9 @@ function fixture({ write = true, badCertificate = false, failedWrite = false, wr
     verifyGenesisCert: async (cert, signature) => !badCertificate && cert === 'certificate' && signature === drive.slice(7),
     genesisSignerDid: () => 'atomic:agent:owner',
     server: { classes: { drive: 'drive' } },
-    async signRequest(url, signer, headers, { method }) {
+    async signRequest(url, signer, headers) {
       assert.equal(new URL(url).origin, node);
       assert.equal(signer.subject, agent);
-      assert.equal(method, 'GET');
       return { ...headers, 'x-atomic-signature': 'test signature' };
     },
     LoroLoader: { initializeLoro: async () => undefined },

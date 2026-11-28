@@ -7,6 +7,7 @@ const genesisProperty = schema + 'genesis';
 const createdByProperty = schema + 'createdBy';
 const libraryName = 'Ponder Source launcher state v1';
 const pageSize = 100;
+const publicAgent = 'https://atomicdata.dev/agents/publicAgent';
 
 export function driveId(input) {
   const source = input.trim();
@@ -110,10 +111,10 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
     const url = new URL(input);
     if (url.origin !== origin) throw new Error('An Atomic request left the selected node.');
     const method = options.method ?? 'GET';
-    // Require native DID authorization even if a proxy drops the header the
-    // SDK would use to negotiate legacy authentication.
+    // Atomic's resource and query handlers verify URL-bound read signatures.
+    // Commit bodies have their own signature.
     const headers = method === 'GET'
-      ? await api.signRequest(url.href, agent, options.headers, { method })
+      ? await api.signRequest(url.href, agent, options.headers)
       : options.headers;
     const deadline = AbortSignal.timeout(20_000);
     const signal = options.signal ? AbortSignal.any([options.signal, deadline]) : deadline;
@@ -138,8 +139,12 @@ export async function openAtomicLibrary(connection, sdk = loadSDK(), transport =
         resource.get(createdByProperty) !== api.genesisSignerDid(cert)) {
       throw new Error('The selected node returned an invalid Atomic drive certificate.');
     }
-    if (!resource.getSubjects(core.properties.read).includes(agent.subject) ||
-        !resource.getSubjects(core.properties.write).includes(agent.subject)) {
+    const readers = resource.getSubjects(core.properties.read);
+    const writers = resource.getSubjects(core.properties.write);
+    if (resource.get(core.properties.parent) || readers.includes(publicAgent) || writers.includes(publicAgent)) {
+      throw new Error('Choose a private Atomic drive for your app library.');
+    }
+    if (!readers.includes(agent.subject) || !writers.includes(agent.subject)) {
       throw new Error('In Atomic, select the same drive and approve Read and edit for this app key.');
     }
     return resource;
